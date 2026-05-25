@@ -173,82 +173,82 @@
     /* =========================================
        7. PRINT MODE (A4 Landscape / A3 Optimal)
        ========================================= */
-    @media print {
-      @page {
-        size: A4 landscape; /* Ưu tiên in ngang cho đẹp */
-        margin: 10mm 15mm;
-      }
-      
-      /* Tắt toàn bộ animation & background overlay để in sạch */
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-      }
-      body::before { display: none !important; }
-      
-      /* Bật in màu nền (đối với Chrome/Edge) */
-      body {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        background: #fff !important;
-      }
+       @media print {
+        @page {
+          size: A4 landscape; /* Ưu tiên in ngang cho đẹp */
+          margin: 10mm 15mm;
+        }
 
-      /* Ẩn các thành phần không cần thiết khi in */
-      .nav, footer, .print-hint, .filter-tabs, .hero p, .hero h1 span { 
-        display: none !important; 
-      }
-      
-      /* Reset Padding & Margin cho Print */
-      section { padding: 1.5rem 0 !important; }
-      .container { max-width: 100% !important; padding: 0 !important; }
-      
-      /* Chống cắt vỡ Layout (Page Breaks) */
-      .ranks-section, .conversion-section, .tasks-section, .rewards-section, .cards-section {
-        page-break-inside: auto;
-      }
-      .rank-item, .task-group, .reward-card, .cut-card, .conv-box, .info-step {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-      }
-      
-      /* Thu gọn Hero */
-      .hero { 
-        padding: 1rem 0 !important; 
-        background: none !important; 
-        color: var(--green-deep) !important;
-        border-bottom: 2px solid #000;
-        margin-bottom: 1rem;
-      }
-      .hero h1 { font-size: 24pt !important; color: #000 !important;}
-      .info-step { 
-        border-color: var(--green-deep) !important; 
-        color: #000 !important; 
-        padding: 1rem !important;
-      }
-      .info-title { color: var(--green-deep) !important; }
-      
-      /* Bảng quy đổi */
-      .conv-box { border: 1px solid #000 !important; box-shadow: none !important; padding: 1rem !important; }
-      .conv-table th { background: #e5e7eb !important; color: #000 !important; }
-      
-      /* Lưới thẻ in */
-      .cards-grid { 
-        grid-template-columns: repeat(3, 1fr) !important; /* Ép 3 cột cho A4 ngang */
-        gap: 10mm !important;
-      }
-      .cut-card {
-        border: 1.5pt dashed #000 !important; /* Chuyển nét đứt thành đen rõ ràng để dễ cắt */
-        box-shadow: none !important;
-      }
-      .cut-icon { color: #000 !important; }
+        /* Tắt toàn bộ animation & background overlay để in sạch */
+        *, *::before, *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+        body::before { display: none !important; }
 
-      .rewards-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+        /* Bật in màu nền (đối với Chrome/Edge) */
+        body {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          background: #fff !important;
+        }
+
+        /* Ẩn các thành phần không cần thiết khi in */
+        .nav, footer, .print-hint, .filter-tabs, .hero p, .hero h1 span { 
+          display: none !important; 
+        }
+
+        /* Reset Padding & Margin cho Print */
+        section { padding: 1.5rem 0 !important; }
+        .container { max-width: 100% !important; padding: 0 !important; }
+
+        /* Chống cắt vỡ Layout (Page Breaks) */
+        .ranks-section, .conversion-section, .tasks-section, .rewards-section, .cards-section {
+          page-break-inside: auto;
+        }
+        .rank-item, .task-group, .reward-card, .cut-card, .conv-box, .info-step {
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+
+        /* Thu gọn Hero */
+        .hero { 
+          padding: 1rem 0 !important; 
+          background: none !important; 
+          color: var(--green-deep) !important;
+          border-bottom: 2px solid #000;
+          margin-bottom: 1rem;
+        }
+        .hero h1 { font-size: 24pt !important; color: #000 !important;}
+        .info-step { 
+          border-color: var(--green-deep) !important; 
+          color: #000 !important; 
+          padding: 1rem !important;
+        }
+        .info-title { color: var(--green-deep) !important; }
+
+        /* Bảng quy đổi */
+        .conv-box { border: 1px solid #000 !important; box-shadow: none !important; padding: 1rem !important; }
+        .conv-table th { background: #e5e7eb !important; color: #000 !important; }
+
+        /* Lưới thẻ in */
+        .cards-grid { 
+          grid-template-columns: repeat(3, 1fr) !important; /* Ép 3 cột cho A4 ngang */
+          gap: 10mm !important;
+        }
+        .cut-card {
+          border: 1.5pt dashed #000 !important; /* Chuyển nét đứt thành đen rõ ràng để dễ cắt */
+          box-shadow: none !important;
+        }
+        .cut-icon { color: #000 !important; }
+
+        .rewards-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
       }
-    }
-  </style>
-</head>
-<body>
+    </style>
+  </head>
+  <body>
 
 <!-- NAV (Ẩn khi in) -->
 <nav class="nav" id="mainNav">
@@ -416,6 +416,7 @@
         <div class="task-row"><div class="t-icon">🌿</div><div class="t-info"><div class="t-name">Hộ vệ thảo dược</div><div class="t-sub">Tưới cây · ~20 phút</div></div><div class="t-reward">+20 🌾</div></div>
         <div class="task-row"><div class="t-icon">🧺</div><div class="t-info"><div class="t-name">Chăm sóc Long bào</div><div class="t-sub">Giặt / Phơi quần áo · ~20 phút</div></div><div class="t-reward">+25 🌾</div></div>
         <div class="task-row"><div class="t-icon">🧼</div><div class="t-info"><div class="t-name">Thanh tẩy bảo vật</div><div class="t-sub">Giặt giày · ~35 phút</div></div><div class="t-reward">+35 🌾</div></div>
+        <div class="task-row"><div class="t-icon">🔱</div><div class="t-info"><div class="t-name">Giải cứu thuỷ cung</div><div class="t-sub">Dọn nhà vệ sinh · ~35 phút</div></div><div class="t-reward">+20 🌾</div></div>
       </div>
     </div>
 
@@ -451,7 +452,7 @@
     </div>
 
     <div class="rewards-grid" id="rewardsGrid">
-      
+
       <!-- Sách / Học hỏi -->
       <div class="reward-card" data-tag="learning">
         <div class="rw-top">
@@ -569,7 +570,7 @@
 <!-- 6. PRIVILEGE CARDS (PRINT & CUT) -->
 <section class="cards-section" id="print-cards">
   <div class="container">
-    
+
     <!-- Hướng dẫn in (Ẩn khi in) -->
     <div class="print-hint">
       <div>
@@ -583,13 +584,13 @@
 
     <!-- Dàn thẻ cắt (Thiết kế layout tối ưu in A4) -->
     <div class="cards-grid">
-      
+
       <!-- Thẻ 1 -->
       <div class="cut-card theme-yellow">
         <i class="fas fa-cut cut-icon"></i>
         <div class="cc-emoji">🏮</div>
         <div class="cc-name">ĐÈN DẦU THẮP MUỘN</div>
-        <div class="cc-cost">Giá: 400 🌾</div>
+        <div class="cc-cost">Giá: 350 🌾</div>
         <div class="cc-desc">Cày phim hoặc đọc truyện muộn thêm 45 phút so với giờ ngủ quy định.</div>
         <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
       </div>
@@ -599,7 +600,7 @@
         <i class="fas fa-cut cut-icon"></i>
         <div class="cc-emoji">🌾</div>
         <div class="cc-name">BÙ NHÌN THẾ THÂN</div>
-        <div class="cc-cost">Giá: 800 🌾</div>
+        <div class="cc-cost">Giá: 900 🌾</div>
         <div class="cc-desc">Miễn toàn bộ việc nhà trong 1 ngày — bù nhìn gác đồng thay con.</div>
         <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
       </div>
@@ -609,7 +610,7 @@
         <i class="fas fa-cut cut-icon"></i>
         <div class="cc-emoji">⚡</div>
         <div class="cc-name">HẠT NẾP THẦN LỰC</div>
-        <div class="cc-cost">Giá: 1.200 🌾</div>
+        <div class="cc-cost">Giá: 2.000 🌾</div>
         <div class="cc-desc">+1 tiếng chơi game hoặc dùng máy tính so với hạn mức ngày hôm đó.</div>
         <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
       </div>
@@ -629,7 +630,7 @@
         <i class="fas fa-cut cut-icon"></i>
         <div class="cc-emoji">🎲</div>
         <div class="cc-name">PHIÊN CHỢ TỰ DO</div>
-        <div class="cc-cost">Giá: 640 🌾</div>
+        <div class="cc-cost">Giá: 850 🌾</div>
         <div class="cc-desc">Không bị hỏi bài hay kiểm tra sách vở trong trọn vẹn 1 buổi tối.</div>
         <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
       </div>
@@ -639,12 +640,12 @@
         <i class="fas fa-cut cut-icon"></i>
         <div class="cc-emoji">🚜</div>
         <div class="cc-name">LỆNH TRƯNG THU ĐẤT</div>
-        <div class="cc-cost">Giá: 960 🌾</div>
+        <div class="cc-cost">Giá: 600 🌾</div>
         <div class="cc-desc">Yêu cầu bố hoặc mẹ làm giúp 1 việc nhà của con trong ngày hôm đó.</div>
         <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
       </div>
 
-            <!-- Thẻ 7 -->
+      <!-- Thẻ 7 -->
       <div class="cut-card theme-red">
         <i class="fas fa-cut cut-icon"></i>
         <div class="cc-emoji">🍿</div>
