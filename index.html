@@ -493,60 +493,45 @@
     .reveal.visible { opacity:1; transform:translateY(0); }
 
     /* tasks preview */
-    /*.tasks-preview {
-      display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    .tasks-preview {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
       gap:1rem; margin-top:2rem;
     }
-    .task-row {
-      background:#fff; border-radius:1rem; padding:1rem 1.2rem;
-      display:flex; align-items:center; gap:1rem;
-      box-shadow:var(--shadow-soft);
-      border:2px solid transparent;
-      transition: border-color .2s, transform .2s;
-    }
-    .task-row:hover { border-color:var(--green-light); transform:translateX(4px); }
-    .task-row .task-icon { font-size:1.5rem; width:2.2rem; text-align:center; }
-    .task-row .task-info { flex:1; }
-    .task-row .task-name { font-weight:700; font-size:.92rem; color:var(--green-deep); }
-    .task-row .task-sub  { font-size:.8rem; color:var(--text-muted); }
-    .task-row .task-reward {
-      background:var(--amber-light); color:#92400e;
-      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.85rem;
-      padding:.2rem .65rem; border-radius:1rem; white-space:nowrap;
-    }*/
-    section { padding: 5rem 2rem; }
-    .container { max-width:1100px; margin:0 auto; }
-    .section-label { font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.78rem; letter-spacing:.15em; text-transform:uppercase; color: var(--green-mid); margin-bottom:.5rem; }
-    .section-title { font-size:clamp(1.8rem, 4vw, 2.8rem); font-weight:900; color: var(--green-deep); margin-bottom:1rem; line-height:1.2; }
-    .section-sub { font-size:1.05rem; color:var(--text-muted); max-width:560px; line-height:1.7; margin-bottom: 2rem; }
 
-      /* Style cho Nhiệm vụ Sử thi (Epic) */
-    .task-row.epic { border: 1px solid #47ea08;; background: linear-gradient(135deg, #fefce8 0%, #fff 100%); position: relative; }
+    /* Style cho Nhiệm vụ Sử thi (Epic) */
+    .task-row.epic { border: 1px solid #47ea08; background: linear-gradient(135deg, #fefce8 0%, #fff 100%); position: relative; }
     .task-row.epic::before { content: "♛"; position: absolute; right: 10px; top: 5px; font-size: 1.2rem; color: #eab308; }
     .task-name.epic { color: #854d0e; font-weight: 900; }
 
-    .tasks-preview { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem; padding: 2rem 0; max-width: 1100px; margin: 0 auto; }
-    
-    .task-row {
-      background:#fff; border-radius:1rem; padding:1rem 1.2rem;
-      display:flex; align-items:center; gap:1rem;
-      box-shadow:var(--shadow-soft); border:2px solid transparent;
-      transition: all .2s;
-    }
-    
     /* Style cho Highlight */
-    .task-row.highlight {
-      border: 1px solid var(--amber);
-      background-color: #fffbeb;
+    .task-row.highlight { border: 1px solid var(--amber); background-color: #fffbeb; }
+
+    .task-row {
+      background:#fff; border-radius:1rem; padding:.85rem 1rem;
+      display:flex; align-items:center; gap:.75rem;
+      box-shadow:var(--shadow-soft);
+      border:2px solid transparent;
+      transition: border-color .2s, transform .2s;
+      min-width: 0; /* prevent flex blowout */
     }
-    
-    .task-icon { font-size:1.5rem; width:2.2rem; text-align:center; }
-    .task-info { flex:1; }
-    .task-name { font-weight:700; font-size:.92rem; color:var(--green-deep); }
-    .task-sub { font-size:.7rem; color:var(--text-muted); }
-    .task-reward { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 0.8rem; }
-    .val-grain { color: #b45309; background: var(--amber-light); border-radius: 1rem; padding: .2rem .65rem; }
-    .val-exp { color: #059669; padding: .2rem .65rem; }
+    .task-row:hover { border-color:var(--green-light); transform:translateX(4px); }
+    .task-row .task-icon { font-size:1.4rem; width:2rem; text-align:center; flex-shrink:0; }
+    .task-row .task-info { flex:1; min-width:0; overflow:hidden; }
+    .task-row .task-name { font-weight:700; font-size:.88rem; color:var(--green-deep); }
+    .task-row .task-sub  { font-size:.75rem; color:var(--text-muted); }
+    .task-row .task-reward {
+      display:flex; flex-direction:column; align-items:flex-end; gap:2px;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem;
+      flex-shrink:0;
+    }
+    .val-grain { color:#b45309; background:var(--amber-light); border-radius:1rem; padding:.15rem .55rem; white-space:nowrap; }
+    .val-exp   { color:#059669; padding:.15rem .55rem; white-space:nowrap; }
+
+    @media(max-width:480px){
+      .tasks-preview { grid-template-columns: 1fr; }
+      .task-row .task-name { white-space:normal; }
+    }
   </style>
 </head>
 <body>
@@ -671,16 +656,6 @@
       </div>
     </div>
 
-    <div class="max-w-4xl mx-auto bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-6 border border-yellow-200 shadow-sm flex flex-col sm:flex-row items-center gap-6 justify-center">
-                <div class="w-16 h-16 shrink-0 bg-white rounded-full flex items-center justify-center text-orange-500 shadow-md">
-                    <i class="fas fa-star text-3xl"></i>
-                </div>
-                <div class="text-center sm:text-left">
-                    <h4 class="text-xl font-bold text-orange-800 mb-1">🌟 Thưởng Tự Giác: GẠO THƠM DẺO</h4>
-                    <p class="text-orange-900">Nếu tự giác làm việc không cần bố mẹ nhắc nhở ➔ <strong>Cộng thêm 20%</strong> số Hạt Gạo của nhiệm vụ đó!</p>
-                </div>
-            </div>
-
     <div class="rate-callout reveal">
       <div class="rate-item">
         <span class="rate-num">10 🌾</span>
@@ -729,24 +704,21 @@
 </section>
 
 <!-- ── TASKS PREVIEW ── -->
-<section style="background:#fff; padding:1rem 2rem 0rem;">
+<section style="background:#fff; padding:3rem 2rem 5rem;">
   <div class="container">
-    <p class="section-label reveal visible">🌾 Ví dụ nhiệm vụ</p>
-    <h2 class="section-title reveal visible">Đồng Điền – Bảng Nhiệm Vụ Mẫu</h2>
-    <p class="section-sub reveal visible">Một số công việc nhà phổ biến và số Hạt Gạo tương ứng. Ba mẹ và con có thể tự điều chỉnh!</p>
-  <div class="tasks-preview">
-    <div class="tasks-preview">
-    <!-- Nhiệm vụ Sử thi -->
+    <p class="section-label reveal">🌾 Ví dụ nhiệm vụ</p>
+    <h2 class="section-title reveal">Đồng Điền – Bảng Nhiệm Vụ Mẫu</h2>
+    <p class="section-sub reveal">Một số công việc nhà phổ biến và số Hạt Gạo tương ứng. Ba mẹ và con có thể tự điều chỉnh!</p>
+
+    <div class="tasks-preview reveal">
+      <!-- Nhiệm vụ Sử thi -->
       <div class="task-row epic">
         <span class="task-icon">🏰</span>
         <div class="task-info">
           <div class="task-name epic">Đại chiến Kho Thóc</div>
           <div class="task-sub">Tổng vệ sinh toàn bộ nhà cửa</div>
         </div>
-        <div class="task-reward">
-          <span class="val-grain">+150 🌾</span>
-          <span class="val-exp">+100 EXP</span>
-        </div>
+        <div class="task-reward"><span class="val-grain">+150 🌾</span><span class="val-exp">+100 EXP</span></div>
       </div>
       <div class="task-row epic">
         <span class="task-icon">🍳</span>
@@ -754,25 +726,23 @@
           <div class="task-name epic">Trợ lý Đầu bếp</div>
           <div class="task-sub">Nấu 1 bữa cơm hoàn chỉnh</div>
         </div>
-        <div class="task-reward">
-          <span class="val-grain">+100 🌾</span>
-          <span class="val-exp">+80 EXP</span>
-        </div>
+        <div class="task-reward"><span class="val-grain">+100 🌾</span><span class="val-exp">+80 EXP</span></div>
       </div>
-    <!-- Highlighted Tasks -->
-    <div class="task-row highlight"><span class="task-icon">🍽️</span><div class="task-info"><div class="task-name">Phá băng bồn rửa</div><div class="task-sub">Rửa bát · ~15 phút</div></div><div class="task-reward"><span class="val-grain">+15 🌾</span><span class="val-exp">+10 EXP</span></div></div>
-    <div class="task-row highlight"><span class="task-icon">🧹</span><div class="task-info"><div class="task-name">Tổng tấn công bụi bẩn</div><div class="task-sub">Quét & lau nhà · ~20 phút</div></div><div class="task-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
-    <div class="task-row highlight"><span class="task-icon">🪑</span><div class="task-info"><div class="task-name">Thiết lập bàn chỉ huy</div><div class="task-sub">Dọn bàn học · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
-    <div class="task-row"><span class="task-icon">👕</span><div class="task-info"><div class="task-name">Triệu hồi đồ giặt</div><div class="task-sub">Gấp & cất đồ · ~15 phút</div></div><div class="task-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
-    <!-- Normal Tasks -->
-    <div class="task-row"><span class="task-icon">🗑️</span><div class="task-info"><div class="task-name">Dọn sạch phế liệu</div><div class="task-sub">Đổ rác · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
-    <div class="task-row"><span class="task-icon">🧺</span><div class="task-info"><div class="task-name">Chăm sóc Long bào</div><div class="task-sub">Giặt / Phơi quần áo · ~20 phút</div></div><div class="task-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
-    <div class="task-row"><span class="task-icon">🧼</span><div class="task-info"><div class="task-name">Thanh tẩy bảo vật</div><div class="task-sub">Giặt giày · ~35 phút</div></div><div class="task-reward"><span class="val-grain">+35 🌾</span><span class="val-exp">+30 EXP</span></div></div>
-    <div class="task-row"><span class="task-icon">📚</span><div class="task-info"><div class="task-name">Tu luyện kiến thức</div><div class="task-sub">Tự học · 1 tiếng</div></div><div class="task-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
-    <div class="task-row"><span class="task-icon">🌿</span><div class="task-info"><div class="task-name">Hộ vệ thảo dược</div><div class="task-sub">Tưới cây · ~20 phút</div></div><div class="task-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
-    <div class="task-row"><span class="task-icon">🛒</span><div class="task-info"><div class="task-name">Viễn chinh lương thực</div><div class="task-sub">Đi chợ · ~30 phút</div></div><div class="task-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
-    <div class="task-row"><span class="task-icon">🐾</span><div class="task-info"><div class="task-name">Thu dọn Giang sơn</div><div class="task-sub">Dọn phòng riêng & Bàn học · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
-    <div class="task-row"><span class="task-icon">🍽️</span><div class="task-info"><div class="task-name">Bảo dưỡng pháp bảo</div><div class="task-sub">Lau dọn bàn ăn · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+      <!-- Highlighted -->
+      <div class="task-row highlight"><span class="task-icon">🍽️</span><div class="task-info"><div class="task-name">Phá băng bồn rửa</div><div class="task-sub">Rửa bát · ~15 phút</div></div><div class="task-reward"><span class="val-grain">+15 🌾</span><span class="val-exp">+10 EXP</span></div></div>
+      <div class="task-row highlight"><span class="task-icon">🧹</span><div class="task-info"><div class="task-name">Tổng tấn công bụi bẩn</div><div class="task-sub">Quét &amp; lau nhà · ~20 phút</div></div><div class="task-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
+      <div class="task-row highlight"><span class="task-icon">🪑</span><div class="task-info"><div class="task-name">Thiết lập bàn chỉ huy</div><div class="task-sub">Dọn bàn học · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+      <!-- Normal -->
+      <div class="task-row"><span class="task-icon">👕</span><div class="task-info"><div class="task-name">Triệu hồi đồ giặt</div><div class="task-sub">Gấp &amp; cất đồ · ~15 phút</div></div><div class="task-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🗑️</span><div class="task-info"><div class="task-name">Dọn sạch phế liệu</div><div class="task-sub">Đổ rác · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🧺</span><div class="task-info"><div class="task-name">Chăm sóc Long bào</div><div class="task-sub">Giặt / Phơi quần áo · ~20 phút</div></div><div class="task-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🧼</span><div class="task-info"><div class="task-name">Thanh tẩy bảo vật</div><div class="task-sub">Giặt giày · ~35 phút</div></div><div class="task-reward"><span class="val-grain">+35 🌾</span><span class="val-exp">+30 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">📚</span><div class="task-info"><div class="task-name">Tu luyện kiến thức</div><div class="task-sub">Tự học · 1 tiếng</div></div><div class="task-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🌿</span><div class="task-info"><div class="task-name">Hộ vệ thảo dược</div><div class="task-sub">Tưới cây · ~20 phút</div></div><div class="task-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🛒</span><div class="task-info"><div class="task-name">Viễn chinh lương thực</div><div class="task-sub">Đi chợ · ~30 phút</div></div><div class="task-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🐾</span><div class="task-info"><div class="task-name">Thu dọn Giang sơn</div><div class="task-sub">Dọn phòng riêng · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🍽️</span><div class="task-info"><div class="task-name">Bảo dưỡng pháp bảo</div><div class="task-sub">Lau dọn bàn ăn · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+    </div>
   </div>
 </section>
 
@@ -792,32 +762,29 @@
       </div>
       <div class="rank-item">
         <div class="rank-emoji">🌿</div>
-        <div class="rank-name">Thợ Lành Nghề</div>
-        <div class="rank-exp">200 – 1500 EXP</div>
+        <div class="rank-name">Thợ Cày</div>
+        <div class="rank-exp">200 – 500 EXP</div>
         <span class="rank-badge" style="background:#dcfce7;color:#166534">+5% bonus Gạo</span>
       </div>
       <div class="rank-item">
         <div class="rank-emoji">🌾</div>
         <div class="rank-name">Điền Chủ</div>
-        <div class="rank-exp">1501 – 3.600 EXP</div>
+        <div class="rank-exp">500 – 1.000 EXP</div>
         <span class="rank-badge" style="background:#fef9c3;color:#854d0e">+10% bonus Gạo</span>
       </div>
       <div class="rank-item">
         <div class="rank-emoji">🏡</div>
-        <div class="rank-name">Đại Phú Hộ</div>
-        <div class="rank-exp">3.601 – 7.500 EXP</div>
+        <div class="rank-name">Lão Làng</div>
+        <div class="rank-exp">1.000 – 2.000 EXP</div>
         <span class="rank-badge" style="background:#fed7aa;color:#9a3412">+15% · Đặc quyền</span>
       </div>
       <div class="rank-item">
         <div class="rank-emoji">👑</div>
-        <div class="rank-name">Già Làng</div>
-        <div class="rank-exp">7.500+ EXP</div>
+        <div class="rank-name">Đại Điền Chủ</div>
+        <div class="rank-exp">2.000+ EXP</div>
         <span class="rank-badge" style="background:#fde68a;color:#713f12">+20% · Tất cả QH</span>
       </div>
     </div>
-
-
-    
   </div>
 </section>
 
@@ -830,13 +797,6 @@
         <h3>🚫 Luật Thiên Tai — Cơ Chế Phạt</h3>
         <p>Nông trại có thể gặp thiên tai nếu người nông dân lười biếng. Công bằng là nền tảng của hệ thống!</p>
         <div class="penalty-rules">
-          <div class="penalty-rule">
-            <i class="fas fa-bolt"></i>
-            <div>
-              <strong>Thiếu Nhiệm Vụ Highlight</strong>
-              <span>Không hoàn thành các nhiệm vụ <span class="highlight-red">Highlight</span> trong ngày: Phạt <span class="highlight-red">-50 Gạo/ngày</span>.</span>
-            </div>
-          </div>
           <div class="penalty-rule">
             <i class="fas fa-leaf"></i>
             <div>
