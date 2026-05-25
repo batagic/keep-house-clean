@@ -242,7 +242,7 @@
 <div class="page-hero">
   <div class="badge">🌾 Trung Tâm Quy Đổi</div>
   <h1>Tính Gạo → Tiền</h1>
-  <p>Nhập số Hạt Gạo con đã tích lũy và xem ngay giá trị tiền mặt tương đương. Tỷ giá cố định: 10 Gạo = 5.000 VNĐ.</p>
+  <p>Nhập số Hạt Gạo con đã tích lũy và xem ngay giá trị tiền mặt tương đương. Tỷ giá cố định: 10 Gạo = 1.000 VNĐ (1 Gạo = 100 VNĐ).</p>
 </div>
 <div style="background:var(--cream);">
   <svg viewBox="0 0 1200 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:50px;display:block;">
@@ -269,10 +269,10 @@
           <div class="quick-amounts">
             <button class="quick-btn" onclick="setAmount(50)">50</button>
             <button class="quick-btn" onclick="setAmount(100)">100</button>
-            <button class="quick-btn" onclick="setAmount(200)">200</button>
-            <button class="quick-btn" onclick="setAmount(500)">500</button>
-            <button class="quick-btn" onclick="setAmount(1000)">1.000</button>
-            <button class="quick-btn" onclick="setAmount(2000)">2.000</button>
+            <button class="quick-btn" onclick="setAmount(400)">400</button>
+            <button class="quick-btn" onclick="setAmount(800)">800</button>
+            <button class="quick-btn" onclick="setAmount(1200)">1.200</button>
+            <button class="quick-btn" onclick="setAmount(2400)">2.400</button>
           </div>
 
           <div class="calc-result">
@@ -283,12 +283,12 @@
 
           <div class="progress-section" style="margin-top:1.5rem">
             <div class="progress-label">
-              <span>Tiến độ tích lũy</span>
+              <span>Tiến độ tích lũy mục tiêu tối đa</span>
               <span id="progressPct">0%</span>
             </div>
             <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
             <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted);margin-top:.3rem">
-              <span>0 🌾</span><span>500 🌾</span><span>1.000 🌾</span>
+              <span>0 🌾</span><span>4.000 🌾</span><span>8.000 🌾</span>
             </div>
           </div>
 
@@ -308,65 +308,65 @@
         </div>
       </div>
 
-      <!-- RIGHT: goal unlock panel -->
+      <!-- RIGHT: goal targets -->
       <div class="reveal">
         <h3 style="font-size:1.1rem;font-weight:800;color:var(--green-deep);margin-bottom:1rem;">🎯 Mục Tiêu Đổi Quà</h3>
         <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1.2rem;">Nhập số Gạo bên trái để xem mục tiêu nào bạn đã đủ sức đổi!</p>
 
         <div class="goal-list">
-          <div class="goal-item" data-cost="50">
+          <div class="goal-item" data-cost="400">
             <span class="goal-emoji">🏮</span>
             <div class="goal-info">
               <div class="goal-name">Đèn Dầu Thắp Muộn</div>
-              <div class="goal-cost">50 🌾 · Thẻ bài đặc quyền</div>
+              <div class="goal-cost">400 🌾 · Thẻ bài đặc quyền</div>
             </div>
             <span class="goal-status locked" id="goal-0">🔒 Chưa đủ</span>
           </div>
-          <div class="goal-item" data-cost="100">
+          <div class="goal-item" data-cost="800">
             <span class="goal-emoji">📚</span>
             <div class="goal-info">
               <div class="goal-name">Gói Mở Mang Bờ Cõi (Sách)</div>
-              <div class="goal-cost">100 🌾 = 50.000 VNĐ</div>
+              <div class="goal-cost">800 🌾 = 80.000 VNĐ</div>
             </div>
             <span class="goal-status locked" id="goal-1">🔒 Chưa đủ</span>
           </div>
-          <div class="goal-item" data-cost="150">
+          <div class="goal-item" data-cost="1200">
             <span class="goal-emoji">🍲</span>
             <div class="goal-info">
               <div class="goal-name">Mâm Cỗ Mừng Vụ Mùa</div>
-              <div class="goal-cost">150 🌾 = 75.000 VNĐ</div>
+              <div class="goal-cost">1.200 🌾 = 120.000 VNĐ</div>
             </div>
             <span class="goal-status locked" id="goal-2">🔒 Chưa đủ</span>
           </div>
-          <div class="goal-item" data-cost="200">
+          <div class="goal-item" data-cost="1600">
             <span class="goal-emoji">🧭</span>
             <div class="goal-info">
               <div class="goal-name">Giấy Thông Hành Viễn Chinh</div>
-              <div class="goal-cost">200 🌾 = 100.000 VNĐ</div>
+              <div class="goal-cost">1.600 🌾 = 160.000 VNĐ</div>
             </div>
             <span class="goal-status locked" id="goal-3">🔒 Chưa đủ</span>
           </div>
-          <div class="goal-item" data-cost="300">
+          <div class="goal-item" data-cost="2400">
             <span class="goal-emoji">🏰</span>
             <div class="goal-info">
               <div class="goal-name">Lệnh Bài Mở Cổng Thành</div>
-              <div class="goal-cost">300 🌾 = 150.000 VNĐ</div>
+              <div class="goal-cost">2.400 🌾 = 240.000 VNĐ</div>
             </div>
             <span class="goal-status locked" id="goal-4">🔒 Chưa đủ</span>
           </div>
-          <div class="goal-item" data-cost="500">
+          <div class="goal-item" data-cost="4000">
             <span class="goal-emoji">🍕</span>
             <div class="goal-info">
               <div class="goal-name">Gói Kinh Lý Đô Thành (Nhà hàng)</div>
-              <div class="goal-cost">500 🌾 = 250.000 VNĐ</div>
+              <div class="goal-cost">4.000 🌾 = 400.000 VNĐ</div>
             </div>
             <span class="goal-status locked" id="goal-5">🔒 Chưa đủ</span>
           </div>
-          <div class="goal-item" data-cost="1000">
+          <div class="goal-item" data-cost="8000">
             <span class="goal-emoji">👑</span>
             <div class="goal-info">
               <div class="goal-name">Tiệc Hoàng Cung</div>
-              <div class="goal-cost">1.000 🌾 = 500.000 VNĐ</div>
+              <div class="goal-cost">8.000 🌾 = 800.000 VNĐ</div>
             </div>
             <span class="goal-status locked" id="goal-6">🔒 Chưa đủ</span>
           </div>
@@ -419,8 +419,8 @@
       <div class="plan-card reveal">
         <div class="plan-icon">🏆</div>
         <h4>Ví Dụ: Đôi Giày 500k</h4>
-        <div class="plan-number">~1.000 🌾</div>
-        <p>Cần 1.000 Gạo. Nếu mỗi ngày kiếm 70 Gạo → đủ tiền mua giày trong khoảng <strong>2 tuần</strong>!</p>
+        <div class="plan-number">~5.000 🌾</div>
+        <p>Cần 5.000 Gạo. Nếu mỗi ngày kiếm 70 Gạo → đủ tiền mua giày trong khoảng <strong>71 ngày</strong>!</p>
       </div>
     </div>
   </div>
@@ -510,8 +510,9 @@
   document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
 
   /* ── Calculator ── */
-  const RATE = 500; // 1 Gạo = 500 VNĐ (10 Gạo = 5000 VNĐ)
-  const GOALS = [50,100,150,200,300,500,1000];
+  const RATE = 100; // 1 Gạo = 100 VNĐ (10 Gạo = 1.000 VNĐ)
+  // Đã cập nhật mảng mốc chi phí khớp chính xác 100% với thuộc tính data-cost trong HTML
+  const GOALS = [400, 800, 1200, 1600, 2400, 4000, 8000];
 
   function formatVND(n) {
     return n.toLocaleString('vi-VN') + ' VNĐ';
@@ -527,16 +528,18 @@
 
     // note
     let note = 'Bắt đầu nhập số Gạo để xem kết quả ✨';
-    if(grains > 0 && grains < 50)   note = `Chưa đủ để đổi thẻ bài nhỏ nhất — cố lên! 💪`;
-    if(grains >= 50 && grains < 100) note = `Đủ đổi thẻ bài đặc quyền rồi! 🎴`;
-    if(grains >= 100 && grains < 300) note = `Tốt lắm! Đủ mua sách hoặc đổi thẻ bài cao cấp 📚`;
-    if(grains >= 300 && grains < 500) note = `Xuất sắc! Mời bạn đến nhà hoặc đi tự do rồi 🧭`;
-    if(grains >= 500 && grains < 1000) note = `Wow — đủ đãi cả nhà ăn nhà hàng bình dân rồi! 🍕`;
-    if(grains >= 1000) note = `ĐẠI ĐIỀN CHỦ! Đủ mua giày/đồ 500k bằng chính mồ hôi của mình 👑`;
+    if(grains > 0 && grains < 400)   note = `Chưa đủ để đổi Đèn Dầu Thắp Muộn — cố lên! 💪`;
+    if(grains >= 400 && grains < 800) note = `Đủ đổi Đèn Dầu Thắp Muộn rồi! 🏮`;
+    if(grains >= 800 && grains < 1200) note = `Tốt lắm! Đủ đổi Gói Mở Mang Bờ Cõi (Sách) 📚`;
+    if(grains >= 1200 && grains < 1600) note = `Tuyệt vời! Bạn có thể chọn Mâm Cỗ Mừng Vụ Mùa 🍲`;
+    if(grains >= 1600 && grains < 2400) note = `Xuất sắc! Có thể xin Giấy Thông Hành Viễn Chinh 🧭`;
+    if(grains >= 2400 && grains < 4000) note = `Quá đỉnh! Đủ sức sở hữu Lệnh Bài Mở Cổng Thành 🏰`;
+    if(grains >= 4000 && grains < 8000) note = `Wow — một chuyến du ngoạn Kinh Lý Đô Thành trọn vẹn thực sự! 🍕`;
+    if(grains >= 8000) note = `ĐẠI ĐIỀN CHỦ HUYỀN THOẠI! Bạn đã đạt cột mốc tối thượng: Tiệc Hoàng Cung 👑`;
     document.getElementById('calcNote').textContent = note;
 
-    // progress (max 1000)
-    const pct = Math.min(100, Math.round((grains / 1000) * 100));
+    // progress (Mốc tối đa tính theo phần thưởng cao nhất là 8000 Gạo)
+    const pct = Math.min(100, Math.round((grains / 8000) * 100));
     document.getElementById('progressFill').style.width = pct + '%';
     document.getElementById('progressPct').textContent = pct + '%';
 
@@ -550,7 +553,7 @@
         row.classList.add('can-afford');
       } else {
         const need = cost - grains;
-        el.textContent = `🔒 Còn thiếu ${need}🌾`;
+        el.textContent = `🔒 Còn thiếu ${need.toLocaleString('vi-VN')} 🌾`;
         el.className = 'goal-status locked';
         row.classList.remove('can-afford');
       }
@@ -575,11 +578,12 @@
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Thẻ bài\nThắp Muộn', 'Thẻ bài\nBù Nhìn', 'Sách\nTri Thức', 'Mâm Cỗ\nGia Đình', 'Thông Hành\nViễn Chinh', 'Mở Cổng\nThành', 'Kinh Lý\nĐô Thành'],
+        labels: ['Đèn Dầu\nThắp Muộn', 'Mở Mang\nBờ Cõi', 'Mâm Cỗ\nVụ Mùa', 'Thông Hành\nViễn Chinh', 'Mở Cổng\nThành', 'Kinh Lý\nĐô Thành', 'Tiệc\nHoàng Cung'],
         datasets: [
           {
             label: 'Số Hạt Gạo',
-            data: [50, 100, 100, 150, 200, 300, 500],
+            // Đồng bộ dữ liệu biểu đồ cột trùng khớp 100% với mục tiêu đổi quà
+            data: [400, 800, 1200, 1600, 2400, 4000, 8000],
             backgroundColor: [
               'rgba(245,166,35,.75)',
               'rgba(74,190,122,.75)',
@@ -596,8 +600,8 @@
             borderRadius: 10,
           },
           {
-            label: 'Giá trị VNĐ (÷1000)',
-            data: [25, 50, 50, 75, 100, 150, 250],
+            label: 'Giá trị VNĐ (÷100)',
+            data: [40, 80, 120, 160, 240, 400, 800],
             backgroundColor: 'rgba(196,125,58,.2)',
             borderColor: '#c47d3a',
             borderWidth: 2,
@@ -621,8 +625,8 @@
             bodyFont: { size:12 },
             callbacks: {
               label: function(ctx) {
-                if(ctx.datasetIndex === 0) return `  ${ctx.raw} Hạt Gạo`;
-                return `  ${(ctx.raw * 1000).toLocaleString('vi-VN')} VNĐ`;
+                if(ctx.datasetIndex === 0) return `  ${ctx.raw.toLocaleString('vi-VN')} Hạt Gạo`;
+                return `  ${(ctx.raw * 100).toLocaleString('vi-VN')} VNĐ`;
               }
             }
           }
