@@ -103,7 +103,9 @@
     .task-row .t-info { flex:1; }
     .task-row .t-name { font-weight:800; font-size:1rem; color:var(--text-main); }
     .task-row .t-sub  { font-size:.85rem; color:var(--text-muted); }
-    .task-row .t-reward { background: var(--amber-light); color: #b45309; padding: .3rem .8rem; border-radius: 1rem; font-family: 'Baloo 2'; font-weight: 800; font-size: 1rem; }
+    .task-row .t-reward { display:flex; flex-direction:column; align-items:flex-end; gap:3px; font-family:'Baloo 2',sans-serif; flex-shrink:0; }
+    .val-grain { color:#b45309; background:var(--amber-light); border-radius:1rem; padding:.15rem .6rem; white-space:nowrap; font-weight: 800; font-size: .95rem;}
+    .val-exp   { color:#065f46; background:#d1fae5; border-radius:1rem; padding:.15rem .6rem; white-space:nowrap; font-weight: 700; font-size: .75rem;}
     .task-row.epic { background: linear-gradient(135deg, #fefce8 0%, #fff 100%); border-color: #fde047; }
     .task-row.epic .t-name { color: #854d0e; font-weight: 900; }
 
@@ -173,82 +175,82 @@
     /* =========================================
        7. PRINT MODE (A4 Landscape / A3 Optimal)
        ========================================= */
-       @media print {
-        @page {
-          size: A4 landscape; /* Ưu tiên in ngang cho đẹp */
-          margin: 10mm 15mm;
-        }
-
-        /* Tắt toàn bộ animation & background overlay để in sạch */
-        *, *::before, *::after {
-          animation: none !important;
-          transition: none !important;
-        }
-        body::before { display: none !important; }
-
-        /* Bật in màu nền (đối với Chrome/Edge) */
-        body {
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-          background: #fff !important;
-        }
-
-        /* Ẩn các thành phần không cần thiết khi in */
-        .nav, footer, .print-hint, .filter-tabs, .hero p, .hero h1 span { 
-          display: none !important; 
-        }
-
-        /* Reset Padding & Margin cho Print */
-        section { padding: 1.5rem 0 !important; }
-        .container { max-width: 100% !important; padding: 0 !important; }
-
-        /* Chống cắt vỡ Layout (Page Breaks) */
-        .ranks-section, .conversion-section, .tasks-section, .rewards-section, .cards-section {
-          page-break-inside: auto;
-        }
-        .rank-item, .task-group, .reward-card, .cut-card, .conv-box, .info-step {
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-
-        /* Thu gọn Hero */
-        .hero { 
-          padding: 1rem 0 !important; 
-          background: none !important; 
-          color: var(--green-deep) !important;
-          border-bottom: 2px solid #000;
-          margin-bottom: 1rem;
-        }
-        .hero h1 { font-size: 24pt !important; color: #000 !important;}
-        .info-step { 
-          border-color: var(--green-deep) !important; 
-          color: #000 !important; 
-          padding: 1rem !important;
-        }
-        .info-title { color: var(--green-deep) !important; }
-
-        /* Bảng quy đổi */
-        .conv-box { border: 1px solid #000 !important; box-shadow: none !important; padding: 1rem !important; }
-        .conv-table th { background: #e5e7eb !important; color: #000 !important; }
-
-        /* Lưới thẻ in */
-        .cards-grid { 
-          grid-template-columns: repeat(3, 1fr) !important; /* Ép 3 cột cho A4 ngang */
-          gap: 10mm !important;
-        }
-        .cut-card {
-          border: 1.5pt dashed #000 !important; /* Chuyển nét đứt thành đen rõ ràng để dễ cắt */
-          box-shadow: none !important;
-        }
-        .cut-icon { color: #000 !important; }
-
-        .rewards-grid {
-          grid-template-columns: repeat(2, 1fr) !important;
-        }
+    @media print {
+      @page {
+        size: A4 landscape; /* Ưu tiên in ngang cho đẹp */
+        margin: 10mm 15mm;
       }
-    </style>
-  </head>
-  <body>
+      
+      /* Tắt toàn bộ animation & background overlay để in sạch */
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+      body::before { display: none !important; }
+      
+      /* Bật in màu nền (đối với Chrome/Edge) */
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        background: #fff !important;
+      }
+
+      /* Ẩn các thành phần không cần thiết khi in */
+      .nav, footer, .print-hint, .filter-tabs, .hero p, .hero h1 span { 
+        display: none !important; 
+      }
+      
+      /* Reset Padding & Margin cho Print */
+      section { padding: 1.5rem 0 !important; }
+      .container { max-width: 100% !important; padding: 0 !important; }
+      
+      /* Chống cắt vỡ Layout (Page Breaks) */
+      .ranks-section, .conversion-section, .tasks-section, .rewards-section, .cards-section {
+        page-break-inside: auto;
+      }
+      .rank-item, .task-group, .reward-card, .cut-card, .conv-box, .info-step {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      
+      /* Thu gọn Hero */
+      .hero { 
+        padding: 1rem 0 !important; 
+        background: none !important; 
+        color: var(--green-deep) !important;
+        border-bottom: 2px solid #000;
+        margin-bottom: 1rem;
+      }
+      .hero h1 { font-size: 24pt !important; color: #000 !important;}
+      .info-step { 
+        border-color: var(--green-deep) !important; 
+        color: #000 !important; 
+        padding: 1rem !important;
+      }
+      .info-title { color: var(--green-deep) !important; }
+      
+      /* Bảng quy đổi */
+      .conv-box { border: 1px solid #000 !important; box-shadow: none !important; padding: 1rem !important; }
+      .conv-table th { background: #e5e7eb !important; color: #000 !important; }
+      
+      /* Lưới thẻ in */
+      .cards-grid { 
+        grid-template-columns: repeat(3, 1fr) !important; /* Ép 3 cột cho A4 ngang */
+        gap: 10mm !important;
+      }
+      .cut-card {
+        border: 1.5pt dashed #000 !important; /* Chuyển nét đứt thành đen rõ ràng để dễ cắt */
+        box-shadow: none !important;
+      }
+      .cut-icon { color: #000 !important; }
+
+      .rewards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+  </style>
+</head>
+<body>
 
 <!-- NAV (Ẩn khi in) -->
 <nav class="nav" id="mainNav">
@@ -399,11 +401,11 @@
     <div class="task-group">
       <div class="task-group-title"><span style="font-size: 2rem;">🌱</span> Cấp độ 1: Tập sự (Khuyên dùng < 10 tuổi)</div>
       <div class="tasks-grid">
-        <div class="task-row"><div class="t-icon">🪑</div><div class="t-info"><div class="t-name">Thiết lập bàn chỉ huy</div><div class="t-sub">Dọn bàn học · ~10 phút</div></div><div class="t-reward">+10 🌾</div></div>
-        <div class="task-row"><div class="t-icon">🗑️</div><div class="t-info"><div class="t-name">Dọn sạch phế liệu</div><div class="t-sub">Đổ rác · ~10 phút</div></div><div class="t-reward">+10 🌾</div></div>
-        <div class="task-row"><div class="t-icon">🐾</div><div class="t-info"><div class="t-name">Thu dọn Giang sơn</div><div class="t-sub">Dọn phòng riêng · ~10 phút</div></div><div class="t-reward">+10 🌾</div></div>
-        <div class="task-row"><div class="t-icon">🍽️</div><div class="t-info"><div class="t-name">Bảo dưỡng pháp bảo</div><div class="t-sub">Lau dọn bàn ăn · ~10 phút</div></div><div class="t-reward">+10 🌾</div></div>
-        <div class="task-row"><div class="t-icon">👕</div><div class="t-info"><div class="t-name">Triệu hồi đồ giặt</div><div class="t-sub">Gấp & cất đồ · ~15 phút</div></div><div class="t-reward">+20 🌾</div></div>
+        <div class="task-row"><div class="t-icon">🪑</div><div class="t-info"><div class="t-name">Thiết lập bàn chỉ huy</div><div class="t-sub">Dọn bàn học · ~10 phút</div></div><div class="t-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🗑️</div><div class="t-info"><div class="t-name">Dọn sạch phế liệu</div><div class="t-sub">Đổ rác · ~10 phút</div></div><div class="t-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🐾</div><div class="t-info"><div class="t-name">Thu dọn Giang sơn</div><div class="t-sub">Dọn phòng riêng · ~10 phút</div></div><div class="t-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🍽️</div><div class="t-info"><div class="t-name">Bảo dưỡng pháp bảo</div><div class="t-sub">Lau dọn bàn ăn · ~10 phút</div></div><div class="t-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">👕</div><div class="t-info"><div class="t-name">Triệu hồi đồ giặt</div><div class="t-sub">Gấp & cất đồ · ~15 phút</div></div><div class="t-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
       </div>
     </div>
 
@@ -411,12 +413,11 @@
     <div class="task-group">
       <div class="task-group-title"><span style="font-size: 2rem;">🌿</span> Cấp độ 2: Trợ thủ (Khuyên dùng 10-12 tuổi)</div>
       <div class="tasks-grid">
-        <div class="task-row"><div class="t-icon">🍽️</div><div class="t-info"><div class="t-name">Phá băng bồn rửa</div><div class="t-sub">Rửa bát · ~15 phút</div></div><div class="t-reward">+15 🌾</div></div>
-        <div class="task-row"><div class="t-icon">🧹</div><div class="t-info"><div class="t-name">Tổng tấn công bụi bẩn</div><div class="t-sub">Quét & lau nhà · ~20 phút</div></div><div class="t-reward">+25 🌾</div></div>
-        <div class="task-row"><div class="t-icon">🌿</div><div class="t-info"><div class="t-name">Hộ vệ thảo dược</div><div class="t-sub">Tưới cây · ~20 phút</div></div><div class="t-reward">+20 🌾</div></div>
-        <div class="task-row"><div class="t-icon">🧺</div><div class="t-info"><div class="t-name">Chăm sóc Long bào</div><div class="t-sub">Giặt / Phơi quần áo · ~20 phút</div></div><div class="t-reward">+25 🌾</div></div>
-        <div class="task-row"><div class="t-icon">🧼</div><div class="t-info"><div class="t-name">Thanh tẩy bảo vật</div><div class="t-sub">Giặt giày · ~35 phút</div></div><div class="t-reward">+35 🌾</div></div>
-        <div class="task-row"><div class="t-icon">🔱</div><div class="t-info"><div class="t-name">Giải cứu thuỷ cung</div><div class="t-sub">Dọn nhà vệ sinh · ~35 phút</div></div><div class="t-reward">+20 🌾</div></div>
+        <div class="task-row"><div class="t-icon">🍽️</div><div class="t-info"><div class="t-name">Phá băng bồn rửa</div><div class="t-sub">Rửa bát · ~15 phút</div></div><div class="t-reward"><span class="val-grain">+15 🌾</span><span class="val-exp">+10 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🧹</div><div class="t-info"><div class="t-name">Tổng tấn công bụi bẩn</div><div class="t-sub">Quét & lau nhà · ~20 phút</div></div><div class="t-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🌿</div><div class="t-info"><div class="t-name">Hộ vệ thảo dược</div><div class="t-sub">Tưới cây · ~20 phút</div></div><div class="t-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🧺</div><div class="t-info"><div class="t-name">Chăm sóc Long bào</div><div class="t-sub">Giặt / Phơi quần áo · ~20 phút</div></div><div class="t-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🧼</div><div class="t-info"><div class="t-name">Thanh tẩy bảo vật</div><div class="t-sub">Giặt giày · ~35 phút</div></div><div class="t-reward"><span class="val-grain">+35 🌾</span><span class="val-exp">+30 EXP</span></div></div>
       </div>
     </div>
 
@@ -424,10 +425,10 @@
     <div class="task-group">
       <div class="task-group-title"><span style="font-size: 2rem;">🔥</span> Cấp độ 3: Quản gia (Khuyên dùng 13-15 tuổi)</div>
       <div class="tasks-grid">
-        <div class="task-row"><div class="t-icon">📚</div><div class="t-info"><div class="t-name">Tu luyện kiến thức</div><div class="t-sub">Tự học · 1 tiếng</div></div><div class="t-reward">+30 🌾</div></div>
-        <div class="task-row"><div class="t-icon">🛒</div><div class="t-info"><div class="t-name">Viễn chinh lương thực</div><div class="t-sub">Đi chợ · ~30 phút</div></div><div class="t-reward">+30 🌾</div></div>
-        <div class="task-row epic"><div class="t-icon">🍳</div><div class="t-info"><div class="t-name">Trợ lý Đầu bếp</div><div class="t-sub">Nấu 1 bữa cơm hoàn chỉnh</div></div><div class="t-reward">+100 🌾</div></div>
-        <div class="task-row epic"><div class="t-icon">🏰</div><div class="t-info"><div class="t-name">Đại chiến Kho Thóc</div><div class="t-sub">Tổng vệ sinh toàn bộ nhà cửa</div></div><div class="t-reward">+150 🌾</div></div>
+        <div class="task-row"><div class="t-icon">📚</div><div class="t-info"><div class="t-name">Tu luyện kiến thức</div><div class="t-sub">Tự học · 1 tiếng</div></div><div class="t-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🛒</div><div class="t-info"><div class="t-name">Viễn chinh lương thực</div><div class="t-sub">Đi chợ · ~30 phút</div></div><div class="t-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
+        <div class="task-row epic"><div class="t-icon">🍳</div><div class="t-info"><div class="t-name">Trợ lý Đầu bếp</div><div class="t-sub">Nấu 1 bữa cơm hoàn chỉnh</div></div><div class="t-reward"><span class="val-grain">+100 🌾</span><span class="val-exp">+80 EXP</span></div></div>
+        <div class="task-row epic"><div class="t-icon">🏰</div><div class="t-info"><div class="t-name">Đại chiến Kho Thóc</div><div class="t-sub">Tổng vệ sinh toàn bộ nhà cửa</div></div><div class="t-reward"><span class="val-grain">+150 🌾</span><span class="val-exp">+100 EXP</span></div></div>
       </div>
     </div>
   </div>
@@ -452,7 +453,7 @@
     </div>
 
     <div class="rewards-grid" id="rewardsGrid">
-
+      
       <!-- Sách / Học hỏi -->
       <div class="reward-card" data-tag="learning">
         <div class="rw-top">
@@ -570,7 +571,7 @@
 <!-- 6. PRIVILEGE CARDS (PRINT & CUT) -->
 <section class="cards-section" id="print-cards">
   <div class="container">
-
+    
     <!-- Hướng dẫn in (Ẩn khi in) -->
     <div class="print-hint">
       <div>
@@ -584,7 +585,7 @@
 
     <!-- Dàn thẻ cắt (Thiết kế layout tối ưu in A4) -->
     <div class="cards-grid">
-
+      
       <!-- Thẻ 1 -->
       <div class="cut-card theme-yellow">
         <i class="fas fa-cut cut-icon"></i>
