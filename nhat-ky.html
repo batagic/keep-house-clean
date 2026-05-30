@@ -272,193 +272,212 @@
 </head>
 <body>
 
-<nav class="navbar">
-  <a href="#" class="nav-brand">🌾 Kho Thóc Gia Đình</a>
-  <div class="nav-links">
-    <a href="#" class="active">Nhật Ký (Bố Mẹ)</a>
-    <a href="kho-qua.html">Kho Quà (Cho Bé)</a>
-  </div>
-</nav>
+  <nav class="navbar">
+    <a href="#" class="nav-brand">🌾 Kho Thóc Gia Đình</a>
+    <div class="nav-links">
+      <a href="#" class="active">Nhật Ký (Bố Mẹ)</a>
+      <a href="kho-qua.html">Kho Quà (Cho Bé)</a>
+    </div>
+  </nav>
 
-<div class="container">
-  <h1 class="page-title">Nhật Ký Vụ Mùa</h1>
-  <p class="page-subtitle">Nơi Bố Mẹ ghi nhận công sức và quản lý điểm số tích lũy trực tiếp.</p>
+  <div class="container">
+    <h1 class="page-title">Nhật Ký Vụ Mùa</h1>
+    <p class="page-subtitle">Nơi Bố Mẹ ghi nhận công sức và quản lý điểm số tích lũy trực tiếp.</p>
 
-  <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
-    <button class="btn-secondary" onclick="openModal()"><i class="fas fa-plus"></i> Đăng ký bé mới</button>
-  </div>
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+      <button class="btn-secondary" onclick="openModal()"><i class="fas fa-plus"></i> Đăng ký bé mới</button>
+    </div>
 
-  <div class="profile-grid" id="profileGrid"></div>
+    <div class="profile-grid" id="profileGrid"></div>
 
-  <div class="main-dashboard-grid">
-    
-    <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #edf7f1; padding-bottom: 1rem; margin-bottom: 0.5rem;">
-        <h3 style="font-family:'Baloo 2'; margin:0; color:var(--green-deep); font-size: 1.4rem;">📋 Nhiệm Vụ Hôm Nay</h3>
-        <span style="background: var(--amber-light); color: var(--earth); font-size: 0.9rem; font-weight: 800; padding: 0.3rem 0.8rem; border-radius: 1.5rem;" id="checkedCount">0 / 15</span>
-      </div>
+    <div class="main-dashboard-grid">
 
-      <div class="tasks-compact-container" id="tasksCompactGrid">
+      <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #edf7f1; padding-bottom: 1rem; margin-bottom: 0.5rem;">
+          <h3 style="font-family:'Baloo 2'; margin:0; color:var(--green-deep); font-size: 1.4rem;">📋 Nhiệm Vụ Hôm Nay</h3>
+          <span style="background: var(--amber-light); color: var(--earth); font-size: 0.9rem; font-weight: 800; padding: 0.3rem 0.8rem; border-radius: 1.5rem;" id="checkedCount">0 / 15</span>
         </div>
 
-      <div class="bonus-box" id="bonusToggleDiv" onclick="toggleBonus()">
-        <div class="toggle-switch"></div>
-        <div>
-          <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main)">Tự giác — không cần nhắc nhở</div>
-          <div style="font-size: 0.8rem; color: var(--text-muted)">Cộng thêm 20% Gạo cho tất cả nhiệm vụ đã hoàn thành</div>
+        <div class="tasks-compact-container" id="tasksCompactGrid">
+        </div>
+
+        <div class="bonus-box" id="bonusToggleDiv" onclick="toggleBonus()">
+          <div class="toggle-switch"></div>
+          <div>
+            <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main)">Tự giác — không cần nhắc nhở</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted)">Cộng thêm 20% Gạo cho tất cả nhiệm vụ đã hoàn thành</div>
+          </div>
+        </div>
+
+        <div class="totals-bar">
+          <span>🌾 Tổng Gạo: <span id="todayGrain" style="color:var(--earth);">0</span></span>
+          <span>⭐ EXP: <span id="todayExp" style="color:var(--green-deep);">0</span></span>
+        </div>
+
+        <div style="display: flex; gap: 0.8rem; margin-top: 1.5rem;">
+          <input type="text" id="logNote" placeholder="Ghi chú (Tùy chọn)..." style="flex:1; padding:0.8rem; border:1px solid #e2e8f0; border-radius:0.6rem; font-size:0.95rem;" />
+          <button class="btn-main" style="padding: 0 1.5rem;" onclick="submitDailyLog()">Ghi Nhật Ký</button>
         </div>
       </div>
 
-      <div class="totals-bar">
-        <span>🌾 Tổng Gạo: <span id="todayGrain" style="color:var(--earth);">0</span></span>
-        <span>⭐ EXP: <span id="todayExp" style="color:var(--green-deep);">0</span></span>
-      </div>
-
-      <div style="display: flex; gap: 0.8rem; margin-top: 1.5rem;">
-        <input type="text" id="logNote" placeholder="Ghi chú (Tùy chọn)..." style="flex:1; padding:0.8rem; border:1px solid #e2e8f0; border-radius:0.6rem; font-size:0.95rem;" />
-        <button class="btn-main" style="padding: 0 1.5rem;" onclick="submitDailyLog()">Ghi Nhật Ký</button>
-      </div>
-    </div>
-
-    <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
-      <div style="border-bottom: 2px solid #edf7f1; padding-bottom: 1rem; margin-bottom: 1.5rem;">
-        <h3 style="font-family:'Baloo 2'; margin:0; color:var(--green-deep); font-size: 1.4rem; display:flex; justify-content:space-between; align-items:center;">
-          <span>🎁 Kho Quà Tặng</span>
-          <span style="font-size:0.85rem; font-weight:normal; color:var(--text-muted); font-family: 'Mulish';">Đổi thưởng cho bé</span>
-        </h3>
-      </div>
-      
-      <div class="rewards-small-grid" id="rewardsSmallGrid">
+      <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
+        <div style="border-bottom: 2px solid #edf7f1; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+          <h3 style="font-family:'Baloo 2'; margin:0; color:var(--green-deep); font-size: 1.4rem; display:flex; justify-content:space-between; align-items:center;">
+            <span>🎁 Kho Quà Tặng</span>
+            <span style="font-size:0.85rem; font-weight:normal; color:var(--text-muted); font-family: 'Mulish';">Đổi thưởng cho bé</span>
+          </h3>
         </div>
-      
-      <div style="margin-top: 2rem; text-align: right; border-top: 1px dashed #e2e8f0; padding-top: 1.5rem;">
-        <button class="btn-main" style="background: var(--amber); color: var(--earth); font-size: 1rem; padding: 0.8rem 1.5rem;" onclick="redeemReward()">Nhận Quà Đã Chọn</button>
+
+        <div class="rewards-small-grid" id="rewardsSmallGrid">
+        </div>
+
+        <div style="margin-top: 2rem; text-align: right; border-top: 1px dashed #e2e8f0; padding-top: 1.5rem;">
+          <button class="btn-main" style="background: var(--amber); color: var(--earth); font-size: 1rem; padding: 0.8rem 1.5rem;" onclick="redeemReward()">Nhận Quà Đã Chọn</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <h3 style="font-family:'Baloo 2'; font-size: 1.5rem; color: var(--green-deep); margin-bottom: 1.5rem;">📜 Lịch Sử Gieo Hạt</h3>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <h3 class="modal-title">Thêm Tài Khoản Bé</h3>
+      <div class="form-group">
+        <label>Tên của bé</label>
+        <input type="text" id="pName" class="form-control" placeholder="VD: Gia Minh..."/>
+      </div>
+      <div class="form-group">
+        <label>Biểu tượng (Emoji)</label>
+        <input type="text" id="pAvatar" class="form-control" placeholder="👦, 👧, 🦸‍♂️..."/>
+      </div>
+      <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top: 1.5rem;">
+        <button class="btn-secondary" onclick="closeModal()">Hủy</button>
+        <button class="btn-main" onclick="confirmAddProfile()">Tạo Mới</button>
       </div>
     </div>
   </div>
 
-  <div class="history-card">
-    <h3 style="font-family:'Baloo 2'; font-size: 1.5rem; color: var(--green-deep); margin-bottom: 1.5rem;">📜 Lịch Sử Gieo Hạt</h3>
-    <div id="historyList"></div>
-  </div>
-</div>
+  <div class="toast" id="toast"></div>
 
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-box">
-    <h3 class="modal-title">Thêm Tài Khoản Bé</h3>
-    <div class="form-group">
-      <label>Tên của bé</label>
-      <input type="text" id="pName" class="form-control" placeholder="VD: Gia Minh..."/>
-    </div>
-    <div class="form-group">
-      <label>Biểu tượng (Emoji)</label>
-      <input type="text" id="pAvatar" class="form-control" placeholder="👦, 👧, 🦸‍♂️..."/>
-    </div>
-    <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top: 1.5rem;">
-      <button class="btn-secondary" onclick="closeModal()">Hủy</button>
-      <button class="btn-main" onclick="confirmAddProfile()">Tạo Mới</button>
-    </div>
-  </div>
-</div>
+  <script>
+    let profiles = [];
+    let currentProfile = null;
+    let isBonusActive = false;
 
-<div class="toast" id="toast"></div>
+    const TASKS = [
+      { id: 't1', name: 'Đại chiến Kho Thóc', sub: 'Tổng vệ sinh nhà cửa', grain: 150, exp: 100, emoji: '🏰', type: 'epic', category: '⭐ Sử Thi — Lớn' },
+      { id: 't2', name: 'Trợ lý Đầu bếp', sub: 'Nấu 1 bữa hoàn chỉnh', grain: 100, exp: 80, emoji: '🍳', type: 'epic', category: '⭐ Sử Thi — Lớn' },
 
-<script>
-  let profiles = [];
-  let currentProfile = null;
-  let isBonusActive = false;
+      { id: 't3', name: 'Phá băng bồn rửa', sub: 'Rửa bát · ~15p', grain: 15, exp: 10, emoji: '🍽️', type: 'highlight', category: '🟡 Hằng ngày (Ưu tiên)' },
+      { id: 't4', name: 'Tấn công bụi bẩn', sub: 'Quét & lau nhà · ~20p', grain: 25, exp: 20, emoji: '🧹', type: 'highlight', category: '🟡 Hằng ngày (Ưu tiên)' },
+      { id: 't5', name: 'Thiết lập bàn', sub: 'Dọn bàn học · ~10p', grain: 10, exp: 5, emoji: '🪑', type: 'highlight', category: '🟡 Hằng ngày (Ưu tiên)' },
 
-  const TASKS = [
-    { id: 't1', name: 'Đại chiến Kho Thóc', sub: 'Tổng vệ sinh nhà cửa', grain: 150, exp: 100, emoji: '🏰', type: 'epic', category: '⭐ Sử Thi — Lớn' },
-    { id: 't2', name: 'Trợ lý Đầu bếp', sub: 'Nấu 1 bữa hoàn chỉnh', grain: 100, exp: 80, emoji: '🍳', type: 'epic', category: '⭐ Sử Thi — Lớn' },
-    
-    { id: 't3', name: 'Phá băng bồn rửa', sub: 'Rửa bát · ~15p', grain: 15, exp: 10, emoji: '🍽️', type: 'highlight', category: '🟡 Hằng ngày (Ưu tiên)' },
-    { id: 't4', name: 'Tấn công bụi bẩn', sub: 'Quét & lau nhà · ~20p', grain: 25, exp: 20, emoji: '🧹', type: 'highlight', category: '🟡 Hằng ngày (Ưu tiên)' },
-    { id: 't5', name: 'Thiết lập bàn', sub: 'Dọn bàn học · ~10p', grain: 10, exp: 5, emoji: '🪑', type: 'highlight', category: '🟡 Hằng ngày (Ưu tiên)' },
-    
-    { id: 't6', name: 'Triệu hồi đồ giặt', sub: 'Gấp & cất đồ · ~15p', grain: 20, exp: 15, emoji: '👕', type: 'normal', category: '📝 Nhiệm vụ thường' },
-    { id: 't7', name: 'Dọn sạch phế liệu', sub: 'Đổ rác · ~10p', grain: 10, exp: 5, emoji: '🗑️', type: 'normal', category: '📝 Nhiệm vụ thường' },
-    { id: 't8', name: 'Chăm sóc Long bào', sub: 'Giặt/Phơi đồ · ~20p', grain: 25, exp: 20, emoji: '🧺', type: 'normal', category: '📝 Nhiệm vụ thường' },
-    { id: 't9', name: 'Thanh tẩy bảo vật', sub: 'Giặt giày · ~35p', grain: 35, exp: 30, emoji: '🧼', type: 'normal', category: '📝 Nhiệm vụ thường' },
-    { id: 't10', name: 'Tu luyện kiến thức', sub: 'Tự học · 1 tiếng', grain: 30, exp: 25, emoji: '📚', type: 'normal', category: '📝 Nhiệm vụ thường' },
-    { id: 't11', name: 'Hộ vệ thảo dược', sub: 'Tưới cây · ~20p', grain: 20, exp: 15, emoji: '🌿', type: 'normal', category: '📝 Nhiệm vụ thường' },
-    { id: 't12', name: 'Viễn chinh lương thực', sub: 'Đi chợ · ~30p', grain: 30, exp: 25, emoji: '🛒', type: 'normal', category: '📝 Nhiệm vụ thường' },
-    { id: 't13', name: 'Thu dọn Giang sơn', sub: 'Dọn phòng · ~10p', grain: 10, exp: 5, emoji: '🐾', type: 'normal', category: '📝 Nhiệm vụ thường' },
-    { id: 't14', name: 'Bảo dưỡng pháp bảo', sub: 'Lau bàn ăn · ~10p', grain: 10, exp: 5, emoji: '🍽️', type: 'normal', category: '📝 Nhiệm vụ thường' },
-    { id: 't15', name: 'Giải cứu thủy cung', sub: 'Dọn WC · ~10p', grain: 20, exp: 10, emoji: '🔱', type: 'normal', category: '📝 Nhiệm vụ thường' }
-  ];
+      { id: 't6', name: 'Triệu hồi đồ giặt', sub: 'Gấp & cất đồ · ~15p', grain: 20, exp: 15, emoji: '👕', type: 'normal', category: '📝 Nhiệm vụ thường' },
+      { id: 't7', name: 'Dọn sạch phế liệu', sub: 'Đổ rác · ~10p', grain: 10, exp: 5, emoji: '🗑️', type: 'normal', category: '📝 Nhiệm vụ thường' },
+      { id: 't8', name: 'Chăm sóc Long bào', sub: 'Giặt/Phơi đồ · ~20p', grain: 25, exp: 20, emoji: '🧺', type: 'normal', category: '📝 Nhiệm vụ thường' },
+      { id: 't9', name: 'Thanh tẩy bảo vật', sub: 'Giặt giày · ~35p', grain: 35, exp: 30, emoji: '🧼', type: 'normal', category: '📝 Nhiệm vụ thường' },
+      { id: 't10', name: 'Tu luyện kiến thức', sub: 'Tự học · 1 tiếng', grain: 30, exp: 25, emoji: '📚', type: 'normal', category: '📝 Nhiệm vụ thường' },
+      { id: 't11', name: 'Hộ vệ thảo dược', sub: 'Tưới cây · ~20p', grain: 20, exp: 15, emoji: '🌿', type: 'normal', category: '📝 Nhiệm vụ thường' },
+      { id: 't12', name: 'Viễn chinh lương thực', sub: 'Đi chợ · ~30p', grain: 30, exp: 25, emoji: '🛒', type: 'normal', category: '📝 Nhiệm vụ thường' },
+      { id: 't13', name: 'Thu dọn Giang sơn', sub: 'Dọn phòng · ~10p', grain: 10, exp: 5, emoji: '🐾', type: 'normal', category: '📝 Nhiệm vụ thường' },
+      { id: 't14', name: 'Bảo dưỡng pháp bảo', sub: 'Lau bàn ăn · ~10p', grain: 10, exp: 5, emoji: '🍽️', type: 'normal', category: '📝 Nhiệm vụ thường' },
+      { id: 't15', name: 'Giải cứu thủy cung', sub: 'Dọn WC · ~10p', grain: 20, exp: 10, emoji: '🔱', type: 'normal', category: '📝 Nhiệm vụ thường' }
+    ];
 
-  // const REWARDS = [
-  //   { id: 'r1', name: 'Gói "Mở Mang Bờ Cõi"', cost: 1000, emoji: '🏕️' },
-  //   { id: 'r2', name: 'Gói "Tiếp Thu Tinh Hoa"', cost: 2000, emoji: '📚' },
-  //   { id: 'r3', name: 'Mâm Cỗ "Mừng Vụ Mùa"', cost: 1200, emoji: '🍲' },
-  //   { id: 'r4', name: 'Lệnh Bài "Mở Cổng Thành"', cost: 2400, emoji: '🏰' },
-  //   { id: 'r5', name: 'Giấy Thông Hành', cost: 1600, emoji: '🗺️' },
-  //   { id: 'r6', name: 'Gói "Kinh Lý Đô Thành"', cost: 4000, emoji: '🍕' },
-  //   { id: 'r7', name: 'Đêm Phim Gia Đình', cost: 1000, emoji: '🍿' },
-  //   { id: 'r8', name: 'Thẻ: ĐÈN DẦU THẮP MUỘN', cost: 300, emoji: '🏮' },
-  //   { id: 'r9', name: 'Thẻ: THÔNG HÀNH CHỢ ĐÊM', cost: 300, emoji: '🌃' },
-  //   { id: 'r10', name: 'Thẻ: MIỄN DỊCH LAO DỊCH', cost: 500, emoji: '🛡️' },
-  //   { id: 'r11', name: 'Thẻ: THỨC TỈNH TRỄ GIỜ', cost: 400, emoji: '⏰' },
-  //   { id: 'r12', name: 'Thẻ: NGÂN LƯỢNG HỖ TRỢ', cost: 600, emoji: '💰' },
-  //   { id: 'r13', name: 'Thẻ: MẬT ĐẠO TIÊU DAO', cost: 300, emoji: '🌳' }
-  // ];
-
-  const REWARDS = [
+    const REWARDS = [
     // 🎁 QUÀ TẶNG DÀI HẠN (Lấy mốc Gạo thấp nhất của Tier 1)
-    { id: 'r1', name: 'Gói "Mở Mang Bờ Cõi"', cost: 800, emoji: '📚' },
-    { id: 'r2', name: 'Mâm Cỗ "Mừng Vụ Mùa"', cost: 1200, emoji: '🍲' },
-    { id: 'r3', name: 'Lệnh Bài "Mở Cổng Thành"', cost: 2400, emoji: '🏰' },
-    { id: 'r4', name: 'Giấy "Thông Hành Viễn Chinh"', cost: 1600, emoji: '🧭' },
-    { id: 'r5', name: 'Gói "Kinh Lý Đô Thành"', cost: 4000, emoji: '🍕' },
-    { id: 'r6', name: 'Vé "Đêm Phim Gia Đình"', cost: 1200, emoji: '🎬' },
+      { id: 'r1', name: 'Gói "Mở Mang Bờ Cõi"', cost: 800, emoji: '📚' },
+      { id: 'r2', name: 'Mâm Cỗ "Mừng Vụ Mùa"', cost: 1200, emoji: '🍲' },
+      { id: 'r3', name: 'Lệnh Bài "Mở Cổng Thành"', cost: 2400, emoji: '🏰' },
+      { id: 'r4', name: 'Giấy "Thông Hành Viễn Chinh"', cost: 1600, emoji: '🧭' },
+      { id: 'r5', name: 'Gói "Kinh Lý Đô Thành"', cost: 4000, emoji: '🍕' },
+      { id: 'r6', name: 'Vé "Đêm Phim Gia Đình"', cost: 1200, emoji: '🎬' },
 
     // ⚡ THẺ BÀI ĐẶC QUYỀN
-    { id: 'r7', name: 'Thẻ: ĐÈN DẦU THẮP MUỘN', cost: 350, emoji: '🏮' },
-    { id: 'r8', name: 'Thẻ: BÙ NHÌN THẾ THÂN', cost: 900, emoji: '🌾' },
-    { id: 'r9', name: 'Thẻ: HẠT NẾP THẦN LỰC', cost: 2000, emoji: '⚡' },
-    { id: 'r10', name: 'Thẻ: KHUÔN BÁNH CHƯNG', cost: 1600, emoji: '🍱' },
-    { id: 'r11', name: 'Thẻ: PHIÊN CHỢ TỰ DO', cost: 850, emoji: '🎲' },
-    { id: 'r12', name: 'Thẻ: LỆNH TRƯNG THU ĐẤT', cost: 600, emoji: '🚜' },
-    { id: 'r13', name: 'Thẻ: BẢO KHÍ GIÒN RỤM', cost: 200, emoji: '🍿' },
-    { id: 'r14', name: 'Thẻ: HÀN BĂNG NGỌC THẠCH', cost: 250, emoji: '🍦' },
-    { id: 'r15', name: 'Thẻ: MẬT ĐẠO TIÊU DAO', cost: 300, emoji: '🌳' },
-  ];
+      { id: 'r7', name: 'Thẻ: ĐÈN DẦU THẮP MUỘN', cost: 350, emoji: '🏮' },
+      { id: 'r8', name: 'Thẻ: BÙ NHÌN THẾ THÂN', cost: 900, emoji: '🌾' },
+      { id: 'r9', name: 'Thẻ: HẠT NẾP THẦN LỰC', cost: 2000, emoji: '⚡' },
+      { id: 'r10', name: 'Thẻ: KHUÔN BÁNH CHƯNG', cost: 1600, emoji: '🍱' },
+      { id: 'r11', name: 'Thẻ: PHIÊN CHỢ TỰ DO', cost: 850, emoji: '🎲' },
+      { id: 'r12', name: 'Thẻ: LỆNH TRƯNG THU ĐẤT', cost: 600, emoji: '🚜' },
+      { id: 'r13', name: 'Thẻ: BẢO KHÍ GIÒN RỤM', cost: 200, emoji: '🍿' },
+      { id: 'r14', name: 'Thẻ: HÀN BĂNG NGỌC THẠCH', cost: 250, emoji: '🍦' },
+      { id: 'r15', name: 'Thẻ: MẬT ĐẠO TIÊU DAO', cost: 300, emoji: '🌳' },
+    ];
 
 
-  function loadData() {
-    const saved = localStorage.getItem('family_grain_profiles');
-    if(saved) profiles = JSON.parse(saved);
-    else {
-      profiles = [{ id: 'p_phuong', name: 'Lan Phương', avatar: '🐡' }];
-      saveData();
+    // --- PHẦN BỔ SUNG LOGIC ĐỒNG BỘ GOOGLE SHEETS ---
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzQh8j8HZ3a5GXXYkVKQYQg1ORf0QLOrKeeKDmgBdV6kEI8s1bBdkUE7-i2i-ndoDfscQ/exec';
+
+    // 1. Load Data chuẩn từ Google Sheets
+    async function loadData() {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        profiles = Array.isArray(data) ? data : [];
+        renderProfiles();
+        // Tự động chọn bé đầu tiên sau khi load xong
+        if (profiles.length > 0) selectProfile(profiles[0].id);
+      } catch (err) {
+        console.error("Lỗi load API:", err);
+        showToast("⚠️ Không tải được dữ liệu từ Server!");
+      }
     }
-  }
-  function saveData() { localStorage.setItem('family_grain_profiles', JSON.stringify(profiles)); }
-  function getState(pid) { const saved = localStorage.getItem(`state_${pid}`); return saved ? JSON.parse(saved) : { totalGrain: 0, totalExp: 0 }; }
-  function saveState(pid, state) { localStorage.setItem(`state_${pid}`, JSON.stringify(state)); }
-  function getLogs(pid) { const saved = localStorage.getItem(`logs_${pid}`); return saved ? JSON.parse(saved) : {}; }
-  function saveLog(pid, date, logData) {
-    const logs = getLogs(pid); logs[date] = logData;
-    localStorage.setItem(`logs_${pid}`, JSON.stringify(logs));
-  }
-  function delLog(pid, date) {
-    const logs = getLogs(pid); delete logs[date];
-    localStorage.setItem(`logs_${pid}`, JSON.stringify(logs));
-  }
 
-  function renderProfiles() {
-    const grid = document.getElementById('profileGrid');
-    if(!grid) return;
-    grid.innerHTML = profiles.map(p => {
-      const state = getState(p.id);
-      const isActive = currentProfile && currentProfile.id === p.id;
-      const lvl = Math.floor(state.totalExp / 1000) + 1;
-      const currentLvlExp = state.totalExp % 1000;
-      const pct = (currentLvlExp / 1000) * 100;
-      const moneyEquivalent = state.totalGrain * 100;
+    // 2. Save Data chuẩn lên Google Sheets
+    async function saveData(payload) {
+      console.log("Đang gửi tới Google Sheets:", payload);
+      try {
+        // Dùng text/plain để tránh CORS preflight block từ Apps Script
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        console.log("Phản hồi từ Server:", result);
+        if (result.result === "success") {
+          showToast("✅ Đã đồng bộ lên Kho Thóc!");
+        } else {
+          showToast("Lỗi Server: " + result.message);
+          console.error("Lỗi Server chi tiết:", result.message);
+        }
+        return result;
+      } catch (err) {
+        console.error("Lỗi mạng:", err);
+        showToast("⚠️ Lưu local thành công, nhưng chưa đồng bộ Server!");
+        return null;
+      }
+    }
 
-      return `
+    function getState(pid) { const saved = localStorage.getItem(`state_${pid}`); return saved ? JSON.parse(saved) : { totalGrain: 0, totalExp: 0 }; }
+    function saveState(pid, state) { localStorage.setItem(`state_${pid}`, JSON.stringify(state)); }
+    function getLogs(pid) { const saved = localStorage.getItem(`logs_${pid}`); return saved ? JSON.parse(saved) : {}; }
+    function saveLog(pid, date, logData) {
+      const logs = getLogs(pid); logs[date] = logData;
+      localStorage.setItem(`logs_${pid}`, JSON.stringify(logs));
+    }
+    function delLog(pid, date) {
+      const logs = getLogs(pid); delete logs[date];
+      localStorage.setItem(`logs_${pid}`, JSON.stringify(logs));
+    }
+
+    function renderProfiles() {
+      const grid = document.getElementById('profileGrid');
+      if(!grid) return;
+      grid.innerHTML = profiles.map(p => {
+        const state = getState(p.id);
+        const isActive = currentProfile && currentProfile.id === p.id;
+        const lvl = Math.floor(state.totalExp / 1000) + 1;
+        const currentLvlExp = state.totalExp % 1000;
+        const pct = (currentLvlExp / 1000) * 100;
+        const moneyEquivalent = state.totalGrain * 100;
+
+        return `
         <div class="profile-card ${isActive ? 'active' : ''}" onclick="selectProfile('${p.id}')">
           <div class="profile-header">
             <span class="profile-avatar">${p.avatar}</span>
@@ -476,27 +495,45 @@
             <div class="profile-bar-bg"><div class="profile-bar-fill" style="width: ${pct}%"></div></div>
           </div>
         </div>
-      `;
-    }).join('');
-  }
+        `;
+      }).join('');
+    }
 
-  function renderTasks() {
-    const container = document.getElementById('tasksCompactGrid');
-    if(!container) return;
+    // function renderProfiles() {
+    //   const grid = document.getElementById('profileGrid');
+    //   grid.innerHTML = profiles.map(p => `
+    //     <div class="profile-card">
+    //       <h3>${p.avatar} ${p.name}</h3>
+    //       <p>Gạo tích lũy: ${p.balance || 0} 🌾</p>
+    //     </div>
+    //   `).join('');
+    // }
 
-    const categories = [...new Set(TASKS.map(t => t.category))];
-    let html = '';
+    function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
 
-    categories.forEach(cat => {
+    function renderTasks() {
+      const container = document.getElementById('tasksCompactGrid');
+      if(!container) return;
+
+      const categories = [...new Set(TASKS.map(t => t.category))];
+      let html = '';
+
+      categories.forEach(cat => {
       // IN RA TITLE CỦA CATEGORY
-      html += `<div class="task-category-title">${cat}</div>`;
-      
+        html += `<div class="task-category-title">${cat}</div>`;
+
       // MỞ THẺ DIV GRID ĐỂ CHIA 2 CỘT TẠI ĐÂY (Bước sửa lỗi quan trọng)
-      html += `<div class="tasks-compact-grid">`;
-      
-      TASKS.filter(t => t.category === cat).forEach(task => {
-        const isEpic = task.type === 'epic' ? 'epic-task' : '';
-        html += `
+        html += `<div class="tasks-compact-grid">`;
+
+        TASKS.filter(t => t.category === cat).forEach(task => {
+          const isEpic = task.type === 'epic' ? 'epic-task' : '';
+          html += `
           <div class="task-compact-card ${isEpic}" id="taskCard_${task.id}" onclick="toggleTask('${task.id}')">
             <input type="checkbox" class="task-cb" id="taskCB_${task.id}" onclick="event.stopPropagation(); toggleTask('${task.id}')" />
             <div class="task-emoji">${task.emoji}</div>
@@ -506,49 +543,49 @@
             </div>
             <div class="task-compact-rewards">+${task.grain}🌾<br/>+${task.exp}⭐</div>
           </div>
-        `;
-      });
+          `;
+        });
 
       // ĐÓNG THẺ DIV GRID
-      html += `</div>`;
-    });
+        html += `</div>`;
+      });
 
-    container.innerHTML = html;
-    updateCounterAndTotals();
-  }
-
-  function renderRewards() {
-    const container = document.getElementById('rewardsSmallGrid');
-    if(!container) return;
-    if(!currentProfile) {
-      container.innerHTML = '<p style="font-size:0.9rem; color:var(--text-muted); text-align:center; grid-column: 1/-1; padding: 2rem;">Vui lòng chọn tài khoản một bé để xem kho quà tặng...</p>';
-      return;
+      container.innerHTML = html;
+      updateCounterAndTotals();
     }
-    const state = getState(currentProfile.id);
-    container.innerHTML = REWARDS.map(rw => {
-      const canAfford = state.totalGrain >= rw.cost;
-      const disabledClass = canAfford ? '' : 'disabled';
-      return `
+
+    function renderRewards() {
+      const container = document.getElementById('rewardsSmallGrid');
+      if(!container) return;
+      if(!currentProfile) {
+        container.innerHTML = '<p style="font-size:0.9rem; color:var(--text-muted); text-align:center; grid-column: 1/-1; padding: 2rem;">Vui lòng chọn tài khoản một bé để xem kho quà tặng...</p>';
+        return;
+      }
+      const state = getState(currentProfile.id);
+      container.innerHTML = REWARDS.map(rw => {
+        const canAfford = state.totalGrain >= rw.cost;
+        const disabledClass = canAfford ? '' : 'disabled';
+        return `
         <div class="reward-small-card ${disabledClass}" onclick="toggleRewardSelection(this, ${canAfford})">
           <div class="rw-s-emoji">${rw.emoji}</div>
           <div class="rw-s-name" title="${rw.name}">${rw.name}</div>
           <div class="rw-s-cost">${rw.cost.toLocaleString()} 🌾</div>
         </div>
-      `;
-    }).join('');
-  }
+        `;
+      }).join('');
+    }
 
-  function renderHistory() {
-    const list = document.getElementById('historyList');
-    if(!list) return;
-    if(!currentProfile) { list.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 1rem;">Vui lòng chọn một bé phía trên để hiển thị lịch sử nhật ký.</p>`; return; }
-    const logs = getLogs(currentProfile.id);
-    const dates = Object.keys(logs).sort((a,b) => b.localeCompare(a));
-    if(dates.length === 0) { list.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 1rem;">Chưa có nhật ký nào được ghi lại.</p>`; return; }
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      if(!list) return;
+      if(!currentProfile) { list.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 1rem;">Vui lòng chọn một bé phía trên để hiển thị lịch sử nhật ký.</p>`; return; }
+      const logs = getLogs(currentProfile.id);
+      const dates = Object.keys(logs).sort((a,b) => b.localeCompare(a));
+      if(dates.length === 0) { list.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 1rem;">Chưa có nhật ký nào được ghi lại.</p>`; return; }
 
-    list.innerHTML = dates.map(date => {
-      const lg = logs[date];
-      return `
+      list.innerHTML = dates.map(date => {
+        const lg = logs[date];
+        return `
         <div class="history-item">
           <div><div class="h-date">${date}</div><div class="h-note">${lg.note || 'Hoàn thành tốt nhiệm vụ!'}</div></div>
           <div style="display:flex; align-items:center; gap: 1rem;">
@@ -556,122 +593,153 @@
             <button class="btn-delete" onclick="deleteHistory('${date}')"><i class="fas fa-trash"></i></button>
           </div>
         </div>
-      `;
-    }).join('');
-  }
-
-  function selectProfile(pid) {
-    currentProfile = profiles.find(p => p.id === pid);
-    renderProfiles(); renderRewards(); renderHistory();
-  }
-
-  function toggleTask(id) {
-    const cb = document.getElementById(`taskCB_${id}`);
-    const card = document.getElementById(`taskCard_${id}`);
-    if(!cb || !card) return;
-    if(event.target !== cb) cb.checked = !cb.checked;
-    if(cb.checked) card.classList.add('checked'); else card.classList.remove('checked');
-    updateCounterAndTotals();
-  }
-
-  function toggleBonus() {
-    isBonusActive = !isBonusActive;
-    const box = document.getElementById('bonusToggleDiv');
-    if(isBonusActive) box.classList.add('active'); else box.classList.remove('active');
-    updateCounterAndTotals();
-  }
-
-  function updateCounterAndTotals() {
-    let checkedCount = 0; let sumGrain = 0; let sumExp = 0;
-    TASKS.forEach(task => {
-      const cb = document.getElementById(`taskCB_${task.id}`);
-      if(cb && cb.checked) { checkedCount++; sumGrain += task.grain; sumExp += task.exp; }
-    });
-    if (isBonusActive) sumGrain = Math.floor(sumGrain * 1.2);
-    document.getElementById('checkedCount').textContent = `${checkedCount} / 15`;
-    document.getElementById('todayGrain').textContent = sumGrain;
-    document.getElementById('todayExp').textContent = sumExp;
-  }
-
-  function toggleRewardSelection(element, canAfford) {
-    if (!canAfford) { showToast("Gạo của bé chưa đủ để đổi phần quà này!"); return; }
-    element.classList.toggle('selected');
-  }
-
-  function submitDailyLog() {
-    if(!currentProfile) { alert('Vui lòng chọn một bé để ghi nhận điểm!'); return; }
-    let sumGrain = 0; let sumExp = 0; let hasChecked = false;
-    TASKS.forEach(task => {
-      const cb = document.getElementById(`taskCB_${task.id}`);
-      if(cb && cb.checked) { sumGrain += task.grain; sumExp += task.exp; hasChecked = true; }
-    });
-    if(!hasChecked) { alert('Vui lòng tích chọn ít nhất một nhiệm vụ!'); return; }
-    if (isBonusActive) sumGrain = Math.floor(sumGrain * 1.2);
-
-    const now = new Date();
-    const dateString = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-    const noteInput = document.getElementById('logNote');
-    const noteText = noteInput ? noteInput.value.trim() : '';
-
-    const state = getState(currentProfile.id);
-    state.totalGrain += sumGrain; state.totalExp += sumExp;
-    saveState(currentProfile.id, state);
-    saveLog(currentProfile.id, dateString, { grain: sumGrain, exp: sumExp, note: noteText });
-
-    if(noteInput) noteInput.value = '';
-    TASKS.forEach(task => {
-      const cb = document.getElementById(`taskCB_${task.id}`); if(cb) cb.checked = false;
-      const card = document.getElementById(`taskCard_${task.id}`); if(card) card.classList.remove('checked');
-    });
-    if(isBonusActive) toggleBonus();
-
-    renderProfiles(); renderRewards(); renderHistory(); updateCounterAndTotals();
-    showToast(`🌾 Đã ghi nhận +${sumGrain} Gạo cho ${currentProfile.name}!`);
-  }
-
-  function deleteHistory(dateStr) {
-    if(!confirm(`Bạn có chắc muốn xóa nhật ký ngày ${dateStr}?\nThao tác này sẽ trừ lại số Gạo và EXP của bé!`)) return;
-    const logs = getLogs(currentProfile.id);
-    const lg = logs[dateStr];
-    if(lg) {
-      const state = getState(currentProfile.id);
-      state.totalGrain = Math.max(0, state.totalGrain - lg.grain);
-      state.totalExp = Math.max(0, state.totalExp - lg.exp);
-      saveState(currentProfile.id, state);
-      delLog(currentProfile.id, dateStr);
-      renderProfiles(); renderRewards(); renderHistory();
-      showToast(`Đã xóa nhật ký ngày ${dateStr}`);
+        `;
+      }).join('');
     }
-  }
 
-  function redeemReward() {
-    if(!currentProfile) { showToast('Vui lòng chọn tài khoản bé trước!'); return; }
-    const selectedCards = document.querySelectorAll('.reward-small-card.selected');
-    if(selectedCards.length === 0) { showToast('Vui lòng chọn ít nhất một món quà để đổi!'); return; }
-    showToast(`Tính năng xác nhận đổi quà đang được nâng cấp!`);
-  }
+    function selectProfile(pid) {
+      currentProfile = profiles.find(p => p.id === pid);
+      renderProfiles(); renderRewards(); renderHistory();
+    }
 
-  function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
-  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
-  function confirmAddProfile() {
-    const nameInp = document.getElementById('pName'); const avaInp = document.getElementById('pAvatar');
-    const name = nameInp ? nameInp.value.trim() : ''; const avatar = avaInp ? avaInp.value.trim() : '👶';
-    if(!name) { alert('Vui lòng nhập tên của bé!'); return; }
-    const newId = 'p_' + Date.now();
-    profiles.push({ id: newId, name: name, avatar: avatar });
-    saveData(); nameInp.value = ''; closeModal(); renderProfiles();
-    showToast(`👶 Đăng ký thành công cho bé ${name}!`);
-  }
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
+    function toggleTask(id) {
+      const cb = document.getElementById(`taskCB_${id}`);
+      const card = document.getElementById(`taskCard_${id}`);
+      if(!cb || !card) return;
+      if(event.target !== cb) cb.checked = !cb.checked;
+      if(cb.checked) card.classList.add('checked'); else card.classList.remove('checked');
+      updateCounterAndTotals();
+    }
 
-  window.addEventListener('DOMContentLoaded', () => {
-    loadData(); renderProfiles(); renderTasks();
-    if(profiles.length > 0) selectProfile(profiles[0].id);
-  });
-</script>
+    function toggleBonus() {
+      isBonusActive = !isBonusActive;
+      const box = document.getElementById('bonusToggleDiv');
+      if(isBonusActive) box.classList.add('active'); else box.classList.remove('active');
+      updateCounterAndTotals();
+    }
+
+    function updateCounterAndTotals() {
+      let checkedCount = 0; let sumGrain = 0; let sumExp = 0;
+      TASKS.forEach(task => {
+        const cb = document.getElementById(`taskCB_${task.id}`);
+        if(cb && cb.checked) { checkedCount++; sumGrain += task.grain; sumExp += task.exp; }
+      });
+      if (isBonusActive) sumGrain = Math.floor(sumGrain * 1.2);
+      document.getElementById('checkedCount').textContent = `${checkedCount} / 15`;
+      document.getElementById('todayGrain').textContent = sumGrain;
+      document.getElementById('todayExp').textContent = sumExp;
+    }
+
+    function toggleRewardSelection(element, canAfford) {
+      if (!canAfford) { showToast("Gạo của bé chưa đủ để đổi phần quà này!"); return; }
+      element.classList.toggle('selected');
+    }
+
+    async function submitDailyLog() {
+      if(!currentProfile) { alert('Vui lòng chọn một bé để ghi nhận điểm!'); return; }
+      let sumGrain = 0; let sumExp = 0; let hasChecked = false;
+      const tasksDone = [];
+      TASKS.forEach(task => {
+        const cb = document.getElementById(`taskCB_${task.id}`);
+        if(cb && cb.checked) { sumGrain += task.grain; sumExp += task.exp; hasChecked = true; tasksDone.push(task.id); }
+      });
+      if(!hasChecked) { alert('Vui lòng tích chọn ít nhất một nhiệm vụ!'); return; }
+      if (isBonusActive) sumGrain = Math.floor(sumGrain * 1.2);
+
+      const now = new Date();
+      const dateString = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      const noteInput = document.getElementById('logNote');
+      const noteText = noteInput ? noteInput.value.trim() : '';
+
+      // 1. Lưu local trước (luôn thành công)
+      const state = getState(currentProfile.id);
+      state.totalGrain += sumGrain; state.totalExp += sumExp;
+      saveState(currentProfile.id, state);
+      saveLog(currentProfile.id, dateString, { grain: sumGrain, exp: sumExp, note: noteText, tasks: tasksDone, bonus: isBonusActive });
+
+      // 2. Đồng bộ Log lên Google Sheets
+      const logPayload = {
+        type: 'log',                         // để Apps Script phân biệt Profile vs Log
+        profileId: currentProfile.id,
+        profileName: currentProfile.name,
+        date: dateString,
+        grain: sumGrain,
+        exp: sumExp,
+        tasks: tasksDone.join(','),
+        bonus: isBonusActive,
+        note: noteText
+      };
+      saveData(logPayload); // không await — gửi background, không block UI
+
+      // 3. Reset UI
+      if(noteInput) noteInput.value = '';
+      TASKS.forEach(task => {
+        const cb = document.getElementById(`taskCB_${task.id}`); if(cb) cb.checked = false;
+        const card = document.getElementById(`taskCard_${task.id}`); if(card) card.classList.remove('checked');
+      });
+      if(isBonusActive) toggleBonus();
+
+      renderProfiles(); renderRewards(); renderHistory(); updateCounterAndTotals();
+      showToast(`🌾 Đã ghi +${sumGrain} Gạo cho ${currentProfile.name}!`);
+    }
+
+    function deleteHistory(dateStr) {
+      if(!confirm(`Bạn có chắc muốn xóa nhật ký ngày ${dateStr}?\nThao tác này sẽ trừ lại số Gạo và EXP của bé!`)) return;
+      const logs = getLogs(currentProfile.id);
+      const lg = logs[dateStr];
+      if(lg) {
+        const state = getState(currentProfile.id);
+        state.totalGrain = Math.max(0, state.totalGrain - lg.grain);
+        state.totalExp = Math.max(0, state.totalExp - lg.exp);
+        saveState(currentProfile.id, state);
+        delLog(currentProfile.id, dateStr);
+        renderProfiles(); renderRewards(); renderHistory();
+        showToast(`Đã xóa nhật ký ngày ${dateStr}`);
+      }
+    }
+
+    function redeemReward() {
+      if(!currentProfile) { showToast('Vui lòng chọn tài khoản bé trước!'); return; }
+      const selectedCards = document.querySelectorAll('.reward-small-card.selected');
+      if(selectedCards.length === 0) { showToast('Vui lòng chọn ít nhất một món quà để đổi!'); return; }
+      showToast(`Tính năng xác nhận đổi quà đang được nâng cấp!`);
+    }
+
+
+// --- CÁC HÀM CŨ ĐƯỢC GIỮ NGUYÊN VÀ CHỈNH SỬA NHỎ ---
+    function confirmAddProfile() {
+      const nameInp = document.getElementById('pName'); 
+      const avaInp = document.getElementById('pAvatar');
+      const name = nameInp ? nameInp.value.trim() : ''; 
+      const avatar = avaInp ? avaInp.value.trim() : '👶';
+      
+      if(!name) { alert('Vui lòng nhập tên của bé!'); return; }
+      
+      const newId = 'p_' + Date.now();
+      const newProfile = { id: newId, name: name, avatar: avatar, balance: 0, history: '[]' };
+      
+      profiles.push(newProfile);
+      saveData(newProfile); // Gọi hàm lưu API mới
+      
+      nameInp.value = ''; 
+      closeModal(); 
+      renderProfiles();
+      showToast(`👶 Đăng ký thành công cho bé ${name}!`);
+    }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // window.addEventListener('DOMContentLoaded', () => {
+    //   loadData(); renderProfiles(); renderTasks();
+    //   if(profiles.length > 0) selectProfile(profiles[0].id);
+    // });
+    window.addEventListener('DOMContentLoaded', () => {
+      loadData(); // Gọi hàm load API thay cho load local cũ
+      renderTasks();
+    });
+  </script>
 </body>
 </html>
