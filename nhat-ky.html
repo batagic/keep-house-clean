@@ -411,7 +411,7 @@
 
 
     // --- STORAGE & SYNC ---
-    const API_URL = 'https://script.google.com/macros/s/AKfycbza8NzTS_zxMumJOLBC2-Dyw-daaoCV1Pb_Ti0Ve0n0Vaq8bTGlfGIFQXNbjRzO1twICw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxELuKLUcEBeqlVMF5V8lDOe9tUQd46ki8NiJc7iUGE-uJoqmuF795sNEFP-r1jL7oxVw/exec';
 
     // sheetsLogs: cache logs từ Sheets, key = profileId, value = mảng log rows
     // { p_phuong: [{date, grain, exp, note, tasks, bonus}, ...], ... }
@@ -458,34 +458,66 @@
       }
     }
 
-    // ── Load Profiles + Logs từ Sheets, tính tổng từ Logs ──
+    // ── Load Profiles + Logs từ Sheets trong 1 request duy nhất ──
     async function loadData() {
       try {
-        // Load Profiles
-        const pRes   = await fetch(API_URL + '?sheet=profiles');
-        const pData  = await pRes.json();
-        profiles = Array.isArray(pData) ? pData : [];
+        // 1 fetch duy nhất — Apps Script trả về { profiles: [...], logs: [...] }
+        const res  = await fetch(API_URL);
+        const data = await res.json();
 
-        // Load Logs
-        const lRes   = await fetch(API_URL + '?sheet=logs');
-        const lData  = await lRes.json();
+        profiles = Array.isArray(data.profiles) ? data.profiles : [];
 
-        // Group logs theo profileId
+        // Group logs theo profileId (cột id trong sheet Logs)
         sheetsLogs = {};
-        if (Array.isArray(lData)) {
-          lData.forEach(row => {
-            const pid = row.profileId;
-            if (!pid) return;
-            if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
-            sheetsLogs[pid].push(row);
+        const logs = Array.isArray(data.logs) ? data.logs : [];
+        logs.forEach(row => {
+          // Sheet Logs header: id | date | grain | exp | note | tasks | bonus
+          // "id" ở sheet = profileId
+          const pid = row.id || row.profileId;
+          if (!pid) return;
+          if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
+          sheetsLogs[pid].push({
+            profileId: pid,
+            date:  row.date  || '',
+            grain: Number(row.grain) || 0,
+            exp:   Number(row.exp)   || 0,
+            note:  row.note  || '',
+            tasks: row.tasks || '',
+            bonus: row.bonus || false
           });
-        }
+        });
 
         renderProfiles();
         if (profiles.length > 0) selectProfile(profiles[0].id);
       } catch (err) {
         console.error('loadData error:', err);
         showToast('⚠️ Không tải được dữ liệu từ Server!');
+      }
+    }
+
+    // ── Reload chỉ Logs sau khi ghi/xóa ──
+    async function reloadLogs() {
+      try {
+        const res  = await fetch(API_URL);
+        const data = await res.json();
+        const logs = Array.isArray(data.logs) ? data.logs : [];
+        sheetsLogs = {};
+        logs.forEach(row => {
+          const pid = row.id || row.profileId;
+          if (!pid) return;
+          if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
+          sheetsLogs[pid].push({
+            profileId: pid,
+            date:  row.date  || '',
+            grain: Number(row.grain) || 0,
+            exp:   Number(row.exp)   || 0,
+            note:  row.note  || '',
+            tasks: row.tasks || '',
+            bonus: row.bonus || false
+          });
+        });
+      } catch(err) {
+        console.error('reloadLogs error:', err);
       }
     }
 
@@ -713,24 +745,7 @@
       showToast(`🌾 Đã ghi +${sumGrain} Gạo cho ${currentProfile.name}!`);
     }
 
-    // Reload chỉ phần Logs (nhẹ hơn load toàn bộ)
-    async function reloadLogs() {
-      try {
-        const lRes  = await fetch(API_URL + '?sheet=logs');
-        const lData = await lRes.json();
-        sheetsLogs  = {};
-        if(Array.isArray(lData)) {
-          lData.forEach(row => {
-            const pid = row.profileId;
-            if(!pid) return;
-            if(!sheetsLogs[pid]) sheetsLogs[pid] = [];
-            sheetsLogs[pid].push(row);
-          });
-        }
-      } catch(err) {
-        console.error('reloadLogs error:', err);
-      }
-    }
+    
 
     async function deleteHistory(dateStr) {
       if(!confirm(`Bạn có chắc muốn xóa nhật ký ngày ${dateStr}?\nThao tác này sẽ trừ lại số Gạo và EXP của bé!`)) return;
