@@ -410,61 +410,89 @@
     ];
 
 
-    // --- PHẦN BỔ SUNG LOGIC ĐỒNG BỘ GOOGLE SHEETS ---
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzQh8j8HZ3a5GXXYkVKQYQg1ORf0QLOrKeeKDmgBdV6kEI8s1bBdkUE7-i2i-ndoDfscQ/exec';
+    // --- STORAGE & SYNC ---
+    const API_URL = 'https://script.google.com/macros/s/AKfycbza8NzTS_zxMumJOLBC2-Dyw-daaoCV1Pb_Ti0Ve0n0Vaq8bTGlfGIFQXNbjRzO1twICw/exec';
 
-    // 1. Load Data chuẩn từ Google Sheets
-    async function loadData() {
-      try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        profiles = Array.isArray(data) ? data : [];
-        renderProfiles();
-        // Tự động chọn bé đầu tiên sau khi load xong
-        if (profiles.length > 0) selectProfile(profiles[0].id);
-      } catch (err) {
-        console.error("Lỗi load API:", err);
-        showToast("⚠️ Không tải được dữ liệu từ Server!");
-      }
+    // sheetsLogs: cache logs từ Sheets, key = profileId, value = mảng log rows
+    // { p_phuong: [{date, grain, exp, note, tasks, bonus}, ...], ... }
+    let sheetsLogs = {};
+
+    // ── Tính tổng grain/exp từ Sheets logs (source of truth) ──
+    function getState(pid) {
+      const logs = sheetsLogs[pid] || [];
+      let totalGrain = 0, totalExp = 0;
+      logs.forEach(lg => {
+        totalGrain += Number(lg.grain) || 0;
+        totalExp   += Number(lg.exp)   || 0;
+      });
+      return { totalGrain, totalExp };
     }
 
-    // 2. Save Data chuẩn lên Google Sheets
+    // ── Local logs cache (dùng cho renderHistory) ──
+    function getLogs(pid) {
+      const rows = sheetsLogs[pid] || [];
+      // Chuyển mảng → object { date: logData } để renderHistory dùng được
+      const obj = {};
+      rows.forEach(r => { obj[r.date] = r; });
+      return obj;
+    }
+
+    // ── POST lên Sheets ──
     async function saveData(payload) {
-      console.log("Đang gửi tới Google Sheets:", payload);
       try {
-        // Dùng text/plain để tránh CORS preflight block từ Apps Script
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(payload)
         });
         const result = await response.json();
-        console.log("Phản hồi từ Server:", result);
-        if (result.result === "success") {
-          showToast("✅ Đã đồng bộ lên Kho Thóc!");
-        } else {
-          showToast("Lỗi Server: " + result.message);
-          console.error("Lỗi Server chi tiết:", result.message);
+        if (result.result !== 'success') {
+          console.error('Sheets error:', result.message);
+          showToast('⚠️ Ghi Sheets thất bại: ' + result.message);
         }
         return result;
       } catch (err) {
-        console.error("Lỗi mạng:", err);
-        showToast("⚠️ Lưu local thành công, nhưng chưa đồng bộ Server!");
+        console.error('Fetch error:', err);
+        showToast('⚠️ Không kết nối được Server!');
         return null;
       }
     }
 
-    function getState(pid) { const saved = localStorage.getItem(`state_${pid}`); return saved ? JSON.parse(saved) : { totalGrain: 0, totalExp: 0 }; }
-    function saveState(pid, state) { localStorage.setItem(`state_${pid}`, JSON.stringify(state)); }
-    function getLogs(pid) { const saved = localStorage.getItem(`logs_${pid}`); return saved ? JSON.parse(saved) : {}; }
-    function saveLog(pid, date, logData) {
-      const logs = getLogs(pid); logs[date] = logData;
-      localStorage.setItem(`logs_${pid}`, JSON.stringify(logs));
+    // ── Load Profiles + Logs từ Sheets, tính tổng từ Logs ──
+    async function loadData() {
+      try {
+        // Load Profiles
+        const pRes   = await fetch(API_URL + '?sheet=profiles');
+        const pData  = await pRes.json();
+        profiles = Array.isArray(pData) ? pData : [];
+
+        // Load Logs
+        const lRes   = await fetch(API_URL + '?sheet=logs');
+        const lData  = await lRes.json();
+
+        // Group logs theo profileId
+        sheetsLogs = {};
+        if (Array.isArray(lData)) {
+          lData.forEach(row => {
+            const pid = row.profileId;
+            if (!pid) return;
+            if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
+            sheetsLogs[pid].push(row);
+          });
+        }
+
+        renderProfiles();
+        if (profiles.length > 0) selectProfile(profiles[0].id);
+      } catch (err) {
+        console.error('loadData error:', err);
+        showToast('⚠️ Không tải được dữ liệu từ Server!');
+      }
     }
-    function delLog(pid, date) {
-      const logs = getLogs(pid); delete logs[date];
-      localStorage.setItem(`logs_${pid}`, JSON.stringify(logs));
-    }
+
+    // ── Hàm stub không còn dùng (giữ để tránh lỗi nếu có code cũ gọi) ──
+    function saveState(pid, state) { /* no-op: state tính từ Sheets Logs */ }
+    function saveLog(pid, date, logData) { /* no-op */ }
+    function delLog(pid, date) { /* handled by deleteHistory */ }
 
     function renderProfiles() {
       const grid = document.getElementById('profileGrid');
@@ -637,44 +665,46 @@
 
     async function submitDailyLog() {
       if(!currentProfile) { alert('Vui lòng chọn một bé để ghi nhận điểm!'); return; }
-      let sumGrain = 0; let sumExp = 0; let hasChecked = false;
+      let sumGrain = 0, sumExp = 0, hasChecked = false;
       const tasksDone = [];
       TASKS.forEach(task => {
         const cb = document.getElementById(`taskCB_${task.id}`);
         if(cb && cb.checked) { sumGrain += task.grain; sumExp += task.exp; hasChecked = true; tasksDone.push(task.id); }
       });
       if(!hasChecked) { alert('Vui lòng tích chọn ít nhất một nhiệm vụ!'); return; }
-      if (isBonusActive) sumGrain = Math.floor(sumGrain * 1.2);
+      if(isBonusActive) sumGrain = Math.floor(sumGrain * 1.2);
 
       const now = new Date();
       const dateString = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
       const noteInput = document.getElementById('logNote');
-      const noteText = noteInput ? noteInput.value.trim() : '';
+      const noteText  = noteInput ? noteInput.value.trim() : '';
 
-      // 1. Lưu local trước (luôn thành công)
-      const state = getState(currentProfile.id);
-      state.totalGrain += sumGrain; state.totalExp += sumExp;
-      saveState(currentProfile.id, state);
-      saveLog(currentProfile.id, dateString, { grain: sumGrain, exp: sumExp, note: noteText, tasks: tasksDone, bonus: isBonusActive });
-
-      // 2. Đồng bộ Log lên Google Sheets
-      const logPayload = {
-        type: 'log',                         // để Apps Script phân biệt Profile vs Log
-        profileId: currentProfile.id,
+      // 1. Ghi Log lên Sheets (await để chắc chắn ghi xong)
+      const result = await saveData({
+        type: 'log',
+        profileId:   currentProfile.id,
         profileName: currentProfile.name,
-        date: dateString,
-        grain: sumGrain,
-        exp: sumExp,
-        tasks: tasksDone.join(','),
-        bonus: isBonusActive,
-        note: noteText
-      };
-      saveData(logPayload); // không await — gửi background, không block UI
+        date:        dateString,
+        grain:       sumGrain,
+        exp:         sumExp,
+        tasks:       tasksDone.join(','),
+        bonus:       isBonusActive,
+        note:        noteText
+      });
+
+      if(!result) {
+        // Nếu mất mạng — vẫn cập nhật local cache để UI không bị trống
+        if(!sheetsLogs[currentProfile.id]) sheetsLogs[currentProfile.id] = [];
+        sheetsLogs[currentProfile.id].push({ date: dateString, grain: sumGrain, exp: sumExp, note: noteText });
+      } else {
+        // 2. Reload Logs từ Sheets để tất cả trình duyệt dùng cùng source
+        await reloadLogs();
+      }
 
       // 3. Reset UI
       if(noteInput) noteInput.value = '';
       TASKS.forEach(task => {
-        const cb = document.getElementById(`taskCB_${task.id}`); if(cb) cb.checked = false;
+        const cb   = document.getElementById(`taskCB_${task.id}`);   if(cb)   cb.checked = false;
         const card = document.getElementById(`taskCard_${task.id}`); if(card) card.classList.remove('checked');
       });
       if(isBonusActive) toggleBonus();
@@ -683,18 +713,38 @@
       showToast(`🌾 Đã ghi +${sumGrain} Gạo cho ${currentProfile.name}!`);
     }
 
-    function deleteHistory(dateStr) {
+    // Reload chỉ phần Logs (nhẹ hơn load toàn bộ)
+    async function reloadLogs() {
+      try {
+        const lRes  = await fetch(API_URL + '?sheet=logs');
+        const lData = await lRes.json();
+        sheetsLogs  = {};
+        if(Array.isArray(lData)) {
+          lData.forEach(row => {
+            const pid = row.profileId;
+            if(!pid) return;
+            if(!sheetsLogs[pid]) sheetsLogs[pid] = [];
+            sheetsLogs[pid].push(row);
+          });
+        }
+      } catch(err) {
+        console.error('reloadLogs error:', err);
+      }
+    }
+
+    async function deleteHistory(dateStr) {
       if(!confirm(`Bạn có chắc muốn xóa nhật ký ngày ${dateStr}?\nThao tác này sẽ trừ lại số Gạo và EXP của bé!`)) return;
-      const logs = getLogs(currentProfile.id);
-      const lg = logs[dateStr];
-      if(lg) {
-        const state = getState(currentProfile.id);
-        state.totalGrain = Math.max(0, state.totalGrain - lg.grain);
-        state.totalExp = Math.max(0, state.totalExp - lg.exp);
-        saveState(currentProfile.id, state);
-        delLog(currentProfile.id, dateStr);
+      const result = await saveData({
+        type:      'delete_log',
+        profileId: currentProfile.id,
+        date:      dateStr
+      });
+      if(result && result.result === 'success') {
+        await reloadLogs();
         renderProfiles(); renderRewards(); renderHistory();
         showToast(`Đã xóa nhật ký ngày ${dateStr}`);
+      } else {
+        showToast('⚠️ Xóa thất bại, thử lại!');
       }
     }
 
