@@ -5,8 +5,7 @@
 
 // Local dev:
 // const API_URL = 'http://localhost:3001';
-const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc';
-// const API_URL = 'http://localhost:3001';
+const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc/'; // trailing / bắt buộc (tránh Nginx 301)
 
 // Rollback Google Apps Script:
 // const API_URL = 'https://script.google.com/macros/s/AKfycbwrQ4WC4WnZ4X33RQScOnOG5RFHAVblqIYEhNVfHJENAAzRe-rGEN-5ICobJFp-oTHYeg/exec';
