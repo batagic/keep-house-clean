@@ -365,26 +365,49 @@
 
     function renderRewards() {
       const container = document.getElementById('rewardsSmallGrid');
+      const hintEl = document.getElementById('rewardsAffordHint');
       if (!container) return;
       if (!currentProfile) {
         container.innerHTML = '<p style="font-size:.9rem;color:var(--text-muted);text-align:center;grid-column:1/-1;padding:2rem;">Chọn bé để xem kho quà.</p>';
+        if (hintEl) {
+          hintEl.textContent = 'Chọn bé để xem quà';
+          hintEl.classList.add('is-empty');
+        }
         return;
       }
       const { totalGrain } = getState(currentProfile.id);
+      const sorted = [...REWARDS].sort((a, b) => {
+        const aOk = totalGrain >= a.cost;
+        const bOk = totalGrain >= b.cost;
+        if (aOk !== bOk) return aOk ? -1 : 1;
+        return a.cost - b.cost;
+      });
+      let affordCount = 0;
       const parts = [];
-      for (let i = 0; i < REWARDS.length; i++) {
-        const rw = REWARDS[i];
+      for (let i = 0; i < sorted.length; i++) {
+        const rw = sorted[i];
         const canAfford = totalGrain >= rw.cost;
+        if (canAfford) affordCount++;
         parts.push(`
-          <div class="reward-small-card${canAfford ? '' : ' disabled'}"
+          <div class="reward-small-card${canAfford ? ' affordable' : ' disabled'}"
                data-reward-id="${rw.id}" data-cost="${rw.cost}" data-name="${rw.name}"
                onclick="toggleRewardSelection(this,${canAfford})">
+            ${canAfford ? '<span class="rw-s-badge">✓ Đổi được</span>' : ''}
             <div class="rw-s-emoji">${rw.emoji}</div>
             <div class="rw-s-name" title="${rw.name}">${rw.name}</div>
             <div class="rw-s-cost">${rw.cost.toLocaleString()} 🌾</div>
         </div>`);
       }
       container.innerHTML = parts.join('');
+      if (hintEl) {
+        if (affordCount > 0) {
+          hintEl.textContent = `${affordCount} quà đổi được`;
+          hintEl.classList.remove('is-empty');
+        } else {
+          hintEl.textContent = 'Chưa đủ Gạo để đổi quà';
+          hintEl.classList.add('is-empty');
+        }
+      }
     }
 
     let _sortedLogsCache = null;
