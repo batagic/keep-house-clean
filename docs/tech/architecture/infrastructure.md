@@ -116,7 +116,7 @@ batagic.github.io/keep-house-clean     Nginx (host hoặc eedt-nginx mở rộng
 
 - Container Docker mới, Node.js (Express/Fastify + `pg`).
 - Port nội bộ: **3001**.
-- Logic API port từ `datasource/appscripv11.md`: profiles, logs, redemptions, auth passcode.
+- Logic API port từ `tech/legacy/apps-script-v11.md`: profiles, logs, redemptions, auth passcode.
 - Process: `pm2` hoặc Docker healthcheck; env qua `.env` (không commit secret).
 
 ### Database (trong eedt-postgres)
@@ -171,7 +171,7 @@ redemptions    — id, family_id, profile_id, reward_id, grain_spent, ...
 - [ ] Backup `kho_thoc` (pg_dump cron)
 - [ ] Kiểm tra `free -h` / `docker stats` trước khi deploy
 
-→ Xem [DEPLOY-PHASE1.md](./DEPLOY-PHASE1.md)
+→ Xem [operations.md](../../operations.md)
 
 ### Phase 2+
 
@@ -181,6 +181,6 @@ redemptions    — id, family_id, profile_id, reward_id, grain_spent, ...
 
 ## Tham chiếu
 
-- Nghiệp vụ: `TAI-LIEU-NGHIEP-VU.md`
-- API hiện tại (Apps Script): `datasource/appscripv11.md`
+- Nghiệp vụ: `specs/brd.md`
+- API hiện tại (Apps Script): `tech/legacy/apps-script-v11.md`
 - Frontend live: https://batagic.github.io/keep-house-clean/code/

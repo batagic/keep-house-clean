@@ -331,6 +331,7 @@
 
         parts.push(`
       <div class="profile-card${isActive ? ' active' : ''}" data-pid="${p.id}" onclick="selectProfile('${p.id}',true)">
+        <button type="button" class="profile-delete-btn" onclick="event.stopPropagation();deleteProfile('${p.id}')" aria-label="Xóa bé ${p.name}" title="Xóa bé">🗑️</button>
         <div class="profile-header">
           <span class="profile-avatar">${p.avatar || '👶'}</span>
           <div class="profile-info">
@@ -692,6 +693,45 @@
 
     function openModal()  { document.getElementById('modalOverlay').classList.add('open'); }
     function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+    async function deleteProfile(pid) {
+      const p = profiles.find(x => x.id === pid);
+      if (!p) return;
+
+      const state = getState(pid);
+      const msg = `Xóa hồ sơ bé "${p.name}"?\n\nToàn bộ nhật ký (${state.totalGrain.toLocaleString('vi-VN')} 🌾, ${state.totalExp.toLocaleString('vi-VN')} ⭐) và mã đổi quà sẽ bị xóa vĩnh viễn.`;
+      if (!confirm(msg)) return;
+
+      const result = await saveData({ type: 'delete_profile', profileId: pid });
+      if (!result || result.result !== 'success') return;
+
+      const wasCurrent = currentProfile && currentProfile.id === pid;
+
+      profiles = profiles.filter(x => x.id !== pid);
+      delete profileBalances[pid];
+      delete sheetsLogs[pid];
+      delete logsMeta[pid];
+      try { localStorage.removeItem(_logsCacheKey(pid)); } catch { /* quota */ }
+
+      _writeProfilesCache();
+
+      if (wasCurrent) {
+        const nextPid = profiles[0]?.id;
+        if (nextPid) {
+          selectProfile(nextPid, false, true);
+        } else {
+          currentProfile = null;
+          localStorage.removeItem(CACHE_LAST_PID_KEY);
+          renderProfiles();
+          renderRewards();
+          renderHistory();
+        }
+      } else {
+        renderProfiles();
+      }
+
+      showToast(`Đã xóa hồ sơ bé ${p.name}`);
+    }
 
     async function confirmAddProfile() {
       const name   = document.getElementById('pName')?.value.trim();

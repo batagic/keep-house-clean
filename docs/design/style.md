@@ -639,8 +639,8 @@ Content (cards, grids, tables)
 
 ### 13.4 Tài liệu liên quan
 
-- [TAI-LIEU-NGHIEP-VU.md](./TAI-LIEU-NGHIEP-VU.md) — Quy tắc nghiệp vụ, luồng Gạo/EXP
-- [README.md](./README.md) — Tổng quan dự án
+- [specs/brd.md](../specs/brd.md) — Quy tắc nghiệp vụ, luồng Gạo/EXP
+- [README.md](../README.md) — Mục lục tài liệu
 
 ---
 

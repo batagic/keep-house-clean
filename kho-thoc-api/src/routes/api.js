@@ -1,5 +1,5 @@
 const express = require('express');
-const { readProfiles, writeProfile } = require('../services/profiles');
+const { readProfiles, writeProfile, deleteProfile } = require('../services/profiles');
 const { readLogs, writeLog, deleteLog } = require('../services/logs');
 const { redeemWithPasscode } = require('../services/redeem');
 
@@ -63,6 +63,9 @@ router.post('/', async (req, res) => {
         break;
       case 'delete_log':
         result = await deleteLog(params);
+        break;
+      case 'delete_profile':
+        result = await deleteProfile(params);
         break;
       case 'profile':
       default:

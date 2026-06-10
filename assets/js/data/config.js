@@ -1,4 +1,4 @@
-/** Cấu hình toàn app — chọn MỘT API_URL (xem deploy/vps/HUONG-DAN-DEPLOY-VPS.md) */
+/** Cấu hình toàn app — chọn MỘT API_URL (xem docs/installation.md, docs/operations.md) */
 
 // Production — GitHub Pages → VPS (sau khi HTTPS apinhatkyvumua.taho.cat OK):
 // const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc/'; // trailing / bắt buộc

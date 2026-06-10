@@ -27,4 +27,4 @@ sudo cp -n "$REPO_DIR/deploy/vps/.env.production.example" "$INSTALL_ROOT/kho-tho
 
 echo ""
 echo "✅ Thư mục: $INSTALL_ROOT"
-echo "   Tiếp theo: xem deploy/vps/HUONG-DAN-DEPLOY-VPS.md"
+echo "   Tiếp theo: xem docs/installation.md và docs/operations.md"

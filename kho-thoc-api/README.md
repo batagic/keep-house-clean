@@ -4,7 +4,7 @@ API Node.js thay Google Apps Script — **Phase 1** (1 gia đình, không auth).
 
 Dùng **Postgres sẵn có** (`eedt-postgres`) — không tạo container Postgres mới.
 
-Contract tương thích `docs/datasource/appscripv11.md`:
+Contract tương thích `docs/tech/legacy/apps-script-v11.md`:
 
 | Method | Query / Body | Response |
 |--------|----------------|----------|
@@ -16,7 +16,7 @@ Contract tương thích `docs/datasource/appscripv11.md`:
 
 ---
 
-> **Hướng dẫn đầy đủ từng bước:** [docs/HUONG-DAN-CAI-DAT.md](../docs/HUONG-DAN-CAI-DAT.md)
+> **Cài đặt:** [docs/installation.md](../docs/installation.md) · **Vận hành:** [docs/operations.md](../docs/operations.md)
 
 ## 1. Tạo user + database riêng (một lần / mỗi máy)
 

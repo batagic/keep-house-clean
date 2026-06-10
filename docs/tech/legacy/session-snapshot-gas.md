@@ -22,7 +22,7 @@
     "apps_script_note": "Mỗi lần sửa Code.gs phải tạo New Deployment, không edit deployment cũ",
     "balance_formula": "totalGrain = SUM(Logs.grain) | totalExp = SUM(Logs.exp) — cache trên Profiles, logs vẫn là sổ cái gốc",
     "deploy_cache_balance": [
-      "1. Copy Code.gs từ docs/datasource/appscripv11.md vào Apps Script",
+      "1. Copy Code.gs từ docs/tech/legacy/apps-script-v11.md vào Apps Script",
       "2. Cập nhật WEB_APP_URL trong Code.gs khớp config.js",
       "3. Deploy → New deployment (Web app)",
       "4. Chạy backfillProfileBalances() một lần",

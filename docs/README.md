@@ -1,34 +1,41 @@
-# keep-house-clean
+# Tài liệu — Kho Thóc Gia Đình
 
-Gamification to learn finance and keep house clean (for child).
+## Vận hành
 
-## Cấu trúc dự án
+| File | Nội dung |
+|------|----------|
+| [installation.md](./installation.md) | Cài đặt lần đầu — macOS local + VPS |
+| [operations.md](./operations.md) | Deploy tính năng mới, SSL, xử lý sự cố, backup |
+
+## Specs & nghiệp vụ
+
+| File | Nội dung |
+|------|----------|
+| [specs/brd.md](./specs/brd.md) | BRD tổng thể + index tính năng |
+| [specs/passcode.md](./specs/passcode.md) | Passcode đổi quà |
+| [specs/admin.md](./specs/admin.md) | Trang admin |
+
+## Kỹ thuật & thiết kế
+
+| File | Nội dung |
+|------|----------|
+| [tech/architecture/infrastructure.md](./tech/architecture/infrastructure.md) | Hạ tầng VPS, multi-tenant |
+| [tech/architecture/frontend.md](./tech/architecture/frontend.md) | Cấu trúc `code/` |
+| [tech/architecture/project-directory.html](./tech/architecture/project-directory.html) | Sơ đồ thư mục (interactive) |
+| [tech/migration-vps.md](./tech/migration-vps.md) | Lộ trình migrate GAS → VPS |
+| [tech/legacy/apps-script-v11.md](./tech/legacy/apps-script-v11.md) | API GAS (archive) |
+| [design/style.md](./design/style.md) | Design system |
+
+## Cấu trúc
 
 ```
-keep-house-clean/
-├── code/          # Frontend HTML (index, nhat-ky, kho-qua, quy-doi, print)
-├── docs/          # Tài liệu
-│   ├── TAI-LIEU-NGHIEP-VU.md
-│   ├── architech.md
-│   ├── style.md
-│   └── datasource/
-└── README.md      # Tổng quan (thư mục gốc)
+docs/
+├── README.md
+├── installation.md
+├── operations.md
+├── specs/          # brd + đặc tả tính năng
+├── tech/           # kiến trúc, migrate, legacy
+└── design/         # style guide
 ```
 
-## Tài liệu
-
-| File | Mô tả |
-|------|-------|
-| [TAI-LIEU-NGHIEP-VU.md](./TAI-LIEU-NGHIEP-VU.md) | Quy tắc nghiệp vụ, luồng Gạo/EXP |
-| [architech.md](./architech.md) | Kiến trúc hạ tầng (GitHub Pages + API) |
-| [kehoach.md](./kehoach.md) | Đánh giá & lộ trình migrate VPS thay Apps Script |
-| [HUONG-DAN-CAI-DAT.md](./HUONG-DAN-CAI-DAT.md) | Hướng dẫn cài đặt (local + VPS tổng quát) |
-| [deploy/vps/RUNBOOK-VPS.md](../deploy/vps/RUNBOOK-VPS.md) | **Runbook deploy VPS** — lệnh copy-paste từng bước |
-| [deploy/vps/HUONG-DAN-DEPLOY-VPS.md](../deploy/vps/HUONG-DAN-DEPLOY-VPS.md) | Deploy VPS chi tiết + xử lý lỗi |
-| [DEPLOY-PHASE1.md](./DEPLOY-PHASE1.md) | Checklist Phase 1 + bài học deploy |
-| [kho-thoc-api/README.md](../kho-thoc-api/README.md) | API Node.js + Docker |
-| [style.md](./style.md) | Design system & UI guidelines |
-| [infa/project-directory-architecture.html](./infa/project-directory-architecture.html) | Kiến trúc thư mục dự án (interactive) |
-| [datasource/appscripv11.md](./datasource/appscripv11.md) | API Google Apps Script hiện tại |
-| [snapshot.md](./snapshot.md) | **Snapshot trạng thái hiện tại** (resume session) |
-| [datasource/session_snapshot.md](./datasource/session_snapshot.md) | Snapshot phiên cũ (GAS era) |
+Config Nginx: `deploy/vps/nginx/` (không có tài liệu markdown riêng — xem `operations.md`).

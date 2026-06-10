@@ -2,7 +2,7 @@
 
 **Cập nhật:** 10/06/2026  
 **Trạng thái:** Phase 1 — code xong, **đã test local**; chờ deploy VPS + cutover production  
-**Liên quan:** [architech.md](./architech.md) · [HUONG-DAN-CAI-DAT.md](./HUONG-DAN-CAI-DAT.md) · [DEPLOY-PHASE1.md](./DEPLOY-PHASE1.md) · [datasource/appscripv11.md](./datasource/appscripv11.md)
+**Liên quan:** [tech/architecture/infrastructure.md](./architecture/infrastructure.md) · [installation.md](../installation.md) · [operations.md](../operations.md) · [tech/legacy/apps-script-v11.md](./legacy/apps-script-v11.md)
 
 ---
 
@@ -32,7 +32,7 @@ GitHub Pages  →  HTTPS API (VPS)  →  PostgreSQL (Docker)
               dùng chung eedt-postgres
 ```
 
-Chi tiết triển khai: xem [architech.md](./architech.md). Tóm tắt:
+Chi tiết triển khai: xem [tech/architecture/infrastructure.md](./architecture/infrastructure.md). Tóm tắt:
 
 - Giữ frontend trên GitHub Pages
 - Thêm container Node.js (`kho-thoc-api`, port nội bộ 3001)
@@ -72,7 +72,7 @@ Chi tiết triển khai: xem [architech.md](./architech.md). Tóm tắt:
 
 ## 4. Khả thi kỹ thuật với VPS hiện tại
 
-Theo [architech.md](./architech.md), VPS Singapore **1 vCPU / 1 GB RAM** đang chạy 6 container + bot Telegram.
+Theo [tech/architecture/infrastructure.md](./architecture/infrastructure.md), VPS Singapore **1 vCPU / 1 GB RAM** đang chạy 6 container + bot Telegram.
 
 **Kết luận: khả thi, nhưng có điều kiện.**
 
@@ -186,7 +186,7 @@ API thay GAS cho **1 gia đình**, chưa auth — chứng minh ổn định trê
   - `kho_thoc` bị chặn CONNECT sang DB `eedt` (đã verify local)
 - [x] Script import CSV từ Google Sheets — `scripts/import-csv.js` + mount `data/` trong compose
 - [x] Frontend hỗ trợ cả GAS và VPS — `API_USE_PLAIN_TEXT` trong `config.js`, `nhat-ky.js`
-- [x] Tài liệu cài đặt — [HUONG-DAN-CAI-DAT.md](./HUONG-DAN-CAI-DAT.md), [DEPLOY-PHASE1.md](./DEPLOY-PHASE1.md)
+- [x] Tài liệu cài đặt — [installation.md](../installation.md), [operations.md](../operations.md)
 - [x] Test local: migration, `?type=ping`, ghi/đọc profile + log qua Docker
 
 #### Chưa làm (VPS + production)
@@ -199,7 +199,7 @@ API thay GAS cho **1 gia đình**, chưa auth — chứng minh ổn định trê
 - [ ] Kiểm tra `free -h` / `docker stats` trước khi deploy
 - [ ] Backup `pg_dump` cron
 
-Chi tiết từng bước: [HUONG-DAN-CAI-DAT.md](./HUONG-DAN-CAI-DAT.md)
+Chi tiết từng bước: [installation.md](../installation.md)
 
 ### Phase 2 — Auth
 
@@ -235,7 +235,7 @@ Chi tiết từng bước: [HUONG-DAN-CAI-DAT.md](./HUONG-DAN-CAI-DAT.md)
 | Mở cho nhiều gia đình | Migrate là **bắt buộc** — GAS/Sheets không phù hợp |
 | Giữ đơn giản, 1 gia đình mãi mãi | GAS vẫn đủ dùng; migrate là nice-to-have |
 
-**Bước tiếp theo:** deploy lên VPS theo [HUONG-DAN-CAI-DAT.md](./HUONG-DAN-CAI-DAT.md) Phần B, rồi cutover `API_URL` trên GitHub Pages.
+**Bước tiếp theo:** deploy lên VPS theo [installation.md](../installation.md) Phần B, rồi cutover `API_URL` trên GitHub Pages.
 
 ---
 
@@ -287,9 +287,9 @@ Container eedt-postgres
 
 | File | Nội dung |
 |---|---|
-| `docs/kehoach.md` | Đánh giá + lộ trình + tiến độ (file này) |
-| `docs/HUONG-DAN-CAI-DAT.md` | Hướng dẫn từng bước local + VPS |
-| `docs/DEPLOY-PHASE1.md` | Checklist deploy Phase 1 |
+| `docs/tech/migration-vps.md` | Đánh giá + lộ trình + tiến độ (file này) |
+| `docs/installation.md` | Cài đặt local + VPS |
+| `docs/operations.md` | Deploy tính năng mới + sự cố |
 | `kho-thoc-api/README.md` | API reference + lệnh nhanh |
 | `kho-thoc-api/data/README.md` | Format CSV import |
 

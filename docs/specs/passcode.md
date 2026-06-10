@@ -1,27 +1,29 @@
-# Spec — Passcode đổi quà (Phase 2 Auth)
+# Spec — Passcode đổi quà (Phase 2)
 
-**Phiên bản:** 1.2  
+**Phiên bản:** 1.3  
 **Ngày:** 10/06/2026  
-**Trạng thái:** Đã thống nhất — đang triển khai
+**Trạng thái:** Đang triển khai  
+**Liên quan:** [admin.md](./admin.md) · [brd.md](./brd.md)
 
 ---
 
 ## 1. Mục tiêu
 
-Bảo vệ **đổi quà** (trừ Hạt Gạo) bằng mã xác nhận **riêng cho từng bé**. Khi đăng ký bé mới, server trả mã ngay cho bố/mẹ — giữ lại cho các lần đổi quà sau. Chỉ khi **quên mã** mới liên hệ admin.
+Bảo vệ **đổi quà** bằng mã xác nhận **riêng cho từng bé**. Đăng ký bé mới → server trả mã plain text cho bố/mẹ. Quên mã → admin sinh lại ([admin.md](./admin.md)).
 
-**Không** thay đổi luồng nhật ký hàng ngày: bé vẫn vào `nhat-ky.html`, tick nhiệm vụ và ghi nhật ký như hiện tại — không cần đăng nhập hay passcode.
+**Không** đổi luồng nhật ký hàng ngày — không cần passcode khi ghi nhật ký.
 
 ---
 
-## 2. Hai loại credential
+## 2. Mã đổi quà
 
-| Loại | Ai dùng | Mục đích | Lưu trữ |
-|------|---------|----------|---------|
-| **Tài khoản admin** | Bố/mẹ / vận hành | Đăng nhập trang `/admin` để quản lý mã đổi quà theo từng bé | DB: `admin_users.password_hash` (bcrypt) |
-| **Mã đổi quà** | Bố/mẹ đọc cho bé | Xác nhận khi bé nhấn "Nhận Quà" trên nhật ký | DB: `redeem_passcodes` (bcrypt, gắn `profile_id`); plain text trả **một lần** khi đăng ký bé mới hoặc admin sinh mã mới |
+| | |
+|--|--|
+| Ai dùng | Bố/mẹ đọc cho bé khi đổi quà |
+| Lưu trữ | `redeem_passcodes` (bcrypt, gắn `profile_id`) |
+| Plain text | Trả **một lần** khi đăng ký bé hoặc admin sinh mã |
 
-Hai loại **không trùng nhau**. Mỗi bé có **một mã active** riêng.
+Mỗi bé **một mã active** (`revoked_at IS NULL`).
 
 ---
 
@@ -63,45 +65,21 @@ Bé chọn quà → Nhấn "Nhận Quà" → Modal nhập mã
 - Mã sai hoặc không khớp bé → `403`, **không** trừ Gạo, **không** cập nhật UI.
 - Chỉ cập nhật UI sau khi API trả `success`.
 
-### 3.4 Admin — quản lý mã theo bé
-
-```
-Admin → /admin/login → username + password → JWT
-→ /admin/dashboard (layout sidebar + nội dung chính)
-→ Danh sách bé + trạng thái mã → Sinh mã mới / Thu hồi từng bé
-→ Copy mã plain text → gửi Zalo cho bố/mẹ (khi quên mã)
-```
-
-- **Sinh mã mới** theo từng bé: tự động thu hồi mã active cũ của bé đó.
-- Plain text mã trả khi đăng ký bé (`profile`) hoặc admin `generate` — không lưu DB, không hiện lại sau đó.
+Quên mã → bố/mẹ liên hệ admin → xem [admin.md](./admin.md).
 
 ---
 
-## 4. URL
-
-### Frontend (GitHub Pages)
+## 4. URL & API
 
 | URL | Trang |
 |-----|-------|
-| `.../nhat-ky.html` | Nhật ký (+ modal passcode đổi quà) |
-| `.../admin/` | Redirect login hoặc dashboard |
-| `.../admin/login.html` | Đăng nhập admin |
-| `.../admin/dashboard.html` | Quản trị — mã đổi quà (sidebar + main) |
-
-Không link công khai tới `/admin` từ nav trang bé.
-
-### API (VPS)
-
-Base: `https://apinhatkyvumua.taho.cat/kho-thoc/`
+| `.../nhat-ky.html` | Nhật ký + modal passcode đổi quà |
 
 | Method | Path | Auth |
 |--------|------|------|
-| `POST` | `/admin/login` | Không |
-| `GET` | `/admin/passcode` | JWT admin |
-| `POST` | `/admin/passcode/generate` | JWT admin |
-| `POST` | `/admin/passcode/revoke` | JWT admin |
-| `POST` | `/` `{ type: "redeem", ... }` | Passcode đổi quà (theo profileId) |
-| `GET/POST` | `/` *(còn lại)* | Không *(Phase 2)* |
+| `POST` | `/` `{ type: "redeem", ... }` | Passcode (theo profileId) |
+| `POST` | `/` `{ type: "profile", ... }` | Không — trả passcode khi inserted |
+| `GET/POST` | `/` *(log, delete_log, …)* | Không |
 
 ---
 
@@ -110,95 +88,17 @@ Base: `https://apinhatkyvumua.taho.cat/kho-thoc/`
 Migration: `kho-thoc-api/migrations/002_redeem_auth.sql`
 
 ```sql
-admin_users       — id, username, password_hash, created_at
-redeem_passcodes  — id, profile_id, passcode_hash, created_at, revoked_at, created_by, last_used_at
+redeem_passcodes — id, profile_id, passcode_hash, created_at, revoked_at, created_by, last_used_at
 ```
 
-- Mỗi bé **một** mã active: `profile_id = $id AND revoked_at IS NULL`.
-- `profile_id` tham chiếu `profiles(id)` — xóa bé thì xóa luôn mã.
-- Khi `INSERT profiles` (bé mới): server gọi `createInitialPasscodeForProfile` (hash only).
-- Seed admin: `npm run seed:admin -- --username ... --password ...`
+- Mỗi bé một mã active; `profile_id` → `profiles(id)`.
+- Đăng ký bé mới: `createInitialPasscodeForProfile` → hash DB, plain text trong response.
 
 ---
 
 ## 6. API chi tiết
 
-### 6.1 Admin login
-
-```http
-POST /kho-thoc/admin/login
-Content-Type: application/json
-
-{ "username": "admin", "password": "..." }
-```
-
-Response `200`:
-
-```json
-{ "token": "<JWT>", "expiresIn": 604800 }
-```
-
-JWT payload: `{ "sub": "admin:1", "role": "admin", "exp": ... }`
-
-### 6.2 Danh sách bé + trạng thái mã
-
-```http
-GET /kho-thoc/admin/passcode
-Authorization: Bearer <JWT>
-```
-
-Response `200`:
-
-```json
-{
-  "result": "success",
-  "profiles": [
-    {
-      "profileId": "p_...",
-      "profileName": "Minh",
-      "avatar": "👶",
-      "hasActivePasscode": true,
-      "createdAt": "2026-06-10T12:00:00.000Z",
-      "lastUsedAt": null
-    }
-  ]
-}
-```
-
-### 6.3 Sinh mã đổi quà (theo bé)
-
-```http
-POST /kho-thoc/admin/passcode/generate
-Authorization: Bearer <JWT>
-Content-Type: application/json
-
-{ "profileId": "p_...", "length": 4 }
-```
-
-Response `200`:
-
-```json
-{
-  "result": "success",
-  "profileId": "p_...",
-  "profileName": "Minh",
-  "passcode": "4829",
-  "createdAt": "2026-06-10T12:00:00.000Z",
-  "message": "Copy mã và gửi bố/mẹ qua Zalo cho bé Minh. Mã cũ của bé này đã bị thu hồi."
-}
-```
-
-### 6.4 Thu hồi mã (theo bé)
-
-```http
-POST /kho-thoc/admin/passcode/revoke
-Authorization: Bearer <JWT>
-Content-Type: application/json
-
-{ "profileId": "p_..." }
-```
-
-### 6.5 Đổi quà
+### 6.1 Đổi quà
 
 ```http
 POST /kho-thoc/
@@ -231,7 +131,7 @@ Response lỗi:
 
 **Chặn bypass:** `POST type=log` với `tasks=REDEEM` bị từ chối — bắt buộc qua `type=redeem`.
 
-### 6.6 Đăng ký bé mới (tự tạo passcode)
+### 6.2 Đăng ký bé mới (tự tạo passcode)
 
 ```http
 POST /kho-thoc/
@@ -261,12 +161,10 @@ Response `200`:
 
 | Mục | Cách xử lý |
 |-----|------------|
-| Plain text passcode | Trả khi đăng ký bé (`profile`) hoặc admin `generate`; DB chỉ hash |
+| Plain text passcode | Trả khi đăng ký bé hoặc admin generate; DB chỉ hash |
 | Brute force mã 4 số | Rate limit: 5 lần sai / 15 phút / profileId |
-| Admin JWT | Hết hạn 7 ngày; `localStorage` key `kho_thoc_admin_token` |
-| `JWT_SECRET` | Env trên VPS — không commit |
-| HTTPS | Bắt buộc (đã có) |
-| Mã theo bé | Validate `profile_id` khi redeem — mã bé A không dùng cho bé B |
+| HTTPS | Bắt buộc |
+| Mã theo bé | Validate `profile_id` — mã bé A không dùng cho bé B |
 
 ---
 
@@ -278,39 +176,13 @@ Response `200`:
 - `redeemReward()`: chờ API success mới cập nhật balance/history.
 - Đăng ký bé mới: modal hiện passcode ngay — bố/mẹ ghi nhớ; quên mã thì liên hệ admin.
 
-### 8.2 Admin — layout sidebar + main
-
-Sau đăng nhập → `dashboard.html`:
-
-| Vùng | Nội dung |
-|------|----------|
-| **Sidebar trái** | Logo, menu (Mã đổi quà, …), Đăng xuất — mở rộng sau |
-| **Main phải** | Bảng danh sách bé, trạng thái mã, Sinh mã mới / Thu hồi |
-
-Files:
-
-- `assets/js/shared/admin-auth.js` — JWT, `adminFetch()`
-- `assets/js/pages/admin-login.js`
-- `assets/js/pages/admin-dashboard.js`
-- `assets/css/pages/admin.css`
+Trang admin → [admin.md](./admin.md).
 
 ---
 
 ## 9. Triển khai
 
-```bash
-# VPS / local
-cd kho-thoc-api
-npm install
-npm run migrate
-npm run seed:admin -- --username admin --password '...'
-# Thêm JWT_SECRET vào .env
-docker compose up -d --build   # hoặc npm run dev
-```
-
-Frontend: push GitHub Pages sau khi API đã deploy.
-
-**Lưu ý migration:** Nếu đã chạy `002` phiên bản cũ (mã global, không có `profile_id`), cần migrate thủ công hoặc reset bảng `redeem_passcodes`.
+Xem [operations.md](../operations.md). Migration `002_redeem_auth.sql`. Nếu đã chạy `002` cũ (mã global), reset hoặc migrate thủ công `redeem_passcodes`.
 
 ---
 
@@ -324,5 +196,7 @@ Frontend: push GitHub Pages sau khi API đã deploy.
 
 ## 11. Tham chiếu
 
-- Kế hoạch tổng: [kehoach.md](../kehoach.md)
-- Nghiệp vụ: [TAI-LIEU-NGHIEP-VU.md](../TAI-LIEU-NGHIEP-VU.md)
+- [admin.md](./admin.md) — trang quản trị mã
+- [brd.md](./brd.md) — nghiệp vụ tổng thể
+- [operations.md](../operations.md) — deploy
+

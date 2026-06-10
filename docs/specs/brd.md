@@ -1,13 +1,21 @@
-# Tài Liệu Mô Tả Nghiệp Vụ
-## Kho Thóc Gia Đình — Hệ thống Gamification Việc Nhà cho Gia Đình
+# BRD — Kho Thóc Gia Đình
 
-**Phiên bản tài liệu:** 1.0  
-**Ngày cập nhật:** 10/06/2026  
-**Phạm vi:** Toàn bộ mã nguồn trong repository `keep-house-clean`
+**Phiên bản:** 1.1 · **Cập nhật:** 10/06/2026 · **Phạm vi:** toàn repo `keep-house-clean`
 
 ---
 
-## Mục lục
+## Đặc tả tính năng (spec con)
+
+| Tính năng | Summary | Spec |
+|-----------|---------|------|
+| Passcode đổi quà | Mã riêng từng bé khi đổi quà; tự sinh khi đăng ký bé | [passcode.md](./passcode.md) |
+| Trang admin | Đăng nhập JWT; sinh/thu hồi mã theo bé | [admin.md](./admin.md) |
+| Nhật ký việc nhà | Ghi nhiệm vụ, cộng Gạo/EXP — không cần passcode | §5–§6 bên dưới |
+| Kho quà & quy đổi | Catalog quà, máy tính Gạo ↔ VNĐ | §6–§7 bên dưới |
+
+---
+
+## Mục lục nghiệp vụ
 
 1. [Tổng quan sản phẩm](#1-tổng-quan-sản-phẩm)
 2. [Mục tiêu và đối tượng sử dụng](#2-mục-tiêu-và-đối-tượng-sử-dụng)
@@ -535,4 +543,4 @@ sequenceDiagram
 
 ---
 
-*Tài liệu được tổng hợp từ: `code/index.html`, `code/kho-qua.html`, `code/quy-doi.html`, `code/nhat-ky.html`, `code/print.html`, `docs/datasource/appscripv11.md`, `docs/datasource/session_snapshot.md`, `docs/README.md`.*
+*Tổng hợp từ: `code/*.html`, `docs/tech/legacy/apps-script-v11.md`.*

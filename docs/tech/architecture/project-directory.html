@@ -315,9 +315,11 @@
 
   <div class="nav-group">Cấu trúc</div>
   <a href="#directory-tree">Cây thư mục</a>
-  <a href="#frontend-modules">Frontend Modules</a>
+  <a href="#frontend-modules">Frontend</a>
+  <a href="#backend-modules">Backend API</a>
   <a href="#data-mapping">Mapping Dữ liệu</a>
   <a href="#deploy-routing">Deploy &amp; Routing</a>
+  <a href="#docs-structure">Tài liệu docs/</a>
 
   <div class="nav-group">Quy ước</div>
   <a href="#conventions">Quy ước quan trọng</a>
@@ -332,15 +334,14 @@
     <div class="label">Project Directory Architecture</div>
     <h1>Kiến trúc Thư mục Dự án</h1>
     <div class="meta">
-      <span class="badge">v1.0.0</span>
+      <span class="badge">v2.0.0</span>
       <span class="badge">2026-06-10</span>
       <span class="badge">Static HTML</span>
-      <span class="badge">GitHub Pages</span>
+      <span class="badge">GitHub Pages + VPS</span>
       <span class="badge">No build step</span>
       <br><br>
-      Phản ánh cấu trúc thực tế sau refactor <code>code/</code> + <code>docs/</code>.
-      Gamification việc nhà cho gia đình — frontend tĩnh, backend hiện tại Google Apps Script
-      (kế hoạch nâng cấp: VPS + PostgreSQL, xem <code>docs/architech.md</code>).
+      Cấu trúc repo <code>keep-house-clean</code> — frontend HTML ở thư mục gốc, API <code>kho-thoc-api</code> trên VPS Docker + PostgreSQL.
+      Rollback GAS vẫn khả dụng qua <code>config.js</code>. Chi tiết hạ tầng: <code>docs/tech/architecture/infrastructure.md</code>.
     </div>
   </header>
 
@@ -359,14 +360,14 @@
       </thead>
       <tbody>
         <tr>
-          <td>Tách <code>code/</code> (frontend) và <code>docs/</code> (tài liệu)</td>
+          <td>Frontend ở thư mục gốc repo + <code>assets/</code></td>
           <td><code>D1</code></td>
-          <td>HTML/CSS/JS trong <code>code/</code>; markdown nghiệp vụ trong <code>docs/</code></td>
+          <td>HTML trang gốc; CSS/JS trong <code>assets/</code> — deploy thẳng GitHub Pages</td>
         </tr>
         <tr>
           <td>Assets tách file — không inline CSS/JS</td>
           <td><code>D2</code></td>
-          <td><code>code/assets/css/shared|pages/</code> + <code>code/assets/js/shared|data|pages/</code></td>
+          <td><code>assets/css/shared|pages/</code> + <code>assets/js/shared|data|pages/</code></td>
         </tr>
         <tr>
           <td>Nav/footer đồng bộ qua một file JS</td>
@@ -384,9 +385,19 @@
           <td><code>assets/js/data/tasks.js</code>, <code>rewards.js</code>, <code>config.js</code></td>
         </tr>
         <tr>
-          <td colspan="3" style="color:var(--text-dim); font-style:italic; text-align:center;">
-            — Các quyết định backend / multi-tenant chưa lock-in, sẽ bổ sung dần —
-          </td>
+          <td>Backend tách <code>kho-thoc-api/</code></td>
+          <td><code>D6</code></td>
+          <td>Node.js + Express + PostgreSQL; Docker trên VPS; contract tương thích GAS</td>
+        </tr>
+        <tr>
+          <td>Passcode + Admin (Phase 2)</td>
+          <td><code>D7</code></td>
+          <td><code>admin/</code> pages; JWT admin; mã đổi quà theo <code>profile_id</code></td>
+        </tr>
+        <tr>
+          <td>Tài liệu gọn: <code>installation</code> + <code>operations</code></td>
+          <td><code>D8</code></td>
+          <td><code>docs/installation.md</code> (cài lần đầu) · <code>docs/operations.md</code> (deploy + sự cố)</td>
         </tr>
       </tbody>
     </table>
@@ -395,46 +406,48 @@
   <!-- ARCHITECTURE DIAGRAM -->
   <section id="architecture-diagram">
     <div class="section-title">Sơ đồ kiến trúc</div>
-    <p class="section-desc">Hiện tại (MVP) và hướng nâng cấp. Chi tiết: <code>docs/architech.md</code>.</p>
+    <p class="section-desc">Production: GitHub Pages + VPS API. Chi tiết: <code>docs/tech/architecture/infrastructure.md</code>.</p>
 
     <div class="diagram-wrap">
       <pre class="mermaid">
 flowchart TB
   subgraph client ["Trình duyệt"]
-    PAGES["code/*.html"]
-    ASSETS["code/assets/"]
+    PAGES["*.html + admin/"]
+    ASSETS["assets/"]
   end
 
-  subgraph host ["GitHub Pages"]
-    GH["batagic.github.io/keep-house-clean/code/"]
+  subgraph gh ["GitHub Pages"]
+    GH["batagic.github.io/keep-house-clean/"]
   end
 
-  subgraph backend_now ["Backend hiện tại"]
-  GAS["Google Apps Script"]
-  SHEETS[("Google Sheets")]
+  subgraph vps ["VPS Vultr"]
+    NGX["Host Nginx :443"]
+    API["kho-thoc-api Docker :3001"]
+    PG[("PostgreSQL kho_thoc")]
   end
 
-  subgraph backend_future ["Backend kế hoạch"]
-  API["kho-thoc-api Node.js"]
-  PG[("PostgreSQL")]
+  subgraph legacy ["Rollback (tùy chọn)"]
+    GAS["Google Apps Script"]
+    SHEETS[("Google Sheets")]
   end
 
   PAGES --> GH
   ASSETS --> GH
-  PAGES -->|fetch API_URL| GAS
-  GAS --> SHEETS
-  PAGES -.->|tương lai| API
-  API -.-> PG
+  PAGES -->|HTTPS fetch API_URL| NGX
+  NGX --> API
+  API --> PG
+  PAGES -.->|rollback config.js| GAS
+  GAS -.-> SHEETS
       </pre>
     </div>
 
     <div class="card">
       <div class="card-title">Thành phần runtime</div>
       <div class="tags">
-        <span class="tag tag-green">Frontend — HTML/CSS/JS thuần</span>
-        <span class="tag tag-orange">API — Google Apps Script v11+</span>
-        <span class="tag tag-blue">Storage — Google Sheets</span>
-        <span class="tag tag-cyan">Deploy — GitHub Pages (miễn phí)</span>
+        <span class="tag tag-green">Frontend — HTML/CSS/JS thuần (repo root)</span>
+        <span class="tag tag-orange">API — kho-thoc-api Node.js + Docker</span>
+        <span class="tag tag-blue">DB — PostgreSQL (eedt-postgres / kho_thoc)</span>
+        <span class="tag tag-cyan">Deploy — GitHub Pages + VPS rsync</span>
       </div>
     </div>
   </section>
@@ -446,60 +459,48 @@ flowchart TB
 
     <div class="tree"><span class="dir">keep-house-clean/</span>
 │
-├── <span class="file">README.md</span>                        <span class="cmt"># Tổng quan repo + link code/ &amp; docs/</span>
+├── <span class="file">README.md</span>
 │
-├── <span class="dir">code/</span>                              <span class="cmt"># Frontend — ứng dụng web tĩnh</span>
-│   ├── <span class="file">README.md</span>                    <span class="cmt"># Hướng dẫn cấu trúc assets &amp; quy ước mở rộng</span>
-│   │
-│   ├── <span class="file">index.html</span>                   <span class="cmt"># Trang chủ — marketing, giới thiệu quy tắc</span>
-│   ├── <span class="file">kho-qua.html</span>                 <span class="cmt"># Catalog quà &amp; thẻ bài (cho bé xem)</span>
-│   ├── <span class="file">quy-doi.html</span>                 <span class="cmt"># Máy tính Gạo ↔ VNĐ + biểu đồ</span>
-│   ├── <span class="file">nhat-ky.html</span>                 <span class="cmt"># App vận hành — bố/mẹ ghi nhật ký, đổi quà</span>
-│   ├── <span class="file">print.html</span>                   <span class="cmt"># Trang in ấn — infographic + thẻ cắt A4</span>
-│   │
-│   └── <span class="dir">assets/</span>
-│       ├── <span class="dir">css/</span>
-│       │   ├── <span class="dir">shared/</span>              <span class="cmt"># Design system — marketing pages</span>
-│       │   │   ├── <span class="file">variables.css</span>    <span class="cmt"># :root tokens (màu, shadow, radius)</span>
-│       │   │   ├── <span class="file">base.css</span>         <span class="cmt"># Reset, body, noise overlay</span>
-│       │   │   ├── <span class="file">nav.css</span>          <span class="cmt"># .nav, .nav-cta, .nav-btn</span>
-│       │   │   ├── <span class="file">layout.css</span>       <span class="cmt"># section, container, section-title</span>
-│       │   │   ├── <span class="file">buttons.css</span>      <span class="cmt"># btn-primary, btn-outline, CTA</span>
-│       │   │   ├── <span class="file">footer.css</span>       <span class="cmt"># Footer marketing</span>
-│       │   │   └── <span class="file">components.css</span>   <span class="cmt"># reveal, tasks, filter tabs, page-hero</span>
-│       │   └── <span class="dir">pages/</span>               <span class="cmt"># CSS riêng từng trang</span>
-│       │       ├── <span class="file">index.css</span>
-│       │       ├── <span class="file">kho-qua.css</span>
-│       │       ├── <span class="file">quy-doi.css</span>
-│       │       ├── <span class="file">nhat-ky.css</span>      <span class="cmt"># App UI — design riêng</span>
-│       │       └── <span class="file">print.css</span>        <span class="cmt"># @media print, cut-cards</span>
-│       │
-│       └── <span class="dir">js/</span>
-│           ├── <span class="dir">shared/</span>              <span class="cmt"># Tiện ích dùng chung</span>
-│           │   ├── <span class="file">site-nav.js</span>      <span class="cmt"># Nav + footer đồng bộ toàn site</span>
-│           │   ├── <span class="file">nav.js</span>           <span class="cmt"># Scroll shadow nav</span>
-│           │   ├── <span class="file">reveal.js</span>        <span class="cmt"># Intersection Observer animation</span>
-│           │   └── <span class="file">filter-cards.js</span>  <span class="cmt"># Lọc thẻ quà theo tag</span>
-│           ├── <span class="dir">data/</span>                <span class="cmt"># Dữ liệu &amp; cấu hình tĩnh</span>
-│           │   ├── <span class="file">config.js</span>        <span class="cmt"># API_URL, GRAIN_RATE</span>
-│           │   ├── <span class="file">tasks.js</span>         <span class="cmt"># 15 nhiệm vụ (TASKS array)</span>
-│           │   └── <span class="file">rewards.js</span>       <span class="cmt"># 15 phần thưởng (REWARDS array)</span>
-│           └── <span class="dir">pages/</span>               <span class="cmt"># Logic riêng từng trang</span>
-│               ├── <span class="file">index.js</span>         <span class="cmt"># Hero grain field animation</span>
-│               ├── <span class="file">kho-qua.js</span>       <span class="cmt"># (placeholder)</span>
-│               ├── <span class="file">quy-doi.js</span>       <span class="cmt"># Calculator + Chart.js</span>
-│               └── <span class="file">nhat-ky.js</span>       <span class="cmt"># App CRUD — profiles, logs, redeem</span>
+├── <span class="file">index.html</span>                   <span class="cmt"># Marketing — quy tắc, giới thiệu</span>
+├── <span class="file">kho-qua.html</span>                 <span class="cmt"># Catalog quà (bé xem)</span>
+├── <span class="file">quy-doi.html</span>                 <span class="cmt"># Máy tính Gạo ↔ VNĐ</span>
+├── <span class="file">nhat-ky.html</span>                 <span class="cmt"># App vận hành — nhật ký, đổi quà</span>
+├── <span class="file">print.html</span>                   <span class="cmt"># In ấn A4</span>
 │
-└── <span class="dir">docs/</span>                              <span class="cmt"># Tài liệu nghiệp vụ &amp; kiến trúc</span>
-    ├── <span class="file">README.md</span>
-    ├── <span class="file">TAI-LIEU-NGHIEP-VU.md</span>        <span class="cmt"># Quy tắc Gạo/EXP, luồng nghiệp vụ</span>
-    ├── <span class="file">architech.md</span>                 <span class="cmt"># Kiến trúc hạ tầng (GitHub Pages + API)</span>
-    ├── <span class="file">style.md</span>                     <span class="cmt"># Design system &amp; UI guidelines</span>
-    ├── <span class="dir">infa/</span>
-    │   └── <span class="file">project-directory-architecture.html</span>  <span class="cmt"># Tài liệu này</span>
-    └── <span class="dir">datasource/</span>
-        ├── <span class="file">appscripv11.md</span>             <span class="cmt"># API Google Apps Script hiện tại</span>
-        └── <span class="file">session_snapshot.md</span>        <span class="cmt"># Snapshot phiên làm việc</span></div>
+├── <span class="dir">admin/</span>                         <span class="cmt"># Phase 2 — không link từ nav bé</span>
+│   ├── <span class="file">login.html</span>
+│   └── <span class="file">dashboard.html</span>             <span class="cmt"># Quản lý mã đổi quà</span>
+│
+├── <span class="dir">assets/</span>
+│   ├── <span class="dir">css/shared|pages/</span>          <span class="cmt"># Design system + CSS từng trang</span>
+│   └── <span class="dir">js/</span>
+│       ├── <span class="dir">shared/</span>                  <span class="cmt"># site-nav, admin-auth, reveal, …</span>
+│       ├── <span class="dir">data/</span>                    <span class="cmt"># config.js, tasks.js, rewards.js</span>
+│       └── <span class="dir">pages/</span>                   <span class="cmt"># nhat-ky.js, admin-*.js, …</span>
+│
+├── <span class="dir">kho-thoc-api/</span>                  <span class="cmt"># Backend Node.js — Docker trên VPS</span>
+│   ├── <span class="file">docker-compose.yml</span>
+│   ├── <span class="dir">src/</span>
+│   │   ├── <span class="file">index.js</span>                 <span class="cmt"># Express entry</span>
+│   │   ├── <span class="dir">routes/</span>                  <span class="cmt"># api.js, admin.js</span>
+│   │   ├── <span class="dir">services/</span>                <span class="cmt"># profiles, logs, redeem, auth</span>
+│   │   └── <span class="dir">middleware/</span>              <span class="cmt"># requireAdmin.js</span>
+│   ├── <span class="dir">migrations/</span>                  <span class="cmt"># 001_init, 002_redeem_auth, …</span>
+│   └── <span class="dir">scripts/</span>                     <span class="cmt"># setup-db, migrate, import-csv, seed-admin</span>
+│
+├── <span class="dir">deploy/vps/</span>
+│   ├── <span class="dir">nginx/</span>                       <span class="cmt"># apinhatkyvumua.taho.cat.conf</span>
+│   └── <span class="file">setup-vps.sh</span>
+│
+├── <span class="dir">docs/</span>
+│   ├── <span class="file">installation.md</span>            <span class="cmt"># Cài đặt macOS + VPS lần đầu</span>
+│   ├── <span class="file">operations.md</span>              <span class="cmt"># Deploy tính năng mới + sự cố</span>
+│   ├── <span class="dir">specs/</span>                       <span class="cmt"># brd.md, passcode.md, admin.md</span>
+│   ├── <span class="dir">tech/</span>                        <span class="cmt"># architecture/, migration-vps, legacy/</span>
+│   └── <span class="dir">design/</span>
+│       └── <span class="file">style.md</span>
+│
+└── <span class="dir">ideas/</span>                         <span class="cmt"># Prototype cũ — không deploy</span></div>
   </section>
 
   <!-- FRONTEND MODULES -->
@@ -529,69 +530,109 @@ flowchart TB
         <div class="desc">In ấn A4 · Gia đình · print.css @media print</div>
       </div>
       <div class="module-box">
+        <div class="name">admin/login.html</div>
+        <div class="desc">Đăng nhập JWT · admin-login.js · admin-auth.js</div>
+      </div>
+      <div class="module-box">
+        <div class="name">admin/dashboard.html</div>
+        <div class="desc">Sinh/thu hồi mã đổi quà · admin-dashboard.js</div>
+      </div>
+      <div class="module-box">
         <div class="name">site-nav.js</div>
         <div class="desc">Nav + footer đồng bộ — NAV_ITEMS single source</div>
       </div>
     </div>
+  </section>
 
-    <div class="placeholder">Backend modules (kho-thoc-api) — chưa có, sẽ bổ sung khi triển khai VPS</div>
+  <!-- BACKEND MODULES -->
+  <section id="backend-modules">
+    <div class="section-title">Backend — kho-thoc-api</div>
+    <p class="section-desc">Node.js + Express + pg. Chạy Docker trên VPS, dùng chung <code>eedt-postgres</code>. Contract tương thích GAS.</p>
+
+    <div class="module-grid">
+      <div class="module-box">
+        <div class="name">routes/api.js</div>
+        <div class="desc">GET ping/profiles/logs · POST log, profile, delete_log, redeem</div>
+      </div>
+      <div class="module-box">
+        <div class="name">routes/admin.js</div>
+        <div class="desc">POST login · GET/POST passcode generate/revoke</div>
+      </div>
+      <div class="module-box">
+        <div class="name">services/profiles.js</div>
+        <div class="desc">CRUD profiles · tạo passcode khi đăng ký bé</div>
+      </div>
+      <div class="module-box">
+        <div class="name">services/redeem.js</div>
+        <div class="desc">Validate passcode bcrypt · ghi log REDEEM · trừ Gạo</div>
+      </div>
+      <div class="module-box">
+        <div class="name">services/auth.js</div>
+        <div class="desc">JWT admin · bcrypt · rate limit redeem</div>
+      </div>
+      <div class="module-box">
+        <div class="name">migrations/</div>
+        <div class="desc">001 profiles+logs · 002 admin+passcodes · 003 profile passcodes</div>
+      </div>
+    </div>
   </section>
 
   <!-- DATA MAPPING -->
   <section id="data-mapping">
     <div class="section-title">Mapping Dữ liệu → Code</div>
-    <p class="section-desc">Google Sheets hiện tại và file JS tương ứng. Chi tiết: <code>docs/datasource/appscripv11.md</code>.</p>
+    <p class="section-desc">PostgreSQL production + dữ liệu tĩnh frontend. Legacy GAS: <code>docs/tech/legacy/apps-script-v11.md</code>.</p>
 
     <table>
       <thead>
         <tr>
-          <th>Sheet / Nguồn</th>
+          <th>Bảng / Nguồn</th>
           <th>Cột chính</th>
-          <th>File code</th>
+          <th>Code</th>
           <th>Ghi chú</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><code>Profiles</code></td>
-          <td>id, name, avatar, balance, history</td>
-          <td><code>nhat-ky.js</code></td>
-          <td>balance tính động từ Logs − Redemptions</td>
+          <td><code>profiles</code></td>
+          <td>id, name, avatar, total_grain, total_exp</td>
+          <td><code>services/profiles.js</code></td>
+          <td>Cache số dư; đồng bộ khi ghi/xóa log</td>
         </tr>
         <tr>
-          <td><code>Logs</code></td>
-          <td>id, name, date, grain, exp, note, tasks, bonus</td>
-          <td><code>nhat-ky.js</code></td>
-          <td>Giao dịch dương — ghi nhiệm vụ hàng ngày</td>
+          <td><code>logs</code></td>
+          <td>id, name, date, grain, exp, tasks, bonus, note</td>
+          <td><code>services/logs.js</code></td>
+          <td>Sổ cái gốc; <code>tasks=REDEEM</code> khi đổi quà</td>
         </tr>
         <tr>
-          <td><code>Redemptions</code></td>
-          <td>id, grain_spent, reward_id, …</td>
-          <td><code>nhat-ky.js</code></td>
-          <td>Chưa hoàn thiện đầy đủ — đang xây dựng</td>
+          <td><code>redeem_passcodes</code></td>
+          <td>profile_id, passcode_hash, revoked_at</td>
+          <td><code>services/redeem.js</code></td>
+          <td>Một mã active / bé (Phase 2)</td>
+        </tr>
+        <tr>
+          <td><code>admin_users</code></td>
+          <td>username, password_hash</td>
+          <td><code>routes/admin.js</code></td>
+          <td>Seed: <code>npm run seed:admin</code></td>
         </tr>
         <tr>
           <td><code>TASKS</code> (static)</td>
-          <td>15 nhiệm vụ — grain, exp, category</td>
-          <td><code>data/tasks.js</code></td>
-          <td>Hardcoded — đồng bộ với print.html</td>
+          <td>15 nhiệm vụ — grain, exp</td>
+          <td><code>assets/js/data/tasks.js</code></td>
+          <td>Đồng bộ print.html</td>
         </tr>
         <tr>
           <td><code>REWARDS</code> (static)</td>
           <td>15 quà — cost, emoji</td>
-          <td><code>data/rewards.js</code></td>
-          <td>9 thẻ bài + 6 quà dài hạn</td>
+          <td><code>assets/js/data/rewards.js</code></td>
+          <td>Catalog client; server validate khi redeem</td>
         </tr>
         <tr>
           <td><code>API_URL</code></td>
-          <td>Apps Script deployment URL</td>
-          <td><code>data/config.js</code></td>
-          <td>Đổi một chỗ khi migrate VPS</td>
-        </tr>
-        <tr>
-          <td colspan="4" style="color:var(--text-dim); font-style:italic; text-align:center;">
-            — Mapping PostgreSQL (kho_thoc DB) — chưa có, sẽ bổ sung dần —
-          </td>
+          <td>VPS hoặc GAS rollback</td>
+          <td><code>assets/js/data/config.js</code></td>
+          <td>Trailing <code>/</code> bắt buộc với VPS</td>
         </tr>
       </tbody>
     </table>
@@ -600,41 +641,88 @@ flowchart TB
   <!-- DEPLOY ROUTING -->
   <section id="deploy-routing">
     <div class="section-title">Deploy &amp; Routing</div>
-    <p class="section-desc">GitHub Pages serve static files. URL sau refactor có prefix <code>/code/</code>.</p>
+    <p class="section-desc">Hai host độc lập. Chi tiết: <code>docs/operations.md</code>.</p>
 
     <table>
       <thead>
         <tr>
-          <th>Path (GitHub Pages)</th>
-          <th>File</th>
+          <th>URL</th>
+          <th>Host</th>
           <th>Mô tả</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><code>/keep-house-clean/code/index.html</code></td>
-          <td>index.html</td>
-          <td>Trang chủ</td>
+          <td><code>…/keep-house-clean/nhat-ky.html</code></td>
+          <td>GitHub Pages</td>
+          <td>App vận hành</td>
         </tr>
         <tr>
-          <td><code>/keep-house-clean/code/nhat-ky.html</code></td>
-          <td>nhat-ky.html</td>
-          <td>App vận hành (bố/mẹ)</td>
+          <td><code>…/keep-house-clean/admin/login.html</code></td>
+          <td>GitHub Pages</td>
+          <td>Admin (Phase 2)</td>
         </tr>
         <tr>
-          <td><code>/keep-house-clean/code/assets/*</code></td>
-          <td>assets/</td>
+          <td><code>…/keep-house-clean/assets/*</code></td>
+          <td>GitHub Pages</td>
           <td>CSS, JS tĩnh</td>
         </tr>
         <tr>
-          <td><code>API_URL</code> (external)</td>
-          <td>Google Apps Script</td>
-          <td>POST/GET JSON — CORS via text/plain</td>
+          <td><code>https://apinhatkyvumua.taho.cat/kho-thoc/</code></td>
+          <td>VPS Nginx → Docker</td>
+          <td>API production — trailing <code>/</code> bắt buộc</td>
         </tr>
         <tr>
-          <td colspan="3" style="color:var(--text-dim); font-style:italic; text-align:center;">
-            — Nginx routing VPS (kho-thoc-api) — chưa triển khai, xem docs/architech.md —
-          </td>
+          <td><code>http://localhost:3001/</code></td>
+          <td>Mac dev</td>
+          <td>API local (<code>BASE_PATH</code> trống)</td>
+        </tr>
+        <tr>
+          <td><code>/opt/nhatkyvumua/kho-thoc-api</code></td>
+          <td>VPS</td>
+          <td>Docker chạy thật (rsync từ <code>repo/</code>)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- DOCS STRUCTURE -->
+  <section id="docs-structure">
+    <div class="section-title">Tài liệu docs/</div>
+    <p class="section-desc">Một README tổng — không có summary.md lồng nhau.</p>
+
+    <table>
+      <thead>
+        <tr><th>File / thư mục</th><th>Vai trò</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>installation.md</code></td>
+          <td>Cài đặt lần đầu — macOS local + VPS bootstrap</td>
+        </tr>
+        <tr>
+          <td><code>operations.md</code></td>
+          <td>Deploy tính năng mới, SSL, xử lý sự cố, backup</td>
+        </tr>
+        <tr>
+          <td><code>specs/brd.md</code></td>
+          <td>BRD tổng + index → passcode, admin</td>
+        </tr>
+        <tr>
+          <td><code>specs/passcode.md</code> · <code>admin.md</code></td>
+          <td>Đặc tả từng tính năng Phase 2</td>
+        </tr>
+        <tr>
+          <td><code>tech/architecture/</code></td>
+          <td>Infrastructure, frontend, file HTML này</td>
+        </tr>
+        <tr>
+          <td><code>tech/migration-vps.md</code></td>
+          <td>Lộ trình migrate GAS → VPS</td>
+        </tr>
+        <tr>
+          <td><code>design/style.md</code></td>
+          <td>Design system</td>
         </tr>
       </tbody>
     </table>
@@ -662,82 +750,87 @@ assets/js/shared/site-nav.js  →  NAV_ITEMS[]</pre>
     </div>
 
     <div class="card">
-      <div class="card-title">3. Phân tách docs/ vs code/</div>
+      <div class="card-title">3. Phân tách runtime vs tài liệu</div>
       <table>
         <thead>
           <tr><th>Thư mục</th><th>Vai trò</th></tr>
         </thead>
         <tbody>
           <tr>
-            <td><code>code/</code></td>
-            <td>Runtime frontend — HTML, CSS, JS deploy lên GitHub Pages</td>
+            <td>HTML + <code>assets/</code> (repo root)</td>
+            <td>Frontend deploy GitHub Pages</td>
+          </tr>
+          <tr>
+            <td><code>kho-thoc-api/</code></td>
+            <td>Backend — Docker trên VPS</td>
+          </tr>
+          <tr>
+            <td><code>deploy/vps/nginx/</code></td>
+            <td>Config Nginx — không commit secrets</td>
           </tr>
           <tr>
             <td><code>docs/</code></td>
-            <td>Tài liệu nghiệp vụ, kiến trúc, design reference — không deploy</td>
+            <td>Tài liệu — không deploy</td>
           </tr>
           <tr>
-            <td><code>docs/datasource/</code></td>
-            <td>Tham chiếu API Apps Script &amp; snapshot phiên làm việc</td>
-          </tr>
-          <tr>
-            <td><code>docs/infa/</code></td>
-            <td>Sơ đồ &amp; kiến trúc thư mục (tài liệu này)</td>
+            <td><code>ideas/</code></td>
+            <td>Prototype — không dùng production</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="placeholder">Quy ước API / comment convention backend — chưa có, sẽ bổ sung khi có kho-thoc-api</div>
+    <div class="card">
+      <div class="card-title">4. Deploy tính năng mới</div>
+      <pre><span class="cmt"># Mac:</span>
+git push origin main
+
+<span class="cmt"># VPS (sau mỗi đổi API):</span>
+git -C /opt/nhatkyvumua/repo pull
+rsync -a repo/kho-thoc-api/ kho-thoc-api/ --exclude .env
+docker compose up -d --build --force-recreate
+
+<span class="cmt"># Chi tiết:</span>
+docs/operations.md</pre>
+    </div>
   </section>
 
   <!-- ROADMAP -->
   <section id="roadmap">
     <div class="section-title">Lộ trình triển khai</div>
-    <p class="section-desc">Đã hoàn thành refactor frontend. Backend multi-tenant đang thảo luận.</p>
+    <p class="section-desc">Phase 1 (API + VPS) đã chạy. Phase 2 passcode + admin đang triển khai.</p>
 
     <div class="diagram-wrap">
       <pre class="mermaid">
 flowchart LR
-  A["✅ Refactor code/ + docs/"] --> B["✅ Tách CSS/JS assets"]
-  B --> C["✅ Nav đồng bộ site-nav.js"]
-  C --> D["🔄 Redemptions API"]
-  D --> E["⏳ kho-thoc-api skeleton"]
-  E --> F["⏳ PostgreSQL schema"]
-  F --> G["⏳ Passcode auth UI"]
-  G --> H["⏳ Deploy VPS"]
+  A["✅ Frontend assets"] --> B["✅ kho-thoc-api"]
+  B --> C["✅ PostgreSQL kho_thoc"]
+  C --> D["✅ VPS HTTPS"]
+  D --> E["🔄 Passcode redeem"]
+  E --> F["🔄 Admin UI"]
+  F --> G["⏳ Multi-tenant Phase 3"]
       </pre>
     </div>
 
     <table>
       <thead>
-        <tr><th>Bước</th><th>Deliverable</th><th>Trạng thái</th></tr>
+        <tr><th>Phase</th><th>Deliverable</th><th>Trạng thái</th></tr>
       </thead>
       <tbody>
         <tr>
           <td>1</td>
-          <td>Tách <code>code/</code> + <code>docs/</code></td>
+          <td>kho-thoc-api + Postgres + deploy VPS + cutover API_URL</td>
           <td>✅ Hoàn thành</td>
         </tr>
         <tr>
           <td>2</td>
-          <td>Assets CSS/JS có cấu trúc shared/pages/data</td>
-          <td>✅ Hoàn thành</td>
+          <td>Passcode đổi quà + <code>admin/</code> + JWT</td>
+          <td>🔄 Đang triển khai</td>
         </tr>
         <tr>
           <td>3</td>
-          <td>Nav &amp; footer đồng bộ 5 trang</td>
-          <td>✅ Hoàn thành</td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td>Redemptions sheet + API case <code>redeem</code></td>
-          <td>🔄 Đang làm</td>
-        </tr>
-        <tr>
-          <td>5–8</td>
-          <td>kho-thoc-api, PostgreSQL, passcode, VPS deploy</td>
-          <td>⏳ Chưa bắt đầu — xem docs/architech.md</td>
+          <td>Multi-tenant <code>family_id</code> (~100 gia đình)</td>
+          <td>⏳ Chưa bắt đầu</td>
         </tr>
       </tbody>
     </table>
@@ -759,9 +852,14 @@ flowchart LR
           <td>Có trên index.html, chưa có trong nhat-ky.html</td>
         </tr>
         <tr>
-          <td>Multi-tenant passcode</td>
-          <td>Thảo luận</td>
-          <td>docs/architech.md — ~100 gia đình</td>
+          <td>Multi-tenant (Phase 3)</td>
+          <td>Chưa làm</td>
+          <td>docs/specs/passcode.md §10 · docs/tech/migration-vps.md</td>
+        </tr>
+        <tr>
+          <td>Cron backup <code>pg_dump</code></td>
+          <td>Chưa làm</td>
+          <td>docs/operations.md</td>
         </tr>
         <tr>
           <td>Build tool (Vite/bundler)</td>
@@ -788,19 +886,19 @@ flowchart LR
 
     <div class="summary-box">
       <ul>
-        <li>Frontend tĩnh trong <code>code/</code> — 5 trang HTML + <code>assets/</code> có tổ chức</li>
-        <li>Tài liệu trong <code>docs/</code> — nghiệp vụ, kiến trúc, style, datasource</li>
-        <li>Nav/footer: một nguồn <code>site-nav.js</code> — đồng bộ toàn site</li>
-        <li>Dữ liệu tĩnh: <code>tasks.js</code>, <code>rewards.js</code>, <code>config.js</code></li>
-        <li>Backend hiện tại: Google Apps Script + Sheets — migrate VPS sau</li>
-        <li>Deploy: GitHub Pages — không cần build step</li>
+        <li>Frontend: HTML ở repo root + <code>assets/</code> + <code>admin/</code> — GitHub Pages, không build</li>
+        <li>Backend: <code>kho-thoc-api</code> Docker trên VPS → PostgreSQL <code>kho_thoc</code></li>
+        <li>API: <code>https://apinhatkyvumua.taho.cat/kho-thoc/</code> — rollback GAS qua <code>config.js</code></li>
+        <li>Tài liệu: <code>installation.md</code> + <code>operations.md</code> + <code>specs/</code> + <code>tech/</code></li>
+        <li>Nav/footer: <code>site-nav.js</code> — một nguồn duy nhất</li>
+        <li>Deploy API: <code>git pull</code> + <code>rsync</code> + <code>docker compose up -d --build</code></li>
       </ul>
     </div>
   </section>
 
   <footer>
-    Kho Thóc Gia Đình — Project Directory Architecture v1.0.0 &nbsp;·&nbsp; Updated 2026-06-10 &nbsp;·&nbsp;
-    Source: code/ · docs/TAI-LIEU-NGHIEP-VU.md · docs/architech.md · docs/datasource/
+    Kho Thóc Gia Đình — Project Directory Architecture v2.0.0 &nbsp;·&nbsp; Updated 2026-06-10 &nbsp;·&nbsp;
+    Source: repo root · kho-thoc-api/ · docs/
   </footer>
 
 </main>

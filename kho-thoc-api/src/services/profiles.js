@@ -52,6 +52,20 @@ async function writeProfile(params) {
   return { result: 'success', action: 'inserted', passcode };
 }
 
+async function deleteProfile(params) {
+  const id = String(params.id || params.profileId || '').trim();
+  if (!id) throw Object.assign(new Error('Thiếu id profile'), { status: 400 });
+
+  const existing = await query('SELECT id, name FROM profiles WHERE id = $1', [id]);
+  if (!existing.rows.length) {
+    return { result: 'error', message: 'Không tìm thấy bé' };
+  }
+
+  await query('DELETE FROM profiles WHERE id = $1', [id]);
+
+  return { result: 'success', action: 'profile_deleted', name: existing.rows[0].name };
+}
+
 async function adjustBalance(profileId, grainDelta, expDelta) {
   if (!profileId) return;
 
@@ -67,6 +81,7 @@ async function adjustBalance(profileId, grainDelta, expDelta) {
 module.exports = {
   readProfiles,
   writeProfile,
+  deleteProfile,
   adjustBalance,
   normalizeProfile,
 };
