@@ -179,9 +179,15 @@ BASE_PATH=/kho-thoc
 DATABASE_URL=postgresql://kho_thoc:mat_khau_vps_manh@eedt-postgres:5432/kho_thoc
 CORS_ORIGINS=https://batagic.github.io
 EEDT_DOCKER_NETWORK=docker_eedt-net
+
+# Phase 2 — passcode + admin (bắt buộc)
+JWT_SECRET=<chuoi-ngau-nhien-dai-it-nhat-32-ky-tu>
+JWT_EXPIRES_IN=7d
+BCRYPT_ROUNDS=10
 ```
 
-> `CORS_ORIGINS` **bắt buộc** có `https://batagic.github.io` — không có trailing slash.
+> `CORS_ORIGINS` **bắt buộc** có `https://batagic.github.io` — không có trailing slash.  
+> `JWT_SECRET` sinh trên VPS: `openssl rand -base64 48` — **không** commit vào git.
 
 ---
 
@@ -195,11 +201,25 @@ docker compose ps
 docker stats --no-stream
 ```
 
+Migration Phase 2 áp dụng `002_redeem_auth.sql` (admin + passcode theo bé) và `003_profile_passcodes.sql` (nâng cấp nếu đã chạy 002 cũ).
+
+Tạo tài khoản admin (**một lần**):
+
+```bash
+docker compose exec kho-thoc-api npm run seed:admin -- \
+  --username admin --password 'mat-khau-admin-manh'
+```
+
 Test **trên VPS** (chưa cần HTTPS):
 
 ```bash
 curl -s 'http://127.0.0.1:3001/kho-thoc/?type=ping'
 # → {"result":"ok","ts":...}
+
+curl -s -X POST 'http://127.0.0.1:3001/kho-thoc/admin/login' \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"mat-khau-admin-manh"}'
+# → {"result":"success","token":"...","expiresIn":...}
 ```
 
 ---
@@ -369,17 +389,52 @@ git push
 
 ---
 
-## Bước 11 — Kiểm tra end-to-end
+## Bước 11 — Push frontend (GitHub Pages)
+
+Frontend gồm `nhat-ky.html`, trang admin (`admin/`), `config.js`. Push toàn bộ lên `main`:
+
+```bash
+git add assets/js/data/config.js admin/ assets/js/pages/admin-*.js assets/css/pages/admin.css
+git commit -m "Deploy Phase 2: passcode + admin"
+git push
+```
+
+Đợi GitHub Pages ~1–2 phút.
+
+| Trang | URL |
+|-------|-----|
+| Nhật ký | `https://batagic.github.io/keep-house-clean/nhat-ky.html` |
+| Admin login | `https://batagic.github.io/keep-house-clean/admin/login.html` |
+
+`config.js` phải có:
+
+```javascript
+const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc/';
+const ADMIN_API_URL = API_URL.replace(/\/?$/, '/') + 'admin/';
+```
+
+---
+
+## Bước 12 — Kiểm tra end-to-end
 
 1. Mở **ẩn danh**: `https://batagic.github.io/keep-house-clean/nhat-ky.html`
 2. DevTools → **Network** → filter `kho-thoc` hoặc domain API
 3. Xác nhận request tới `https://apinhatkyvumua.taho.cat/kho-thoc/?type=profiles`
-4. Thử thêm bé / ghi nhật ký → kiểm tra Postgres:
+4. **Đăng ký bé mới** → modal hiện mã đổi quà (plain text một lần)
+5. **Đổi quà** → nhập mã → thành công
+6. **Admin**: `.../admin/login.html` → đăng nhập → danh sách bé + Sinh mã mới / Thu hồi
+7. Kiểm tra Postgres:
 
 ```bash
 docker exec -e PGPASSWORD='...' eedt-postgres \
   psql -U kho_thoc -d kho_thoc -c 'SELECT id, name, total_grain FROM profiles;'
+
+docker exec -e PGPASSWORD='...' eedt-postgres \
+  psql -U kho_thoc -d kho_thoc \
+  -c 'SELECT profile_id, created_at, revoked_at IS NULL AS active FROM redeem_passcodes ORDER BY created_at DESC LIMIT 10;'
 ```
+
+**Bé import từ CSV (trước Phase 2):** chưa có mã — vào admin → **Sinh mã mới** từng bé (hoặc bố/mẹ đăng ký bé mới sẽ tự có mã).
 
 ---
 
@@ -407,14 +462,25 @@ docker exec -e PGPASSWORD='...' eedt-postgres \
 ## Bảo trì
 
 ```bash
-# Cập nhật code API
+# Cập nhật code API (Phase 2+)
 cd /opt/nhatkyvumua && git -C repo pull
 rsync -a repo/kho-thoc-api/ kho-thoc-api/ --exclude .env --exclude data
-cd kho-thoc-api && docker compose up -d --build
+cd kho-thoc-api
+docker compose up -d --build
+docker compose exec kho-thoc-api node scripts/migrate.js
 
 # Backup DB hàng ngày
 docker exec eedt-postgres pg_dump -U kho_thoc kho_thoc > /opt/nhatkyvumua/backup_$(date +%F).sql
 ```
+
+### Nâng cấp Phase 1 → Phase 2 (VPS đã chạy)
+
+1. Backup DB trước: `pg_dump` (lệnh trên).
+2. Pull/rsync code mới + thêm `JWT_SECRET`, `JWT_EXPIRES_IN`, `BCRYPT_ROUNDS` vào `.env`.
+3. `docker compose up -d --build` + `migrate.js` (chạy `002`, `003`).
+4. `npm run seed:admin` (nếu chưa có admin).
+5. Push frontend GitHub Pages (admin + modal passcode).
+6. Admin **Sinh mã mới** cho các bé cũ (import CSV) nếu cần đổi quà ngay.
 
 ---
 
@@ -426,5 +492,9 @@ docker exec eedt-postgres pg_dump -U kho_thoc kho_thoc > /opt/nhatkyvumua/backup
 - [ ] `docker compose up` + migrate
 - [ ] Import CSV (nếu cần)
 - [ ] Nginx + SSL → `curl https://api.../kho-thoc/?type=ping`
-- [ ] `config.js` → push GitHub Pages
-- [ ] Test `nhat-ky.html` ẩn danh — Network **200** (URL `.../kho-thoc/?type=...`, không 301)
+- [ ] `.env` có `JWT_SECRET` (Phase 2)
+- [ ] `seed:admin` đã chạy
+- [ ] `config.js` → push GitHub Pages (kèm `admin/`)
+- [ ] Test `nhat-ky.html` — đăng ký bé → modal mã; đổi quà OK
+- [ ] Test `admin/login.html` — đăng nhập, danh sách bé
+- [ ] Network **200** (URL `.../kho-thoc/?type=...`, không 301)

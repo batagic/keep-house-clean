@@ -101,6 +101,22 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="passcodeModalOverlay">
+    <div class="modal-box">
+      <h3 class="modal-title">🔑 Mã đổi quà của bé</h3>
+      <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;">
+        Ghi lại mã cho bé <strong id="newProfilePasscodeName"></strong>. Dùng khi bé đổi quà — bố/mẹ đọc mã cho bé nhập.
+        Nếu quên mã, liên hệ admin để được cấp lại.
+      </p>
+      <div class="passcode-reveal-box">
+        <div class="passcode-reveal-code" id="newProfilePasscodeValue"></div>
+      </div>
+      <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top: 1.5rem;">
+        <button class="btn-main" onclick="closePasscodeModal()">Đã ghi nhớ</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="redeemModalOverlay">
     <div class="modal-box">
       <h3 class="modal-title">🎁 Xác nhận đổi quà</h3>

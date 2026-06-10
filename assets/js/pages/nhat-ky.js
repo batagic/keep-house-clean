@@ -693,20 +693,44 @@
     function openModal()  { document.getElementById('modalOverlay').classList.add('open'); }
     function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 
-    function confirmAddProfile() {
+    async function confirmAddProfile() {
       const name   = document.getElementById('pName')?.value.trim();
       const avatar = document.getElementById('pAvatar')?.value.trim() || '👶';
       if (!name) { alert('Vui lòng nhập tên của bé!'); return; }
+
       const newProfile = { id:'p_' + Date.now(), name, avatar, total_grain:0, total_exp:0 };
+      const btn = document.querySelector('#modalOverlay .btn-main');
+      if (btn) { btn.disabled = true; btn.textContent = 'Đang tạo…'; }
+
+      const result = await saveData({ type:'profile', ...newProfile });
+
+      if (btn) { btn.disabled = false; btn.textContent = 'Tạo Mới'; }
+      if (!result || result.result !== 'success') return;
+
       profiles.push(newProfile);
       profileBalances[newProfile.id] = { totalGrain: 0, totalExp: 0 };
       sheetsLogs[newProfile.id] = [];
-      saveData({ type:'profile', ...newProfile });
       document.getElementById('pName').value = '';
       closeModal();
       renderProfiles();
       _writeProfilesCache();
-      showToast(`👶 Đăng ký thành công cho bé ${name}!`);
+      selectProfile(newProfile.id, true, false);
+
+      if (result.passcode) {
+        showNewProfilePasscode(name, result.passcode);
+      } else {
+        showToast(`👶 Đăng ký thành công cho bé ${name}!`);
+      }
+    }
+
+    function showNewProfilePasscode(name, passcode) {
+      document.getElementById('newProfilePasscodeName').textContent = name;
+      document.getElementById('newProfilePasscodeValue').textContent = passcode;
+      document.getElementById('passcodeModalOverlay').classList.add('open');
+    }
+
+    function closePasscodeModal() {
+      document.getElementById('passcodeModalOverlay').classList.remove('open');
     }
 
     function _nowString() {

@@ -101,12 +101,17 @@ Phải thấy: `✅ kho_thoc bị chặn truy cập DB eedt`.
 ## 4. File `.env`
 
 ```bash
-cat > /opt/nhatkyvumua/kho-thoc-api/.env << 'EOF'
+JWT_SECRET=$(openssl rand -base64 48)
+
+cat > /opt/nhatkyvumua/kho-thoc-api/.env << EOF
 PORT=3001
 BASE_PATH=/kho-thoc
 DATABASE_URL=postgresql://kho_thoc:MAT_KHAU_DB@eedt-postgres:5432/kho_thoc
 CORS_ORIGINS=https://batagic.github.io
 EEDT_DOCKER_NETWORK=docker_eedt-net
+JWT_SECRET=${JWT_SECRET}
+JWT_EXPIRES_IN=7d
+BCRYPT_ROUNDS=10
 EOF
 
 # Sửa MAT_KHAU_DB thật:
@@ -124,10 +129,16 @@ cd /opt/nhatkyvumua/kho-thoc-api
 docker compose up -d --build
 docker compose exec kho-thoc-api node scripts/migrate.js
 
+docker compose exec kho-thoc-api npm run seed:admin -- \
+  --username admin --password 'MAT_KHAU_ADMIN'
+
 curl -s 'http://127.0.0.1:3001/kho-thoc/?type=ping'
+curl -s -X POST 'http://127.0.0.1:3001/kho-thoc/admin/login' \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"MAT_KHAU_ADMIN"}'
 ```
 
-Kỳ vọng: `{"result":"ok",...}`
+Kỳ vọng: ping `{"result":"ok",...}` · login có `token`
 
 ---
 
@@ -219,32 +230,30 @@ curl -s -H 'Origin: https://batagic.github.io' \
 
 ---
 
-## 9. Cutover GitHub Pages (trên Mac)
+## 9. Push GitHub Pages (trên Mac)
 
-Sửa `assets/js/data/config.js` — **trailing `/` bắt buộc**:
+`config.js` — **trailing `/` bắt buộc**:
 
 ```javascript
 const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc/';
-// const API_URL = 'http://localhost:3001';
 ```
 
 ```bash
-git add assets/js/data/config.js
-git commit -m "Cutover API to apinhatkyvumua.taho.cat"
+git add assets/js/data/config.js admin/ assets/js/pages/admin-*.js assets/css/pages/admin.css
+git commit -m "Deploy Phase 2: passcode + admin"
 git push
 ```
 
-Đợi 1–2 phút → mở ẩn danh:  
-`https://batagic.github.io/keep-house-clean/nhat-ky.html`
+Đợi 1–2 phút → kiểm tra:
 
-DevTools → Network → request phải là:
+| Trang | URL |
+|-------|-----|
+| Nhật ký | `https://batagic.github.io/keep-house-clean/nhat-ky.html` |
+| Admin | `https://batagic.github.io/keep-house-clean/admin/login.html` |
 
-```text
-https://apinhatkyvumua.taho.cat/kho-thoc/?type=profiles
-Status: 200
-```
+DevTools → Network → `.../kho-thoc/?type=profiles` status **200** (không **301**).
 
-(Không được là `/kho-thoc?type=...` với status **301**.)
+Test nhanh Phase 2: đăng ký bé mới → modal mã · đổi quà · admin login.
 
 ---
 
@@ -274,10 +283,12 @@ docker stats --no-stream
 # Log API
 docker logs -f kho-thoc-api
 
-# Cập nhật code
+# Cập nhật code + migration
 cd /opt/nhatkyvumua && git -C repo pull
 rsync -a repo/kho-thoc-api/ kho-thoc-api/ --exclude .env --exclude data
-cd kho-thoc-api && docker compose up -d --build
+cd kho-thoc-api
+docker compose up -d --build
+docker compose exec kho-thoc-api node scripts/migrate.js
 
 # Backup DB
 docker exec eedt-postgres pg_dump -U kho_thoc kho_thoc > /opt/nhatkyvumua/backup_$(date +%F).sql
