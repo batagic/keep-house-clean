@@ -1,12 +1,78 @@
 # Deploy VPS — config & scripts
 
-Tài liệu deploy đã gộp vào **[docs/operations.md](../../docs/operations.md)** và **[docs/installation.md](../../docs/installation.md)**.
+Tài liệu: [docs/operations.md](../../docs/operations.md) · [docs/installation.md](../../docs/installation.md)
 
-Thư mục này chỉ giữ **config và script**:
+## Bước 0 — SSH không mật khẩu (một lần trên Mac)
+
+```bash
+./deploy/vps/setup-ssh.sh
+```
+
+Script sẽ:
+
+1. Tạo key `~/.ssh/kho_thoc_vps` (ed25519)
+2. Lưu key vào macOS Keychain
+3. Thêm alias `kho-thoc-vps` vào `~/.ssh/config`
+4. `ssh-copy-id` lên VPS — **nhập mật khẩu root lần cuối**
+5. Kiểm tra `ssh kho-thoc-vps` không hỏi mật khẩu
+
+### Cấu hình thủ công (nếu không dùng script)
+
+```bash
+# 1. Tạo key
+ssh-keygen -t ed25519 -f ~/.ssh/kho_thoc_vps -C "kho-thoc-deploy" -N ""
+
+# 2. Thêm vào Keychain (macOS)
+ssh-add --apple-use-keychain ~/.ssh/kho_thoc_vps
+
+# 3. Copy key lên VPS (nhập mật khẩu một lần)
+ssh-copy-id -i ~/.ssh/kho_thoc_vps.pub root@64.176.85.165
+
+# 4. Thêm vào ~/.ssh/config:
+```
+
+```
+Host kho-thoc-vps
+  HostName 64.176.85.165
+  User root
+  IdentityFile ~/.ssh/kho_thoc_vps
+  IdentitiesOnly yes
+  AddKeysToAgent yes
+  UseKeychain yes
+```
+
+```bash
+# 5. Kiểm tra
+ssh -o BatchMode=yes kho-thoc-vps echo ok
+```
+
+---
+
+## Deploy một lệnh
+
+```bash
+# Chỉ API lên VPS
+./deploy/vps/deploy.sh
+
+# API + push GitHub Pages (frontend)
+./deploy/vps/deploy.sh --all
+```
+
+`deploy.sh` yêu cầu SSH key đã cấu hình (`setup-ssh.sh`). Không hỏi mật khẩu VPS.
 
 | File | Mục đích |
 |------|----------|
-| `nginx/apinhatkyvumua.taho.cat.conf` | Nginx HTTPS production |
-| `nginx/eedt-nginx-kho-thoc-snippet.conf` | Snippet tùy chọn |
-| `.env.production.example` | Mẫu env VPS |
-| `setup-vps.sh` | Script hỗ trợ |
+| **`setup-ssh.sh`** | Cấu hình SSH key — chạy **một lần** |
+| **`deploy.sh`** | Deploy một lệnh từ Mac |
+| `deploy-api.sh` | Bước trên VPS (gọi tự động) |
+| `deploy-from-mac.sh` | Alias → `deploy.sh` |
+| `setup-vps.sh` | Cài thư mục lần đầu **trên VPS** |
+| `nginx/` | Config Nginx |
+| `.env.production.example` | Mẫu `.env` VPS |
+
+### Tuỳ chọn
+
+```bash
+VPS_HOST=kho-thoc-vps ./deploy/vps/deploy.sh
+VERIFY_PATTERN=delete_profile ./deploy/vps/deploy.sh
+```
