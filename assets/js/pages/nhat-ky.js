@@ -335,7 +335,10 @@
         <div class="profile-header">
           <span class="profile-avatar">${p.avatar || '👶'}</span>
           <div class="profile-info">
-            <h3 class="profile-name">${p.name}</h3>
+            <div class="profile-name-row">
+              <h3 class="profile-name">${p.name}</h3>
+              ${isActive ? `<button type="button" class="profile-penalty-btn" onclick="event.stopPropagation();openPenaltyModal('${p.id}')" aria-label="Phạt Gạo bé ${p.name}" title="Phạt Gạo">⛔</button>` : ''}
+            </div>
             <div class="profile-level-badge">${rank.emoji} ${rank.name}</div>
           </div>
         </div>
@@ -450,13 +453,16 @@
       for (let i = 0; i < visible.length; i++) {
         const lg         = visible[i];
         const isRedeem   = lg.tasks === 'REDEEM';
+        const isPenalty  = lg.tasks === 'PENALTY';
         const grainColor = lg.grain >= 0 ? 'var(--green-mid)' : 'var(--red)';
         const grainText  = lg.grain >= 0 ? `+${lg.grain}` : `${lg.grain}`;
         const content    = isRedeem
           ? (lg.note || '🎁 Đổi quà')
-          : (lg.tasks
-            ? lg.tasks.split(',').map(id => TASK_MAP[id.trim()]?.name || id).join(', ')
-            : (lg.note || ''));
+          : isPenalty
+            ? (lg.note || '⛔ Phạt Gạo')
+            : (lg.tasks
+              ? lg.tasks.split(',').map(id => TASK_MAP[id.trim()]?.name || id).join(', ')
+              : (lg.note || ''));
         parts.push(`
           <div class="history-item">
             <div>
@@ -588,9 +594,31 @@
       renderProfiles(); renderRewards(); renderHistory(); updateCounterAndTotals();
       _writeProfilesCache();
       _writeLogsCache(pid);
-      showToast(`🌾 Đã ghi +${grain} Gạo cho ${currentProfile.name}!`);
 
-      saveData({ type:'log', profileId: pid, profileName: currentProfile.name, date: dateString, grain, exp, tasks: tasksDone.join(','), bonus: isBonusActive, note: noteText });
+      const result = await saveData({
+        type: 'log',
+        profileId: pid,
+        profileName: currentProfile.name,
+        date: dateString,
+        grain,
+        exp,
+        tasks: tasksDone.join(','),
+        bonus: isBonusActive,
+        note: noteText
+      });
+
+      if (!result || result.result !== 'success') {
+        sheetsLogs[pid] = sheetsLogs[pid].filter(l => l.date !== dateString);
+        _invalidateSortCache();
+        _bumpBalance(pid, -grain, -exp);
+        renderProfiles(); renderRewards(); renderHistory(); updateCounterAndTotals();
+        _writeProfilesCache();
+        _writeLogsCache(pid);
+        showToast('⚠️ Ghi nhật ký thất bại — đã hoàn tác số Gạo hiển thị');
+        return;
+      }
+
+      showToast(`🌾 Đã ghi +${grain} Gạo cho ${currentProfile.name}!`);
     }
 
     function _getRedeemSelection() {
@@ -611,6 +639,103 @@
       if (totalGrain < totalCost) { showToast('Không đủ Gạo để đổi quà!'); return null; }
 
       return { rewardIds, rewardNames, totalCost };
+    }
+
+    function openPenaltyModal(pid) {
+      const p = profiles.find(x => x.id === pid);
+      if (!p) { showToast('Vui lòng chọn bé trước!'); return; }
+
+      document.getElementById('penaltySummary').innerHTML =
+        `Trừ Gạo cho bé <strong>${p.name}</strong><br/>` +
+        `🌾 Hiện có: <strong>${getState(pid).totalGrain.toLocaleString('vi-VN')}</strong> Gạo`;
+
+      document.getElementById('penaltyGrain').value = '';
+      document.getElementById('penaltyNote').value = '';
+      document.getElementById('penaltyModalOverlay').classList.add('open');
+      document.getElementById('penaltyGrain').focus();
+      window._pendingPenaltyPid = pid;
+    }
+
+    function closePenaltyModal() {
+      document.getElementById('penaltyModalOverlay').classList.remove('open');
+      window._pendingPenaltyPid = null;
+    }
+
+    async function confirmPenalty() {
+      const pid = window._pendingPenaltyPid;
+      if (!pid) return;
+
+      const p = profiles.find(x => x.id === pid);
+      if (!p) return;
+
+      const amount = Math.floor(Number(document.getElementById('penaltyGrain').value));
+      const note   = document.getElementById('penaltyNote').value.trim();
+
+      if (!amount || amount < 1) {
+        showToast('Vui lòng nhập số Gạo phạt (ít nhất 1)!');
+        return;
+      }
+      if (!note) {
+        showToast('Vui lòng ghi lý do phạt!');
+        return;
+      }
+
+      const btn = document.getElementById('penaltyConfirmBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang xử lý…';
+
+      const dateString = _nowString();
+      const grainDelta = -amount;
+
+      try {
+        const result = await saveData({
+          type: 'log',
+          profileId: pid,
+          profileName: p.name,
+          date: dateString,
+          grain: grainDelta,
+          exp: 0,
+          tasks: 'PENALTY',
+          bonus: false,
+          note,
+        });
+
+        if (!result || result.result !== 'success') {
+          showToast('⚠️ Phạt thất bại — thử lại!');
+          return;
+        }
+
+        const logEntry = {
+          profileId: pid,
+          date: dateString,
+          grain: grainDelta,
+          exp: 0,
+          tasks: 'PENALTY',
+          bonus: false,
+          note,
+        };
+
+        if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
+        sheetsLogs[pid].unshift(logEntry);
+        _invalidateSortCache();
+
+        _bumpBalance(pid, grainDelta, 0);
+        renderProfiles();
+        if (currentProfile && currentProfile.id === pid) {
+          renderRewards();
+          renderHistory();
+        }
+        _writeProfilesCache();
+        _writeLogsCache(pid);
+
+        closePenaltyModal();
+        showToast(`⛔ Đã phạt -${amount.toLocaleString('vi-VN')} 🌾 (${p.name})`);
+      } catch {
+        showToast('⚠️ Không kết nối được Server!');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Xác nhận phạt';
+      }
     }
 
     function openRedeemModal() {

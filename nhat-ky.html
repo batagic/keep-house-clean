@@ -117,6 +117,25 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="penaltyModalOverlay">
+    <div class="modal-box">
+      <h3 class="modal-title">⛔ Phạt Gạo</h3>
+      <p id="penaltySummary" style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;"></p>
+      <div class="form-group">
+        <label for="penaltyGrain">Số Gạo bị trừ</label>
+        <input type="number" id="penaltyGrain" class="form-control" min="1" step="1" inputmode="numeric" placeholder="VD: 20"/>
+      </div>
+      <div class="form-group">
+        <label for="penaltyNote">Lý do phạt</label>
+        <input type="text" id="penaltyNote" class="form-control" placeholder="VD: Không dọn phòng, nói dối…"/>
+      </div>
+      <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top: 1.5rem;">
+        <button class="btn-secondary" onclick="closePenaltyModal()">Hủy</button>
+        <button class="btn-main btn-penalty" id="penaltyConfirmBtn" onclick="confirmPenalty()">Xác nhận phạt</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="redeemModalOverlay">
     <div class="modal-box">
       <h3 class="modal-title">🎁 Xác nhận đổi quà</h3>

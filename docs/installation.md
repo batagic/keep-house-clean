@@ -134,7 +134,7 @@ Nếu cache Mac: `sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponde
 ```bash
 mkdir -p /opt/nhatkyvumua && cd /opt/nhatkyvumua
 git clone https://github.com/batagic/keep-house-clean.git repo
-rsync -a repo/kho-thoc-api/ ./kho-thoc-api/ --exclude node_modules --exclude .env
+rsync -a repo/kho-thoc-api/ ./kho-thoc-api/ --exclude node_modules --exclude .env --exclude data
 mkdir -p kho-thoc-api/data && chmod +x kho-thoc-api/scripts/*.sh
 ```
 
@@ -147,7 +147,7 @@ rsync -avz --exclude node_modules --exclude .env \
 
 # Trên VPS:
 cd /opt/nhatkyvumua
-rsync -a repo/kho-thoc-api/ ./kho-thoc-api/ --exclude node_modules --exclude .env
+rsync -a repo/kho-thoc-api/ ./kho-thoc-api/ --exclude node_modules --exclude .env --exclude data
 mkdir -p kho-thoc-api/data && chmod +x kho-thoc-api/scripts/*.sh
 ```
 
