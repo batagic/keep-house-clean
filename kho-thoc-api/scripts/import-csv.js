@@ -17,9 +17,27 @@ function parseArgs(argv) {
   for (let i = 2; i < argv.length; i++) {
     if (argv[i] === '--profiles') args.profiles = argv[++i];
     else if (argv[i] === '--logs') args.logs = argv[++i];
+    else if (argv[i] === '--reset') args.reset = true;
     else if (argv[i] === '--help') args.help = true;
   }
   return args;
+}
+
+/** Tính lại total_grain/total_exp từ TOÀN BỘ logs trong DB (nguồn sự thật). */
+async function reconcileBalancesFromLogs(client) {
+  await client.query(`
+    UPDATE profiles p
+    SET total_grain = COALESCE(t.grain, 0),
+        total_exp   = COALESCE(t.exp, 0)
+    FROM (
+      SELECT profile_id,
+             SUM(grain)::int AS grain,
+             SUM(exp)::int AS exp
+      FROM logs
+      GROUP BY profile_id
+    ) t
+    WHERE p.id = t.profile_id
+  `);
 }
 
 /** CSV đơn giản — đủ cho export Google Sheets */
@@ -87,9 +105,7 @@ async function importProfiles(filePath) {
        VALUES ($1, $2, $3, $4, $5)
        ON CONFLICT (id) DO UPDATE SET
          name = EXCLUDED.name,
-         avatar = EXCLUDED.avatar,
-         total_grain = EXCLUDED.total_grain,
-         total_exp = EXCLUDED.total_exp`,
+         avatar = EXCLUDED.avatar`,
       [id, String(o.name || ''), String(o.avatar || '👶'), totalGrain, totalExp]
     );
     count++;
@@ -98,12 +114,15 @@ async function importProfiles(filePath) {
   return count;
 }
 
-async function importLogs(filePath) {
+async function importLogs(filePath, reset = false) {
   const { headers, rows } = parseCsv(fs.readFileSync(filePath, 'utf8'));
   let count = 0;
 
   await withTransaction(async (client) => {
-    await client.query('TRUNCATE logs RESTART IDENTITY');
+    if (reset) {
+      console.warn('⚠️  --reset: xóa toàn bộ logs trước khi import (chỉ dùng lần đầu / migrate)');
+      await client.query('TRUNCATE logs RESTART IDENTITY');
+    }
 
     for (const row of rows) {
       const o = rowToObject(headers, row);
@@ -111,37 +130,42 @@ async function importLogs(filePath) {
       const date = String(o.date || '').trim();
       if (!profileId || !date) continue;
 
-      await client.query(
-        `INSERT INTO logs (profile_id, profile_name, date, grain, exp, tasks, bonus, note)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-         ON CONFLICT (profile_id, date) DO NOTHING`,
-        [
-          profileId,
-          String(o.name || o.profileName || ''),
-          date,
-          Number(o.grain) || 0,
-          Number(o.exp) || 0,
-          String(o.tasks || ''),
-          parseBool(o.bonus),
-          String(o.note || ''),
-        ]
-      );
+      const params = [
+        profileId,
+        String(o.name || o.profileName || ''),
+        date,
+        Number(o.grain) || 0,
+        Number(o.exp) || 0,
+        String(o.tasks || ''),
+        parseBool(o.bonus),
+        String(o.note || ''),
+      ];
+
+      if (reset) {
+        await client.query(
+          `INSERT INTO logs (profile_id, profile_name, date, grain, exp, tasks, bonus, note)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+           ON CONFLICT (profile_id, date) DO NOTHING`,
+          params
+        );
+      } else {
+        await client.query(
+          `INSERT INTO logs (profile_id, profile_name, date, grain, exp, tasks, bonus, note)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+           ON CONFLICT (profile_id, date) DO UPDATE SET
+             profile_name = EXCLUDED.profile_name,
+             grain = EXCLUDED.grain,
+             exp = EXCLUDED.exp,
+             tasks = EXCLUDED.tasks,
+             bonus = EXCLUDED.bonus,
+             note = EXCLUDED.note`,
+          params
+        );
+      }
       count++;
     }
 
-    await client.query(`
-      UPDATE profiles p
-      SET total_grain = COALESCE(t.grain, 0),
-          total_exp   = COALESCE(t.exp, 0)
-      FROM (
-        SELECT profile_id,
-               SUM(grain)::int AS grain,
-               SUM(exp)::int AS exp
-        FROM logs
-        GROUP BY profile_id
-      ) t
-      WHERE p.id = t.profile_id
-    `);
+    await reconcileBalancesFromLogs(client);
   });
 
   return count;
@@ -153,6 +177,10 @@ async function main() {
   if (args.help || !args.profiles || !args.logs) {
     console.log(`Usage:
   npm run import:csv -- --profiles ./profiles.csv --logs ./logs.csv
+  npm run import:csv -- --profiles ./profiles.csv --logs ./logs.csv --reset
+
+Mặc định: merge logs (không xóa dữ liệu live), tính lại số dư từ DB.
+--reset: xóa toàn bộ logs rồi import — CHỈ dùng migrate lần đầu từ Sheets.
 
 Export từ Google Sheets:
   File → Download → Comma Separated Values (.csv)
@@ -166,9 +194,9 @@ Export từ Google Sheets:
   const profileCount = await importProfiles(profilesPath);
   console.log(`profiles: ${profileCount} rows from ${profilesPath}`);
 
-  const logCount = await importLogs(logsPath);
+  const logCount = await importLogs(logsPath, !!args.reset);
   console.log(`logs: ${logCount} rows from ${logsPath}`);
-  console.log('import done — balances backfilled from logs');
+  console.log('import done — balances reconciled from all logs in DB');
 
   await pool.end();
 }

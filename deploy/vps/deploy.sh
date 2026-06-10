@@ -143,3 +143,4 @@ ok "Deploy xong!"
 printf '  API:      %s\n' "${API_PUBLIC_URL}"
 printf '  Frontend: https://batagic.github.io/keep-house-clean/nhat-ky.html\n'
 [[ "$DO_GIT_PUSH" -eq 0 ]] && warn "Chưa push GitHub Pages — chạy lại với --all nếu đổi frontend"
+warn "Không chạy import-csv sau deploy — dữ liệu Gạo nằm trong Postgres, không trong repo"
