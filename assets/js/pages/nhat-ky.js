@@ -331,13 +331,15 @@
 
         parts.push(`
       <div class="profile-card${isActive ? ' active' : ''}" data-pid="${p.id}" onclick="selectProfile('${p.id}',true)">
-        <button type="button" class="profile-delete-btn" onclick="event.stopPropagation();deleteProfile('${p.id}')" aria-label="Xóa bé ${p.name}" title="Xóa bé">🗑️</button>
+        <div class="profile-actions">
+          ${isActive ? `<button type="button" class="profile-action-btn profile-penalty-btn" onclick="event.stopPropagation();openPenaltyModal('${p.id}')" aria-label="Phạt Gạo bé ${p.name}" title="Phạt Gạo">⛈️</button>` : ''}
+          <button type="button" class="profile-action-btn profile-delete-btn" onclick="event.stopPropagation();deleteProfile('${p.id}')" aria-label="Xóa bé ${p.name}" title="Xóa bé">🗑️</button>
+        </div>
         <div class="profile-header">
           <span class="profile-avatar">${p.avatar || '👶'}</span>
           <div class="profile-info">
             <div class="profile-name-row">
               <h3 class="profile-name">${p.name}</h3>
-              ${isActive ? `<button type="button" class="profile-penalty-btn" onclick="event.stopPropagation();openPenaltyModal('${p.id}')" aria-label="Phạt Gạo bé ${p.name}" title="Phạt Gạo">⛔</button>` : ''}
             </div>
             <div class="profile-level-badge">${rank.emoji} ${rank.name}</div>
           </div>

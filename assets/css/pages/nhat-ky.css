@@ -70,7 +70,7 @@
     }
     .profile-card {
       background: white; border: 2px solid #e2e8f0; border-radius: var(--radius);
-      padding: 1.25rem; cursor: pointer; transition: all 0.3s ease;
+      padding: 1.25rem; padding-right: 3.25rem; cursor: pointer; transition: all 0.3s ease;
       box-shadow: var(--shadow); position: relative;
     }
     .profile-card:hover { transform: translateY(-2px); border-color: var(--green-light); }
@@ -78,14 +78,18 @@
     .profile-card.active::after {
       content: '✓'; position: absolute; top: 10px; left: 15px; color: var(--green-mid); font-weight: bold; font-size: 1.2rem;
     }
-    .profile-delete-btn {
+    .profile-actions {
       position: absolute; top: 8px; right: 8px;
-      background: none; border: none; color: #cbd5e1; cursor: pointer;
-      font-size: 1rem; padding: 0.2rem 0.35rem; line-height: 1;
-      opacity: 0; transition: opacity 0.2s, color 0.2s; z-index: 1;
+      display: flex; align-items: center; gap: 0.3rem; z-index: 1;
     }
-    .profile-card:hover .profile-delete-btn,
-    .profile-card.active .profile-delete-btn { opacity: 1; }
+    .profile-action-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 1rem; padding: 0.2rem 0.35rem; line-height: 1;
+      opacity: 0; transition: opacity 0.2s, color 0.2s, transform 0.15s;
+    }
+    .profile-card:hover .profile-action-btn,
+    .profile-card.active .profile-action-btn { opacity: 1; }
+    .profile-delete-btn { color: #cbd5e1; }
     .profile-delete-btn:hover { color: var(--red); }
     .profile-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
     .profile-avatar { font-size: 2.2rem; }
@@ -97,23 +101,8 @@
       min-width: 0;
     }
     .profile-name { font-family: 'Baloo 2', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin: 0; line-height: 1.2; flex: 1; min-width: 0; }
-    .profile-penalty-btn {
-      flex-shrink: 0;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: var(--red);
-      cursor: pointer;
-      font-size: 0.95rem;
-      line-height: 1;
-      padding: 0.2rem 0.4rem;
-      border-radius: 0.45rem;
-      transition: background 0.2s, border-color 0.2s, transform 0.15s;
-    }
-    .profile-penalty-btn:hover {
-      background: #fee2e2;
-      border-color: var(--red);
-      transform: scale(1.05);
-    }
+    .profile-penalty-btn { color: var(--earth-light); }
+    .profile-penalty-btn:hover { color: var(--earth); transform: scale(1.08); }
     .profile-level-badge { display: inline-block; font-size: 0.75rem; background: var(--green-deep); color: white; padding: 0.1rem 0.5rem; border-radius: 1rem; font-weight: 700; margin-top: 0.2rem; }
     .profile-stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem; }
     .p-stat-box { padding: 0.5rem; border-radius: 0.6rem; font-size: 0.85rem; font-weight: 700; display: flex; flex-direction: column; }
