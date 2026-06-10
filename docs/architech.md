@@ -121,10 +121,9 @@ batagic.github.io/keep-house-clean     Nginx (host hoặc eedt-nginx mở rộng
 
 ### Database (trong eedt-postgres)
 
-```sql
--- Ví dụ — chạy khi triển khai
-CREATE USER kho_thoc WITH PASSWORD '...';
-CREATE DATABASE kho_thoc OWNER kho_thoc;
+```bash
+# Tạo user + DB trên eedt-postgres (superuser: eedt)
+docker exec -i eedt-postgres psql -U eedt < kho-thoc-api/scripts/init-db.sql
 ```
 
 | Database | Ứng dụng |
@@ -158,14 +157,25 @@ redemptions    — id, family_id, profile_id, reward_id, grain_spent, ...
 
 ## Việc còn lại (backlog)
 
-- [ ] Schema SQL + migration
-- [ ] Skeleton `kho-thoc-api` (routes map `doGet` / `doPost`)
-- [ ] `docker-compose` snippet kết nối `eedt-postgres`
+### Phase 1 (code — xong)
+
+- [x] Schema SQL + migration — `kho-thoc-api/migrations/`
+- [x] `kho-thoc-api` routes map `doGet` / `doPost`
+- [x] `docker-compose` API only (`eedt-postgres` sẵn có)
+- [x] Frontend `API_USE_PLAIN_TEXT` — `assets/js/data/config.js`
+
+### Phase 1 (VPS — chờ deploy)
+
 - [ ] Cấu hình Nginx route `:443` → `kho-thoc-api:3001`
-- [ ] Màn hình nhập passcode trên frontend
-- [ ] Sửa `API_URL` trong các trang HTML
+- [ ] Cutover `API_URL` sang VPS
 - [ ] Backup `kho_thoc` (pg_dump cron)
 - [ ] Kiểm tra `free -h` / `docker stats` trước khi deploy
+
+→ Xem [DEPLOY-PHASE1.md](./DEPLOY-PHASE1.md)
+
+### Phase 2+
+
+- [ ] Màn hình nhập passcode trên frontend
 
 ---
 

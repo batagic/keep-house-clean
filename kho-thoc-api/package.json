@@ -1,0 +1,21 @@
+{
+  "name": "kho-thoc-api",
+  "version": "1.0.0",
+  "description": "Kho Thóc Gia Đình — API thay Google Apps Script (Phase 1)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "migrate": "node scripts/migrate.js",
+    "import:csv": "node scripts/import-csv.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}

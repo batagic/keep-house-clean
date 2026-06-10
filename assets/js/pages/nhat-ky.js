@@ -147,9 +147,13 @@
 
     async function saveData(payload) {
       try {
-        const res    = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) });
+        const res    = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': API_USE_PLAIN_TEXT ? 'text/plain' : 'application/json' },
+          body: JSON.stringify(payload)
+        });
         const result = await res.json();
-        if (result.result !== 'success') showToast('⚠️ Ghi Sheets thất bại: ' + result.message);
+        if (result.result !== 'success') showToast('⚠️ Ghi dữ liệu thất bại: ' + (result.message || ''));
         return result;
       } catch {
         showToast('⚠️ Không kết nối được Server!');

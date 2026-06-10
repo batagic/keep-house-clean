@@ -1,0 +1,15 @@
+# Tùy chọn: đặt tên file docker-compose.override.yml cạnh docker-compose.yml
+# — chỉ bind API trên localhost (Nginx host proxy vào 127.0.0.1:3001)
+
+services:
+  kho-thoc-api:
+    ports:
+      - "127.0.0.1:3001:3001"
+    networks:
+      - eedt_postgres_net
+      - nginx_net
+
+networks:
+  nginx_net:
+    external: true
+    name: ${NGINX_DOCKER_NETWORK:-docker_eedt-net}
