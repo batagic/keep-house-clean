@@ -197,22 +197,22 @@ Hệ thống có **15 nhiệm vụ cố định**, chia 3 nhóm hiển thị:
 | ID | Tên game hóa | Việc thực tế | Gạo | EXP |
 |---|---|---|---|---|
 | t1 | Đại chiến Kho Thóc | Tổng vệ sinh nhà cửa | 150 | 100 |
-| t2 | Trợ lý Đầu bếp | Nấu 1 bữa hoàn chỉnh | 100 | 80 |
+| t2 | Đầu bếp Kiêu binh | Nấu 1 bữa hoàn chỉnh | 100 | 80 |
 
 ### 6.2 Nhiệm vụ Hằng ngày — Ưu tiên (`type: highlight`)
 
 | ID | Tên game hóa | Việc thực tế | Gạo | EXP |
 |---|---|---|---|---|
 | t3 | Phá băng bồn rửa | Rửa bát · ~15 phút | 15 | 10 |
-| t4 | Tấn công bụi bẩn | Quét & lau nhà · ~20 phút | 25 | 20 |
-| t5 | Thiết lập bàn | Dọn bàn học · ~10 phút | 10 | 5 |
+| t4 | Tổng tấn công bụi bẩn | Quét & lau nhà · ~20 phút | 25 | 20 |
+| t5 | Thiết lập bàn chỉ huy | Dọn bàn học · ~10 phút | 10 | 5 |
 
 ### 6.3 Nhiệm vụ thường (`type: normal`)
 
 | ID | Tên game hóa | Việc thực tế | Gạo | EXP |
 |---|---|---|---|---|
 | t6 | Triệu hồi đồ giặt | Gấp & cất đồ · ~15 phút | 20 | 15 |
-| t7 | Dọn sạch phế liệu | Đổ rác · ~10 phút | 10 | 5 |
+| t7 | Thanh trừ Phế liệu | Đổ rác · ~10 phút | 10 | 5 |
 | t8 | Chăm sóc Long bào | Giặt/Phơi đồ · ~20 phút | 25 | 20 |
 | t9 | Thanh tẩy bảo vật | Giặt giày · ~35 phút | 35 | 30 |
 | t10 | Tu luyện kiến thức | Tự học · 1 tiếng | 30 | 25 |
