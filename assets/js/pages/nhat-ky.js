@@ -1,32 +1,26 @@
 /* ============================================================
        STATE
     ============================================================ */
-    let profiles       = [];
-    let currentProfile = null;
-    let isBonusActive  = false;
-    let sheetsLogs     = {};   // { pid: [{date,grain,exp,note,tasks,bonus}] }
-    let profileBalances = {};  // { pid: { totalGrain, totalExp } } — precomputed
+    let profiles        = [];
+    let currentProfile  = null;
+    let isBonusActive   = false;
+    let sheetsLogs      = {};   // { pid: [{date,grain,exp,note,tasks,bonus}] }
+    let profileBalances = {};   // { pid: { totalGrain, totalExp } }
+    let logsMeta        = {};   // { pid: { total, hasMore, loaded } }
 
-    const CACHE_KEY         = 'kho_thoc_journal_v2';
-    const HISTORY_INITIAL   = 25;
-    let _historyShowAll     = false;
+    const CACHE_PROFILES_KEY = 'kho_thoc_v3_profiles';
+    const CACHE_LAST_PID_KEY = 'kho_thoc_v3_last_pid';
+    const HISTORY_PAGE       = 25;
+    let _historyShowAll      = false;
+    let _tasksRendered       = false;
+    let _logsLoading         = false;
 
-    /* ── Pre-computed lookups (build once, reuse everywhere) ── */
-    const TASK_MAP   = {};   // id → task object
-    const REWARD_MAP = {};   // id → reward object
+    const TASK_MAP   = {};
+    const REWARD_MAP = {};
 
-    /* ============================================================
-       DATA CONSTANTS
-    ============================================================ */
-    // TASKS loaded from data/tasks.js
-
-    // REWARDS loaded from data/rewards.js
-
-    /* Build lookup maps once at startup — O(1) access later */
     TASKS.forEach(t   => TASK_MAP[t.id]   = t);
     REWARDS.forEach(r => REWARD_MAP[r.id] = r);
 
-    /* Pre-compute task categories order (used by renderTasks) */
     const TASK_CATEGORIES = [...new Set(TASKS.map(t => t.category))];
 
     /* ============================================================
@@ -36,7 +30,10 @@
       return profileBalances[pid] || { totalGrain: 0, totalExp: 0 };
     }
 
-    /** Số dư từ cache server trên Profiles (total_grain / total_exp) */
+    function _logsCacheKey(pid) {
+      return `kho_thoc_v3_logs_${pid}`;
+    }
+
     function _applyBalancesFromProfiles() {
       for (let i = 0; i < profiles.length; i++) {
         const p = profiles[i];
@@ -47,67 +44,80 @@
       }
     }
 
-    function _rebuildBalances() {
-      profileBalances = {};
-      for (const pid in sheetsLogs) {
-        const logs = sheetsLogs[pid];
-        let totalGrain = 0, totalExp = 0;
-        for (let i = 0; i < logs.length; i++) {
-          totalGrain += logs[i].grain;
-          totalExp   += logs[i].exp;
-        }
-        profileBalances[pid] = { totalGrain, totalExp };
-      }
-      /* Đồng bộ lại lên object profile để localStorage cache khớp server */
-      for (let i = 0; i < profiles.length; i++) {
-        const p = profiles[i];
-        const b = profileBalances[p.id] || { totalGrain: 0, totalExp: 0 };
+    function _bumpBalance(pid, grainDelta, expDelta) {
+      const b = profileBalances[pid] || { totalGrain: 0, totalExp: 0 };
+      b.totalGrain += grainDelta;
+      b.totalExp   += expDelta;
+      profileBalances[pid] = b;
+      const p = profiles.find(x => x.id === pid);
+      if (p) {
         p.total_grain = b.totalGrain;
         p.total_exp   = b.totalExp;
       }
     }
 
-    function _parseLogs(rawLogs) {
-      sheetsLogs = {};
-      for (let i = 0; i < rawLogs.length; i++) {
-        const row = rawLogs[i];
-        const pid = row.id || row.profileId;
-        if (!pid) continue;
-        if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
-        sheetsLogs[pid].push({
-          profileId: pid,
-          date:  row.date  || '',
-          grain: Number(row.grain) || 0,
-          exp:   Number(row.exp)   || 0,
-          note:  row.note  || '',
-          tasks: row.tasks || '',
-          bonus: row.bonus || false
-        });
-      }
-      _rebuildBalances();
+    function _normalizeLogRow(row) {
+      const pid = row.id || row.profileId;
+      return {
+        profileId: pid,
+        date:  row.date  || '',
+        grain: Number(row.grain) || 0,
+        exp:   Number(row.exp)   || 0,
+        note:  row.note  || '',
+        tasks: row.tasks || '',
+        bonus: row.bonus || false
+      };
     }
 
-    /* ── localStorage cache: hiển thị ngay, đồng bộ nền ── */
-    function _readCache() {
+    /** Gộp logs vào sheetsLogs[pid] — không cộng lại số dư (dùng cache Profiles) */
+    function _mergeLogsForProfile(pid, rawLogs, replace) {
+      if (replace || !sheetsLogs[pid]) sheetsLogs[pid] = [];
+      const existing = new Set(sheetsLogs[pid].map(l => l.date));
+      for (let i = 0; i < rawLogs.length; i++) {
+        const entry = _normalizeLogRow(rawLogs[i]);
+        if (!existing.has(entry.date)) {
+          sheetsLogs[pid].push(entry);
+          existing.add(entry.date);
+        }
+      }
+      sheetsLogs[pid].sort((a, b) => b.date.localeCompare(a.date));
+    }
+
+    function _readProfilesCache() {
       try {
-        const raw = localStorage.getItem(CACHE_KEY);
+        const raw = localStorage.getItem(CACHE_PROFILES_KEY);
         if (!raw) return null;
         const data = JSON.parse(raw);
-        if (!data || !Array.isArray(data.profiles)) return null;
-        return data;
+        return Array.isArray(data) ? data : null;
       } catch {
         return null;
       }
     }
 
-    function _writeCache(profs, rawLogs) {
+    function _writeProfilesCache() {
       try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
+        localStorage.setItem(CACHE_PROFILES_KEY, JSON.stringify(profiles));
+      } catch { /* quota */ }
+    }
+
+    function _readLogsCache(pid) {
+      try {
+        const raw = localStorage.getItem(_logsCacheKey(pid));
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+
+    function _writeLogsCache(pid) {
+      try {
+        localStorage.setItem(_logsCacheKey(pid), JSON.stringify({
           savedAt: Date.now(),
-          profiles: profs,
-          logs: rawLogs || []
+          logs: sheetsLogs[pid] || [],
+          meta: logsMeta[pid] || { total: 0, hasMore: false, loaded: 0 }
         }));
-      } catch { /* quota exceeded — bỏ qua */ }
+      } catch { /* quota */ }
     }
 
     function _setSyncStatus(msg, syncing = false) {
@@ -128,28 +138,11 @@
         </div>`;
     }
 
-    function _applyServerData(profs, rawLogs, autoSelect) {
-      profiles = profs;
-      if (rawLogs && rawLogs.length) {
-        _parseLogs(rawLogs);
-      } else {
-        _applyBalancesFromProfiles();
-        renderProfiles();
-      }
-      if (autoSelect && profiles.length > 0) {
-        const pid = currentProfile?.id && profiles.some(p => p.id === currentProfile.id)
-          ? currentProfile.id
-          : profiles[0].id;
-        selectProfile(pid, true);
-      }
-    }
-
     function _selectProfileAfterLoad(prevPid) {
-      if (prevPid && profiles.some(p => p.id === prevPid)) {
-        selectProfile(prevPid, true);
-      } else if (profiles.length > 0) {
-        selectProfile(profiles[0].id, true);
-      }
+      const pid = (prevPid && profiles.some(p => p.id === prevPid))
+        ? prevPid
+        : (profiles[0] && profiles[0].id);
+      if (pid) selectProfile(pid, true, false);
     }
 
     async function saveData(payload) {
@@ -158,43 +151,81 @@
         const result = await res.json();
         if (result.result !== 'success') showToast('⚠️ Ghi Sheets thất bại: ' + result.message);
         return result;
-      } catch(err) {
+      } catch {
         showToast('⚠️ Không kết nối được Server!');
         return null;
+      }
+    }
+
+    async function fetchLogsPage(pid, offset = 0, replace = false) {
+      const url = `${API_URL}?type=logs&profileId=${encodeURIComponent(pid)}&limit=${HISTORY_PAGE}&offset=${offset}`;
+      const res  = await fetch(url);
+      const data = await res.json();
+      const rawLogs = Array.isArray(data.logs) ? data.logs : [];
+
+      _mergeLogsForProfile(pid, rawLogs, replace);
+      logsMeta[pid] = {
+        total:   data.total   ?? rawLogs.length,
+        hasMore: !!data.hasMore,
+        loaded:  (sheetsLogs[pid] || []).length
+      };
+      _writeLogsCache(pid);
+      _invalidateSortCache();
+      return rawLogs.length;
+    }
+
+    async function loadLogsForProfile(pid, replace = false) {
+      if (!pid || _logsLoading) return;
+      _logsLoading = true;
+      try {
+        await fetchLogsPage(pid, 0, replace);
+        if (currentProfile && currentProfile.id === pid) {
+          renderHistory();
+        }
+      } catch {
+        if (currentProfile && currentProfile.id === pid) {
+          const list = document.getElementById('historyList');
+          if (list && !(sheetsLogs[pid] || []).length) {
+            list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:1rem;">Không tải được lịch sử.</p>';
+          }
+        }
+      } finally {
+        _logsLoading = false;
       }
     }
 
     async function loadData(hadCache = false) {
       if (!hadCache) _setSyncStatus('Đang tải dữ liệu bé…', true);
 
-      const prevPid = currentProfile?.id;
+      const prevPid = currentProfile?.id || localStorage.getItem(CACHE_LAST_PID_KEY);
 
       try {
-        /* Phase 1: profiles + số dư cache (nhẹ, first paint nhanh) */
         const profRes  = await fetch(`${API_URL}?type=profiles`);
         const profData = await profRes.json();
         const newProfiles = Array.isArray(profData.profiles) ? profData.profiles : [];
 
         profiles = newProfiles;
         _applyBalancesFromProfiles();
+        _writeProfilesCache();
         renderProfiles();
-        _selectProfileAfterLoad(prevPid);
+
+        const activePid = (prevPid && profiles.some(p => p.id === prevPid))
+          ? prevPid
+          : profiles[0]?.id;
+
+        if (activePid) {
+          localStorage.setItem(CACHE_LAST_PID_KEY, activePid);
+          currentProfile = profiles.find(p => p.id === activePid) || null;
+          document.querySelectorAll('.profile-card').forEach(el => {
+            el.classList.toggle('active', el.dataset.pid === activePid);
+          });
+          renderRewards();
+        }
 
         if (!hadCache) _setSyncStatus('Đang tải nhật ký…', true);
 
-        /* Phase 2: logs (nặng hơn, tải nền) */
-        const logRes  = await fetch(`${API_URL}?type=logs`);
-        const logData = await logRes.json();
-        const newLogs = Array.isArray(logData.logs) ? logData.logs : [];
-
-        _writeCache(newProfiles, newLogs);
-        _parseLogs(newLogs);
-        renderProfiles();
-        _selectProfileAfterLoad(prevPid);
-
-        if (currentProfile) {
-          renderRewards();
-          renderHistory();
+        if (activePid) {
+          await loadLogsForProfile(activePid, true);
         }
 
         if (hadCache) {
@@ -203,11 +234,13 @@
         } else {
           _setSyncStatus('');
         }
-      } catch (err) {
+      } catch {
         if (!hadCache) {
           showToast('⚠️ Không tải được dữ liệu từ Server!');
           const grid = document.getElementById('profileGrid');
-          if (grid) grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:2rem;">Không kết nối được server. Thử tải lại trang.</p>';
+          if (grid && !profiles.length) {
+            grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:2rem;">Không kết nối được server. Thử tải lại trang.</p>';
+          }
         } else {
           _setSyncStatus('Không đồng bộ được — đang dùng dữ liệu đã lưu');
         }
@@ -215,11 +248,10 @@
     }
 
     /* ============================================================
-       RENDER — DOM manipulation tối thiểu
+       RENDER
     ============================================================ */
-
-    /* Render task list — chỉ gọi 1 lần lúc DOMContentLoaded */
     function renderTasks() {
+      if (_tasksRendered) return;
       const container = document.getElementById('tasksCompactGrid');
       if (!container) return;
       const parts = [];
@@ -241,9 +273,9 @@
         parts.push('</div>');
       });
       container.innerHTML = parts.join('');
+      _tasksRendered = true;
     }
 
-    /* Cache DOM refs for counter update — queried once */
     let _elCheckedCount, _elTodayGrain, _elTodayExp;
     function _initCounterRefs() {
       _elCheckedCount = document.getElementById('checkedCount');
@@ -251,7 +283,6 @@
       _elTodayExp     = document.getElementById('todayExp');
     }
 
-    /* updateCounterAndTotals — đọc trực tiếp checked state, không query DOM trong vòng lặp */
     function updateCounterAndTotals() {
       let count = 0, grain = 0, exp = 0;
       for (let i = 0; i < TASKS.length; i++) {
@@ -259,12 +290,11 @@
         if (cb && cb.checked) { count++; grain += TASKS[i].grain; exp += TASKS[i].exp; }
       }
       if (isBonusActive) grain = Math.floor(grain * 1.2);
-      _elCheckedCount.textContent = `${count} / ${TASKS.length}`;
-      _elTodayGrain.textContent   = grain;
-      _elTodayExp.textContent     = exp;
+      if (_elCheckedCount) _elCheckedCount.textContent = `${count} / ${TASKS.length}`;
+      if (_elTodayGrain)   _elTodayGrain.textContent   = grain;
+      if (_elTodayExp)     _elTodayExp.textContent     = exp;
     }
 
-    /* renderProfiles — build HTML string once, set innerHTML once */
     const RANKS = [
       { name:'Tân Binh',      emoji:'🌱', min:0,    max:200  },
       { name:'Thợ Cày',       emoji:'🌿', min:200,  max:500  },
@@ -286,15 +316,14 @@
         const p        = profiles[i];
         const state    = getState(p.id);
         const isActive = currentProfile && currentProfile.id === p.id;
-
-        const rank    = RANKS.findLast(r => state.totalExp >= r.min) || RANKS[0];
-        const isMax   = rank.max === Infinity;
-        const lvlExp  = state.totalExp - rank.min;
+        const rank     = RANKS.findLast(r => state.totalExp >= r.min) || RANKS[0];
+        const isMax    = rank.max === Infinity;
+        const lvlExp   = state.totalExp - rank.min;
         const lvlRange = isMax ? 1 : rank.max - rank.min;
-        const pct     = isMax ? 100 : Math.min(100, Math.round((lvlExp / lvlRange) * 100));
-        const expText = isMax
-        ? `${state.totalExp.toLocaleString('vi-VN')} ⭐ MAX`
-        : `${state.totalExp.toLocaleString('vi-VN')} / ${rank.max.toLocaleString('vi-VN')}`;
+        const pct      = isMax ? 100 : Math.min(100, Math.round((lvlExp / lvlRange) * 100));
+        const expText  = isMax
+          ? `${state.totalExp.toLocaleString('vi-VN')} ⭐ MAX`
+          : `${state.totalExp.toLocaleString('vi-VN')} / ${rank.max.toLocaleString('vi-VN')}`;
 
         parts.push(`
       <div class="profile-card${isActive ? ' active' : ''}" data-pid="${p.id}" onclick="selectProfile('${p.id}',true)">
@@ -329,7 +358,6 @@
       grid.innerHTML = parts.join('');
     }
 
-    /* renderRewards — chỉ re-render khi profile thay đổi hoặc sau giao dịch */
     function renderRewards() {
       const container = document.getElementById('rewardsSmallGrid');
       if (!container) return;
@@ -340,7 +368,7 @@
       const { totalGrain } = getState(currentProfile.id);
       const parts = [];
       for (let i = 0; i < REWARDS.length; i++) {
-        const rw       = REWARDS[i];
+        const rw = REWARDS[i];
         const canAfford = totalGrain >= rw.cost;
         parts.push(`
           <div class="reward-small-card${canAfford ? '' : ' disabled'}"
@@ -354,7 +382,6 @@
       container.innerHTML = parts.join('');
     }
 
-    /* renderHistory — sort cached, không sort lại mỗi lần */
     let _sortedLogsCache = null;
     let _sortedLogsPid   = null;
 
@@ -365,20 +392,31 @@
         list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:1rem;">Vui lòng chọn một bé để hiển thị lịch sử.</p>';
         return;
       }
-      /* Chỉ sort lại khi đổi bé hoặc logs thay đổi */
+
+      const logs = sheetsLogs[currentProfile.id] || [];
+      if (_logsLoading && !logs.length) {
+        list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:1rem;">Đang tải lịch sử…</p>';
+        return;
+      }
+
       if (_sortedLogsPid !== currentProfile.id || !_sortedLogsCache) {
-        const logs = sheetsLogs[currentProfile.id] || [];
-        _sortedLogsCache = [...logs].sort((a,b) => b.date.localeCompare(a.date));
+        _sortedLogsCache = [...logs];
         _sortedLogsPid   = currentProfile.id;
       }
+
       if (!_sortedLogsCache.length) {
         list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:1rem;">Chưa có nhật ký nào.</p>';
         return;
       }
+
       const visible = _historyShowAll
         ? _sortedLogsCache
-        : _sortedLogsCache.slice(0, HISTORY_INITIAL);
-      const hiddenCount = _sortedLogsCache.length - visible.length;
+        : _sortedLogsCache.slice(0, HISTORY_PAGE);
+
+      const meta = logsMeta[currentProfile.id];
+      const serverHasMore = meta && meta.hasMore;
+      const localHidden   = _sortedLogsCache.length - visible.length;
+      const showMoreBtn   = localHidden > 0 || serverHasMore;
 
       const parts = [];
       for (let i = 0; i < visible.length; i++) {
@@ -387,10 +425,10 @@
         const grainColor = lg.grain >= 0 ? 'var(--green-mid)' : 'var(--red)';
         const grainText  = lg.grain >= 0 ? `+${lg.grain}` : `${lg.grain}`;
         const content    = isRedeem
-        ? (lg.note || '🎁 Đổi quà')
-        : (lg.tasks
-          ? lg.tasks.split(',').map(id => TASK_MAP[id.trim()]?.name || id).join(', ')
-          : (lg.note || ''));
+          ? (lg.note || '🎁 Đổi quà')
+          : (lg.tasks
+            ? lg.tasks.split(',').map(id => TASK_MAP[id.trim()]?.name || id).join(', ')
+            : (lg.note || ''));
         parts.push(`
           <div class="history-item">
             <div>
@@ -402,30 +440,49 @@
                 <span style="color:${grainColor}">${grainText} 🌾</span><br/>
           ${lg.exp > 0 ? `<span style="color:var(--green-deep)">+${lg.exp} ⭐</span>` : ''}
               </div>
-              <button class="btn-delete" onclick="deleteHistory('${lg.date}')"><i class="fas fa-trash"></i></button>
+              <button class="btn-delete" onclick="deleteHistory('${lg.date}')" aria-label="Xóa">🗑️</button>
             </div>
         </div>`);
       }
-      if (hiddenCount > 0) {
-        parts.push(`<button type="button" class="history-more" onclick="loadMoreHistory()">Xem thêm ${hiddenCount} mục cũ hơn…</button>`);
+
+      if (showMoreBtn) {
+        const label = localHidden > 0
+          ? `Xem thêm ${localHidden} mục…`
+          : 'Tải thêm lịch sử cũ…';
+        parts.push(`<button type="button" class="history-more" onclick="loadMoreHistory()">${label}</button>`);
       }
       list.innerHTML = parts.join('');
     }
 
-    function loadMoreHistory() {
-      _historyShowAll = true;
-      renderHistory();
+    async function loadMoreHistory() {
+      if (!currentProfile) return;
+      const pid  = currentProfile.id;
+      const logs = sheetsLogs[pid] || [];
+
+      if (!_historyShowAll && logs.length > HISTORY_PAGE) {
+        _historyShowAll = true;
+        renderHistory();
+        return;
+      }
+
+      const meta = logsMeta[pid];
+      if (meta && meta.hasMore) {
+        const btn = document.querySelector('.history-more');
+        if (btn) btn.textContent = 'Đang tải…';
+        await fetchLogsPage(pid, logs.length, false);
+        _historyShowAll = true;
+        renderHistory();
+      }
     }
 
-    /* ── Invalide sort cache khi logs thay đổi ── */
     function _invalidateSortCache() { _sortedLogsCache = null; }
 
     /* ============================================================
        USER ACTIONS
     ============================================================ */
-
-    function selectProfile(pid, light = false) {
+    function selectProfile(pid, light = false, loadLogs = true) {
       currentProfile = profiles.find(p => p.id === pid);
+      localStorage.setItem(CACHE_LAST_PID_KEY, pid);
       _invalidateSortCache();
       _historyShowAll = false;
 
@@ -437,10 +494,19 @@
         renderProfiles();
       }
 
-      requestAnimationFrame(() => {
-        renderRewards();
-        renderHistory();
-      });
+      renderRewards();
+
+      const cached = _readLogsCache(pid);
+      if (cached && Array.isArray(cached.logs)) {
+        _mergeLogsForProfile(pid, cached.logs, true);
+        if (cached.meta) logsMeta[pid] = cached.meta;
+      }
+
+      renderHistory();
+
+      if (loadLogs) {
+        loadLogsForProfile(pid, true);
+      }
     }
 
     function toggleTask(id) {
@@ -463,7 +529,6 @@
       el.classList.toggle('selected');
     }
 
-    /* Ghi nhật ký — optimistic update: push vào cache ngay, không chờ reload */
     async function submitDailyLog() {
       if (!currentProfile) { alert('Vui lòng chọn một bé!'); return; }
       let grain = 0, exp = 0, hasChecked = false;
@@ -475,33 +540,31 @@
       if (!hasChecked) { alert('Vui lòng tích chọn ít nhất một nhiệm vụ!'); return; }
       if (isBonusActive) grain = Math.floor(grain * 1.2);
 
+      const pid        = currentProfile.id;
       const dateString = _nowString();
       const noteText   = document.getElementById('logNote')?.value.trim() || '';
-      const logEntry   = { profileId:currentProfile.id, date:dateString, grain, exp, note:noteText, tasks:tasksDone.join(','), bonus:isBonusActive };
+      const logEntry   = { profileId: pid, date: dateString, grain, exp, note: noteText, tasks: tasksDone.join(','), bonus: isBonusActive };
 
-      /* Optimistic update — UI phản hồi ngay không cần chờ server */
-      if (!sheetsLogs[currentProfile.id]) sheetsLogs[currentProfile.id] = [];
-      sheetsLogs[currentProfile.id].push(logEntry);
+      if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
+      sheetsLogs[pid].unshift(logEntry);
       _invalidateSortCache();
 
-      /* Reset form */
       document.getElementById('logNote').value = '';
       TASKS.forEach(t => {
-        const cb   = document.getElementById(`taskCB_${t.id}`);   if(cb)   cb.checked = false;
-        const card = document.getElementById(`taskCard_${t.id}`); if(card) card.classList.remove('checked');
+        const cb   = document.getElementById(`taskCB_${t.id}`);   if (cb)   cb.checked = false;
+        const card = document.getElementById(`taskCard_${t.id}`); if (card) card.classList.remove('checked');
       });
       if (isBonusActive) toggleBonus();
 
-      _rebuildBalances();
+      _bumpBalance(pid, grain, exp);
       renderProfiles(); renderRewards(); renderHistory(); updateCounterAndTotals();
-      _writeCache(profiles, _flattenLogs());
+      _writeProfilesCache();
+      _writeLogsCache(pid);
       showToast(`🌾 Đã ghi +${grain} Gạo cho ${currentProfile.name}!`);
 
-      /* Sync lên Sheets background (không await) */
-      saveData({ type:'log', profileId:currentProfile.id, profileName:currentProfile.name, date:dateString, grain, exp, tasks:tasksDone.join(','), bonus:isBonusActive, note:noteText });
+      saveData({ type:'log', profileId: pid, profileName: currentProfile.name, date: dateString, grain, exp, tasks: tasksDone.join(','), bonus: isBonusActive, note: noteText });
     }
 
-    /* Đổi quà — optimistic update với grain âm */
     async function redeemReward() {
       if (!currentProfile) { showToast('Vui lòng chọn bé trước!'); return; }
       const selected = document.querySelectorAll('.reward-small-card.selected');
@@ -515,41 +578,41 @@
       if (totalGrain < totalCost) { showToast('Không đủ Gạo để đổi quà!'); return; }
       if (!confirm(`Xác nhận đổi quà cho ${currentProfile.name}?\n\n🎁 ${rewardNames.join(', ')}\n🌾 Trừ: ${totalCost.toLocaleString()} Gạo`)) return;
 
+      const pid        = currentProfile.id;
       const dateString = _nowString();
-      const logEntry   = { profileId:currentProfile.id, date:dateString, grain:-totalCost, exp:0, tasks:'REDEEM', bonus:false, note:'Đổi quà: ' + rewardNames.join(', ') };
+      const logEntry   = { profileId: pid, date: dateString, grain: -totalCost, exp: 0, tasks: 'REDEEM', bonus: false, note: 'Đổi quà: ' + rewardNames.join(', ') };
 
-      /* Optimistic update */
-      if (!sheetsLogs[currentProfile.id]) sheetsLogs[currentProfile.id] = [];
-      sheetsLogs[currentProfile.id].push(logEntry);
+      if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
+      sheetsLogs[pid].unshift(logEntry);
       _invalidateSortCache();
 
-      _rebuildBalances();
+      _bumpBalance(pid, -totalCost, 0);
       renderProfiles(); renderRewards(); renderHistory();
-      _writeCache(profiles, _flattenLogs());
+      _writeProfilesCache();
+      _writeLogsCache(pid);
       showToast(`🎁 Đổi quà thành công! -${totalCost.toLocaleString()} 🌾`);
 
-      /* Sync background */
-      saveData({ type:'log', profileId:currentProfile.id, profileName:currentProfile.name, date:dateString, grain:-totalCost, exp:0, tasks:'REDEEM', bonus:false, note:logEntry.note });
+      saveData({ type:'log', profileId: pid, profileName: currentProfile.name, date: dateString, grain: -totalCost, exp: 0, tasks: 'REDEEM', bonus: false, note: logEntry.note });
     }
 
     async function deleteHistory(dateStr) {
       if (!confirm(`Xóa nhật ký ngày ${dateStr}?\nThao tác này sẽ trừ lại số Gạo và EXP!`)) return;
-      const result = await saveData({ type:'delete_log', profileId:currentProfile.id, date:dateStr });
+      const pid = currentProfile.id;
+      const removed = (sheetsLogs[pid] || []).find(l => l.date === dateStr);
+      const result = await saveData({ type:'delete_log', profileId: pid, date: dateStr });
       if (result && result.result === 'success') {
-        sheetsLogs[currentProfile.id] = sheetsLogs[currentProfile.id].filter(lg => lg.date !== dateStr);
+        sheetsLogs[pid] = sheetsLogs[pid].filter(lg => lg.date !== dateStr);
         _invalidateSortCache();
-        _rebuildBalances();
+        if (removed) _bumpBalance(pid, -removed.grain, -removed.exp);
         renderProfiles(); renderRewards(); renderHistory();
-        _writeCache(profiles, _flattenLogs());
+        _writeProfilesCache();
+        _writeLogsCache(pid);
         showToast(`Đã xóa nhật ký ngày ${dateStr}`);
       } else {
         showToast('⚠️ Xóa thất bại, thử lại!');
       }
     }
 
-    /* ============================================================
-       PROFILE MANAGEMENT
-    ============================================================ */
     function openModal()  { document.getElementById('modalOverlay').classList.add('open'); }
     function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 
@@ -560,35 +623,13 @@
       const newProfile = { id:'p_' + Date.now(), name, avatar, total_grain:0, total_exp:0 };
       profiles.push(newProfile);
       profileBalances[newProfile.id] = { totalGrain: 0, totalExp: 0 };
+      sheetsLogs[newProfile.id] = [];
       saveData({ type:'profile', ...newProfile });
       document.getElementById('pName').value = '';
       closeModal();
       renderProfiles();
-      _writeCache(profiles, _flattenLogs());
+      _writeProfilesCache();
       showToast(`👶 Đăng ký thành công cho bé ${name}!`);
-    }
-
-    /* ============================================================
-       HELPERS
-    ============================================================ */
-    function _flattenLogs() {
-      const flat = [];
-      for (const pid in sheetsLogs) {
-        for (let i = 0; i < sheetsLogs[pid].length; i++) {
-          const lg = sheetsLogs[pid][i];
-          flat.push({
-            id: pid,
-            profileId: pid,
-            date: lg.date,
-            grain: lg.grain,
-            exp: lg.exp,
-            note: lg.note,
-            tasks: lg.tasks,
-            bonus: lg.bonus
-          });
-        }
-      }
-      return flat;
     }
 
     function _nowString() {
@@ -598,7 +639,6 @@
 
     function formatVNDate(dateStr) {
       if (!dateStr) return '';
-      // Parse ISO hoặc "YYYY-MM-DD HH:mm" → convert sang GMT+7
       const d = new Date(dateStr.includes('T') ? dateStr : dateStr.replace(' ', 'T') + '+00:00');
       const gmt7 = new Date(d.getTime() + 7 * 60 * 60 * 1000);
       const dd   = String(gmt7.getUTCDate()).padStart(2, '0');
@@ -609,7 +649,6 @@
       return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
     }
 
-    /* Toast — dùng 1 timer, tránh nhiều toast chồng nhau */
     let _toastTimer;
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -619,7 +658,6 @@
       _toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    /* ── Deprecated stubs — giữ lại đề phòng code cũ gọi ── */
     function saveState() {}
     function saveLog()   {}
     function delLog()    {}
@@ -627,19 +665,42 @@
     function reloadLogs() { return loadData(); }
 
     /* ============================================================
-       INIT
+       INIT — profiles cache trước, tasks defer, sync nền
     ============================================================ */
+    function _bootstrapFromCache() {
+      const profCache = _readProfilesCache();
+      if (!profCache || !profCache.length) return false;
+
+      profiles = profCache;
+      _applyBalancesFromProfiles();
+      renderProfiles();
+
+      const lastPid = localStorage.getItem(CACHE_LAST_PID_KEY);
+      const pid = (lastPid && profiles.some(p => p.id === lastPid))
+        ? lastPid
+        : profiles[0].id;
+
+      const logCache = _readLogsCache(pid);
+      if (logCache && Array.isArray(logCache.logs)) {
+        _mergeLogsForProfile(pid, logCache.logs, true);
+        if (logCache.meta) logsMeta[pid] = logCache.meta;
+      }
+
+      selectProfile(pid, true, false);
+      return true;
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       _initCounterRefs();
-      renderTasks();
 
-      const cached = _readCache();
-      if (cached) {
-        _applyServerData(cached.profiles, cached.logs, true);
+      const hadCache = _bootstrapFromCache();
+      if (hadCache) {
         _setSyncStatus('Đang đồng bộ nền…', true);
-        loadData(true);
       } else {
         _showProfileSkeleton();
-        loadData(false);
       }
+
+      requestAnimationFrame(() => renderTasks());
+
+      loadData(hadCache);
     });

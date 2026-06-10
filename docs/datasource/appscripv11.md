@@ -1,17 +1,21 @@
 // ============================================================
 // Code.gs — Google Apps Script cho Kho Thóc Gia Đình
-// doGet  → ?type=profiles | ?type=logs | (mặc định) all
+// doGet  → ?type=profiles | ?type=logs | ?type=ping | (mặc định) all
+//          logs: &profileId=…&limit=25&offset=0
 // doPost → { type: 'log' | 'delete_log' | 'profile', ... }
 //
 // Profiles: id | name | avatar | total_grain | total_exp
-// (cột balance cũ được đọc/ghi tương thích khi chưa đổi header)
 //
-// Chạy một lần sau khi deploy: backfillProfileBalances()
+// Sau deploy:
+//   1. backfillProfileBalances()  — một lần
+//   2. setupKeepWarmTrigger()     — giữ API ấm (5 phút/lần)
 // ============================================================
 
 const SHEET_ID       = '1JhOR_Ry5Z9h__wH288zVS2KtYPUD-8PgCWS1KZoErmU';
 const SHEET_PROFILES = 'Profiles';
 const SHEET_LOGS     = 'Logs';
+/** Cập nhật khi deploy Web App mới — khớp assets/js/data/config.js */
+const WEB_APP_URL    = 'https://script.google.com/macros/s/AKfycbwrQ4WC4WnZ4X33RQScOnOG5RFHAVblqIYEhNVfHJENAAzRe-rGEN-5ICobJFp-oTHYeg/exec';
 
 function createResponse(data) {
   return ContentService
@@ -19,7 +23,6 @@ function createResponse(data) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ── Đảm bảo header Profiles có total_grain, total_exp ──
 function ensureProfileHeaders_(sheet) {
   const lastCol = Math.max(sheet.getLastColumn(), 1);
   const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(h => String(h || '').trim());
@@ -61,15 +64,12 @@ function normalizeProfileRow_(headers, row) {
   const obj = {};
   headers.forEach((h, i) => { if (h) obj[h] = row[i]; });
 
-  const grain = Number(obj.total_grain ?? obj.balance) || 0;
-  const exp   = Number(obj.total_exp) || 0;
-
   return {
-    id:         String(obj.id || ''),
-    name:       String(obj.name || ''),
-    avatar:     String(obj.avatar || '👶'),
-    total_grain: grain,
-    total_exp:   exp
+    id:          String(obj.id || ''),
+    name:        String(obj.name || ''),
+    avatar:      String(obj.avatar || '👶'),
+    total_grain: Number(obj.total_grain ?? obj.balance) || 0,
+    total_exp:   Number(obj.total_exp) || 0
   };
 }
 
@@ -84,40 +84,83 @@ function readProfiles_() {
     .map(row => normalizeProfileRow_(headers, row));
 }
 
-function readLogs_() {
-  const ss = SpreadsheetApp.openById(SHEET_ID);
-  const lSheet = ss.getSheetByName(SHEET_LOGS);
-  if (!lSheet) return [];
-
-  const lData    = lSheet.getDataRange().getValues();
-  const lHeaders = lData[0];
-  return lData.slice(1)
-    .filter(row => row[0])
-    .map(row => {
-      const obj = {};
-      lHeaders.forEach((h, i) => obj[h] = row[i]);
-      obj.grain = Number(obj.grain) || 0;
-      obj.exp   = Number(obj.exp)   || 0;
-      return obj;
-    });
+function rowToLog_(lHeaders, row) {
+  const obj = {};
+  lHeaders.forEach((h, i) => obj[h] = row[i]);
+  obj.grain = Number(obj.grain) || 0;
+  obj.exp   = Number(obj.exp)   || 0;
+  return obj;
 }
 
-// ── GET: ?type=profiles | ?type=logs | all (mặc định) ──
+/**
+ * Đọc logs — hỗ trợ phân trang theo profile.
+ * opts: { profileId?, limit?, offset? }
+ * Trả về: { logs, total, hasMore }
+ */
+function readLogs_(opts) {
+  opts = opts || {};
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const lSheet = ss.getSheetByName(SHEET_LOGS);
+  if (!lSheet) return { logs: [], total: 0, hasMore: false };
+
+  const lData    = lSheet.getDataRange().getValues();
+  if (lData.length < 2) return { logs: [], total: 0, hasMore: false };
+
+  const lHeaders = lData[0];
+  const idCol    = lHeaders.indexOf('id');
+  const dateCol  = lHeaders.indexOf('date');
+  const profileId = opts.profileId ? String(opts.profileId) : '';
+
+  let rows = [];
+  for (let i = 1; i < lData.length; i++) {
+    if (!lData[i][0]) continue;
+    if (profileId && String(lData[i][idCol]) !== profileId) continue;
+    rows.push(lData[i]);
+  }
+
+  rows.sort((a, b) => String(b[dateCol]).localeCompare(String(a[dateCol])));
+
+  const total  = rows.length;
+  const limit  = opts.limit  > 0 ? opts.limit  : 0;
+  const offset = opts.offset > 0 ? opts.offset : 0;
+
+  if (limit > 0) {
+    rows = rows.slice(offset, offset + limit);
+  }
+
+  const logs = rows.map(row => rowToLog_(lHeaders, row));
+
+  return {
+    logs,
+    total,
+    hasMore: limit > 0 ? (offset + logs.length) < total : false
+  };
+}
+
 function doGet(e) {
   try {
     const type = (e && e.parameter && e.parameter.type) || 'all';
+
+    if (type === 'ping') {
+      return createResponse({ result: 'ok', ts: Date.now() });
+    }
 
     if (type === 'profiles') {
       return createResponse({ profiles: readProfiles_() });
     }
 
     if (type === 'logs') {
-      return createResponse({ logs: readLogs_() });
+      const profileId = (e.parameter && e.parameter.profileId) || '';
+      const limit     = parseInt((e.parameter && e.parameter.limit)  || '0', 10) || 0;
+      const offset    = parseInt((e.parameter && e.parameter.offset) || '0', 10) || 0;
+      return createResponse(readLogs_({ profileId, limit, offset }));
     }
 
+    const allLogs = readLogs_();
     return createResponse({
       profiles: readProfiles_(),
-      logs:     readLogs_()
+      logs:     allLogs.logs,
+      total:    allLogs.total
     });
 
   } catch (err) {
@@ -126,7 +169,6 @@ function doGet(e) {
   }
 }
 
-// ── POST ──
 function doPost(e) {
   try {
     const params = JSON.parse(e.postData.contents);
@@ -144,14 +186,13 @@ function doPost(e) {
   }
 }
 
-// ── Cập nhật cache số dư trên Profiles ──
 function adjustProfileBalance_(profileId, grainDelta, expDelta) {
   if (!profileId) return;
 
   const sheet   = getProfilesSheet_();
   const data    = sheet.getDataRange().getValues();
   const headers = data[0].map(h => String(h || '').trim());
-  const idCol   = headers.indexOf('id');
+  const idCol    = headers.indexOf('id');
   const grainCol = profileColIndex_(headers, 'total_grain', 'balance');
   const expCol   = headers.indexOf('total_exp');
 
@@ -171,13 +212,12 @@ function adjustProfileBalance_(profileId, grainDelta, expDelta) {
   }
 }
 
-// ── Ghi Profile (insert or update name/avatar; giữ nguyên số dư) ──
 function writeProfile(params) {
   const sheet   = getProfilesSheet_();
   const data    = sheet.getDataRange().getValues();
   const headers = data[0].map(h => String(h || '').trim());
-  const idCol    = headers.indexOf('id');
-  const nameCol  = headers.indexOf('name');
+  const idCol     = headers.indexOf('id');
+  const nameCol   = headers.indexOf('name');
   const avatarCol = headers.indexOf('avatar');
   const grainCol  = profileColIndex_(headers, 'total_grain', 'balance');
   const expCol    = headers.indexOf('total_exp');
@@ -202,7 +242,6 @@ function writeProfile(params) {
   return createResponse({ result: 'success', action: 'inserted' });
 }
 
-// ── Ghi Log + cập nhật cache ──
 function writeLog(params) {
   const ss  = SpreadsheetApp.openById(SHEET_ID);
   let sheet = ss.getSheetByName(SHEET_LOGS);
@@ -226,11 +265,9 @@ function writeLog(params) {
   ]);
 
   adjustProfileBalance_(params.profileId, grain, exp);
-
   return createResponse({ result: 'success', action: 'log_inserted' });
 }
 
-// ── Xóa Log + trừ cache ──
 function deleteLog(params) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_LOGS);
   if (!sheet) return createResponse({ result: 'error', message: 'Sheet Logs không tồn tại' });
@@ -255,9 +292,8 @@ function deleteLog(params) {
   return createResponse({ result: 'error', message: 'Không tìm thấy log để xóa' });
 }
 
-// ── Migration: tính lại total_grain / total_exp từ Logs (chạy 1 lần trong editor) ──
 function backfillProfileBalances() {
-  const logs = readLogs_();
+  const logs = readLogs_().logs;
   const totals = {};
 
   logs.forEach(log => {
@@ -287,6 +323,27 @@ function backfillProfileBalances() {
 
   Logger.log('backfillProfileBalances: updated ' + updated + ' profiles');
   return { updated, totals };
+}
+
+/** Time-driven trigger: ping Web App mỗi 5 phút — giảm cold start */
+function keepWarm_() {
+  try {
+    UrlFetchApp.fetch(WEB_APP_URL + '?type=ping', { muteHttpExceptions: true, followRedirects: true });
+  } catch (err) {
+    Logger.log('keepWarm_ error: ' + err.toString());
+  }
+}
+
+/** Chạy một lần trong editor sau deploy để tạo trigger */
+function setupKeepWarmTrigger() {
+  ScriptApp.getProjectTriggers().forEach(t => {
+    if (t.getHandlerFunction() === 'keepWarm_') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('keepWarm_')
+    .timeBased()
+    .everyMinutes(5)
+    .create();
+  Logger.log('keepWarm trigger created (every 5 minutes)');
 }
 
 function doOptions(e) {

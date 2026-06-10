@@ -1,7 +1,7 @@
 {
   "project": "Kho Thóc Gia Đình — Family Gamification Web App",
   "current_stage": "Đang xây dựng tính năng đổi quà (Redemptions) — chưa implement vào code",
-  "last_done": "Cache số dư trên Profiles (total_grain, total_exp): Apps Script cập nhật khi ghi/xóa log, doGet ?type=profiles|logs, frontend load 2 phase, hàm backfillProfileBalances()",
+  "last_done": "Tối ưu load nhat-ky: cache localStorage tách profiles/logs, API logs phân trang, keep-warm trigger 5 phút, preconnect, bỏ Font Awesome",
   "next_steps": [
     "Thêm sheet Redemptions vào Google Sheets: id | name | date | grain_spent | reward_id | reward_name | note",
     "Cập nhật Code.gs: doGet đọc thêm sheet Redemptions, doPost thêm case 'redeem' → writeRedemption()",
@@ -23,9 +23,10 @@
     "balance_formula": "totalGrain = SUM(Logs.grain) | totalExp = SUM(Logs.exp) — cache trên Profiles, logs vẫn là sổ cái gốc",
     "deploy_cache_balance": [
       "1. Copy Code.gs từ docs/datasource/appscripv11.md vào Apps Script",
-      "2. Deploy → New deployment (Web app)",
-      "3. Chạy backfillProfileBalances() một lần trong editor (Authorize → Run)",
-      "4. Kiểm tra sheet Profiles có total_grain, total_exp khớp SUM(logs)"
+      "2. Cập nhật WEB_APP_URL trong Code.gs khớp config.js",
+      "3. Deploy → New deployment (Web app)",
+      "4. Chạy backfillProfileBalances() một lần",
+      "5. Chạy setupKeepWarmTrigger() một lần (trigger ping ?type=ping mỗi 5 phút)"
     ],
     "pages": ["code/index.html", "code/kho-qua.html", "code/quy-doi.html", "code/nhat-ky.html", "code/print.html"],
     "nav_links": "Tất cả trang có: Trang Chủ | Kho Quà | Quy Đổi | Nhật Ký | 🖨️ In | 🌾 Tính Gạo — ngoại trừ print.html có nav riêng",

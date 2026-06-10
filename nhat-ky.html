@@ -4,8 +4,10 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nhật Ký Vụ Mùa – Kho Thóc Gia Đình</title>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="preconnect" href="https://script.google.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Mulish:wght@400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/shared/variables.css" />
   <link rel="stylesheet" href="assets/css/shared/nav.css" />
   <link rel="stylesheet" href="assets/css/shared/footer.css" />
@@ -23,7 +25,7 @@
     <p class="sync-status" id="syncStatus" aria-live="polite"></p>
 
     <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
-      <button class="btn-secondary" onclick="openModal()"><i class="fas fa-plus"></i> Đăng ký bé mới</button>
+      <button class="btn-secondary" onclick="openModal()">➕ Đăng ký bé mới</button>
     </div>
 
     <div class="profile-grid" id="profileGrid"></div>
@@ -103,10 +105,10 @@
 
   <footer id="siteFooter"></footer>
 
-  <script src="assets/js/shared/nav.js"></script>
-  <script src="assets/js/data/config.js"></script>
-  <script src="assets/js/data/tasks.js"></script>
-  <script src="assets/js/data/rewards.js"></script>
-  <script src="assets/js/pages/nhat-ky.js"></script>
+  <script src="assets/js/shared/nav.js" defer></script>
+  <script src="assets/js/data/config.js" defer></script>
+  <script src="assets/js/data/tasks.js" defer></script>
+  <script src="assets/js/data/rewards.js" defer></script>
+  <script src="assets/js/pages/nhat-ky.js" defer></script>
 </body>
 </html>
