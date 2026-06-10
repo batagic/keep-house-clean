@@ -11,4 +11,7 @@ module.exports = {
     .split(',')
     .map(s => s.trim())
     .filter(Boolean),
+  jwtSecret: process.env.JWT_SECRET || 'dev-only-change-in-production',
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  bcryptRounds: Number(process.env.BCRYPT_ROUNDS) || 10,
 };

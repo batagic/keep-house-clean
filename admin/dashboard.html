@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quản lý mã đổi quà — Kho Thóc</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Mulish:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../assets/css/pages/admin.css"/>
+</head>
+<body>
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div>
+        <p class="admin-logo">🌾 Kho Thóc</p>
+        <p class="admin-sub" style="margin-bottom:0">Quản lý mã đổi quà</p>
+      </div>
+      <button type="button" class="btn-secondary" id="logoutBtn">Đăng xuất</button>
+    </div>
+
+    <div class="admin-card">
+      <h1>Mã xác nhận đổi quà</h1>
+      <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:1rem;">
+        Bé nhập mã này khi đổi quà trên Nhật Ký. Gửi mã cho bố/mẹ qua Zalo sau khi tạo.
+      </p>
+
+      <div id="statusBox" class="status-box">Đang tải…</div>
+
+      <div id="passcodeReveal" class="passcode-reveal hidden">
+        <div>Mã mới — copy và gửi Zalo</div>
+        <div class="code" id="newPasscode"></div>
+        <div class="hint">Mã chỉ hiện một lần. Mã cũ đã bị thu hồi.</div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn-main" id="generateBtn">Tạo mã mới</button>
+        <button type="button" class="btn-danger" id="revokeBtn">Thu hồi mã</button>
+      </div>
+      <p class="error-msg hidden" id="actionError"></p>
+    </div>
+  </div>
+
+  <script src="../assets/js/data/config.js"></script>
+  <script src="../assets/js/shared/admin-auth.js"></script>
+  <script src="../assets/js/pages/admin-dashboard.js"></script>
+</body>
+</html>

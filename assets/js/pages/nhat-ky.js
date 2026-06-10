@@ -569,34 +569,107 @@
       saveData({ type:'log', profileId: pid, profileName: currentProfile.name, date: dateString, grain, exp, tasks: tasksDone.join(','), bonus: isBonusActive, note: noteText });
     }
 
-    async function redeemReward() {
-      if (!currentProfile) { showToast('Vui lòng chọn bé trước!'); return; }
+    function _getRedeemSelection() {
+      if (!currentProfile) { showToast('Vui lòng chọn bé trước!'); return null; }
       const selected = document.querySelectorAll('.reward-small-card.selected');
-      if (!selected.length) { showToast('Vui lòng chọn ít nhất một món quà!'); return; }
+      if (!selected.length) { showToast('Vui lòng chọn ít nhất một món quà!'); return null; }
 
       let totalCost = 0;
       const rewardNames = [];
-      selected.forEach(card => { totalCost += Number(card.dataset.cost || 0); rewardNames.push(card.dataset.name); });
+      const rewardIds = [];
+      selected.forEach(card => {
+        totalCost += Number(card.dataset.cost || 0);
+        rewardNames.push(card.dataset.name);
+        rewardIds.push(card.dataset.rewardId);
+      });
 
       const { totalGrain } = getState(currentProfile.id);
-      if (totalGrain < totalCost) { showToast('Không đủ Gạo để đổi quà!'); return; }
-      if (!confirm(`Xác nhận đổi quà cho ${currentProfile.name}?\n\n🎁 ${rewardNames.join(', ')}\n🌾 Trừ: ${totalCost.toLocaleString()} Gạo`)) return;
+      if (totalGrain < totalCost) { showToast('Không đủ Gạo để đổi quà!'); return null; }
 
-      const pid        = currentProfile.id;
-      const dateString = _nowString();
-      const logEntry   = { profileId: pid, date: dateString, grain: -totalCost, exp: 0, tasks: 'REDEEM', bonus: false, note: 'Đổi quà: ' + rewardNames.join(', ') };
+      return { rewardIds, rewardNames, totalCost };
+    }
 
-      if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
-      sheetsLogs[pid].unshift(logEntry);
-      _invalidateSortCache();
+    function openRedeemModal() {
+      const pending = _getRedeemSelection();
+      if (!pending) return;
 
-      _bumpBalance(pid, -totalCost, 0);
-      renderProfiles(); renderRewards(); renderHistory();
-      _writeProfilesCache();
-      _writeLogsCache(pid);
-      showToast(`🎁 Đổi quà thành công! -${totalCost.toLocaleString()} 🌾`);
+      const summary = document.getElementById('redeemSummary');
+      summary.innerHTML = `
+        <strong>${currentProfile.name}</strong><br/>
+        🎁 ${pending.rewardNames.join(', ')}<br/>
+        🌾 Trừ: ${pending.totalCost.toLocaleString()} Gạo`;
 
-      saveData({ type:'log', profileId: pid, profileName: currentProfile.name, date: dateString, grain: -totalCost, exp: 0, tasks: 'REDEEM', bonus: false, note: logEntry.note });
+      document.getElementById('redeemPasscode').value = '';
+      document.getElementById('redeemModalOverlay').classList.add('open');
+      document.getElementById('redeemPasscode').focus();
+      window._pendingRedeem = pending;
+    }
+
+    function closeRedeemModal() {
+      document.getElementById('redeemModalOverlay').classList.remove('open');
+      window._pendingRedeem = null;
+    }
+
+    async function confirmRedeem() {
+      const pending = window._pendingRedeem;
+      if (!pending || !currentProfile) return;
+
+      const passcode = document.getElementById('redeemPasscode').value.trim();
+      if (!passcode) { showToast('Vui lòng nhập mã xác nhận!'); return; }
+
+      const btn = document.getElementById('redeemConfirmBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang xử lý…';
+
+      const pid = currentProfile.id;
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': API_USE_PLAIN_TEXT ? 'text/plain' : 'application/json' },
+          body: JSON.stringify({
+            type: 'redeem',
+            passcode,
+            profileId: pid,
+            profileName: currentProfile.name,
+            rewardIds: pending.rewardIds,
+          }),
+        });
+        const result = await res.json();
+
+        if (!res.ok || result.result !== 'success') {
+          showToast('⚠️ ' + (result.message || 'Đổi quà thất bại'));
+          return;
+        }
+
+        const dateString = result.date || _nowString();
+        const logEntry = {
+          profileId: pid,
+          date: dateString,
+          grain: result.grain ?? -pending.totalCost,
+          exp: 0,
+          tasks: 'REDEEM',
+          bonus: false,
+          note: result.note || ('Đổi quà: ' + pending.rewardNames.join(', ')),
+        };
+
+        if (!sheetsLogs[pid]) sheetsLogs[pid] = [];
+        sheetsLogs[pid].unshift(logEntry);
+        _invalidateSortCache();
+
+        _bumpBalance(pid, -pending.totalCost, 0);
+        renderProfiles();
+        renderRewards();
+        renderHistory();
+        _writeProfilesCache();
+        _writeLogsCache(pid);
+        closeRedeemModal();
+        showToast(`🎁 Đổi quà thành công! -${pending.totalCost.toLocaleString()} 🌾`);
+      } catch {
+        showToast('⚠️ Không kết nối được Server!');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Xác nhận';
+      }
     }
 
     async function deleteHistory(dateStr) {

@@ -1,23 +1,28 @@
 # Runbook deploy VPS — apinhatkyvumua.taho.cat
 
-**Xác nhận:** SSL terminate ở **Host Nginx** (`:443` active, cert Let's Encrypt có sẵn cho `*.taho.cat`).
+**Xác nhận:** SSL terminate ở **Host Nginx** (`:443` active).  
+**IP VPS:** `64.176.85.165` · **Domain API:** `apinhatkyvumua.taho.cat`
 
-Chạy lần lượt trên VPS (`root@vultr`). Thay `MAT_KHAU_DB` bằng mật khẩu thật.
+Chạy lần lượt. Thay `MAT_KHAU_DB` bằng mật khẩu thật (≥ 12 ký tự).
+
+> Hướng dẫn chi tiết + xử lý lỗi: [HUONG-DAN-DEPLOY-VPS.md](./HUONG-DAN-DEPLOY-VPS.md)
 
 ---
 
-## 0. DNS (nếu chưa làm)
+## 0. DNS
 
-Panel DNS → **A record**:
+Panel Hostinger → **A record**: `apinhatkyvumua` → `64.176.85.165`
 
-```text
-apinhatkyvumua.taho.cat  →  <IP_VPS>
-```
-
-Kiểm tra:
+Kiểm tra từ Mac:
 
 ```bash
-dig +short apinhatkyvumua.taho.cat
+dig +short apinhatkyvumua.taho.cat @8.8.8.8
+```
+
+Kỳ vọng: `64.176.85.165`. Nếu `@8.8.8.8` có IP nhưng không có `@` thì trống → flush cache Mac:
+
+```bash
+sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
 ```
 
 ---
@@ -41,7 +46,9 @@ chmod +x kho-thoc-api/scripts/*.sh
 
 ### Cách B — rsync từ Mac (code chưa push GitHub)
 
-Trên **VPS** trước (rsync không tự tạo thư mục cha):
+> **Lưu ý:** rsync **không** tự tạo thư mục cha — phải `mkdir` trên VPS trước.
+
+Trên **VPS**:
 
 ```bash
 mkdir -p /opt/nhatkyvumua/repo
@@ -52,7 +59,7 @@ Trên **Mac**:
 ```bash
 rsync -avz --exclude node_modules --exclude .env \
   /Users/thao/DATA/Development/projects/NhatKyVuMua/keep-house-clean/ \
-  root@<IP_VPS>:/opt/nhatkyvumua/repo/
+  root@64.176.85.165:/opt/nhatkyvumua/repo/
 ```
 
 Tiếp trên **VPS**:
@@ -126,9 +133,17 @@ Kỳ vọng: `{"result":"ok",...}`
 
 ## 6. Import dữ liệu (nếu có CSV)
 
-Upload `profiles.csv` + `logs.csv` vào `/opt/nhatkyvumua/kho-thoc-api/data/` (scp từ Mac), rồi:
+Trên **Mac** (upload CSV):
 
 ```bash
+scp kho-thoc-api/data/profiles.csv kho-thoc-api/data/logs.csv \
+  root@64.176.85.165:/opt/nhatkyvumua/kho-thoc-api/data/
+```
+
+Trên **VPS**:
+
+```bash
+cd /opt/nhatkyvumua/kho-thoc-api
 docker compose exec kho-thoc-api node scripts/import-csv.js \
   --profiles ./data/profiles.csv \
   --logs ./data/logs.csv
@@ -138,8 +153,6 @@ docker compose exec kho-thoc-api node scripts/import-csv.js \
 
 ## 7. Host Nginx + SSL
 
-Subdomain `apinhatkyvumua.taho.cat` **chưa có** trong `/etc/letsencrypt/live/` — tạo cert trước.
-
 **7a. Site HTTP tạm** (certbot cần port 80):
 
 ```bash
@@ -148,8 +161,8 @@ server {
     listen 80;
     server_name apinhatkyvumua.taho.cat;
 
-    location /kho-thoc/ {
-        proxy_pass http://127.0.0.1:3001/kho-thoc/;
+    location /kho-thoc {
+        proxy_pass http://127.0.0.1:3001;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -163,7 +176,13 @@ ln -sf /etc/nginx/sites-available/apinhatkyvumua.taho.cat /etc/nginx/sites-enabl
 nginx -t && systemctl reload nginx
 ```
 
-**7b. Cert Let's Encrypt** (certbot tự thêm block HTTPS):
+Test HTTP:
+
+```bash
+curl -s 'http://apinhatkyvumua.taho.cat/kho-thoc/?type=ping'
+```
+
+**7b. Cert Let's Encrypt:**
 
 ```bash
 certbot --nginx -d apinhatkyvumua.taho.cat
@@ -171,7 +190,7 @@ certbot --nginx -d apinhatkyvumua.taho.cat
 
 Chọn redirect HTTP → HTTPS khi được hỏi.
 
-**7c. (Tùy chọn)** Thay bằng config đầy đủ từ repo sau khi cert OK:
+**7c. Config HTTPS đầy đủ** (sau khi cert OK — **bắt buộc**, tránh 301 CORS):
 
 ```bash
 cp /opt/nhatkyvumua/repo/deploy/vps/nginx/apinhatkyvumua.taho.cat.conf \
@@ -179,9 +198,18 @@ cp /opt/nhatkyvumua/repo/deploy/vps/nginx/apinhatkyvumua.taho.cat.conf \
 nginx -t && systemctl reload nginx
 ```
 
+Kiểm tra không còn 301:
+
+```bash
+curl -sI 'https://apinhatkyvumua.taho.cat/kho-thoc?type=ping' | head -1
+curl -sI 'https://apinhatkyvumua.taho.cat/kho-thoc/?type=ping' | head -1
+```
+
+Cả hai phải `HTTP/2 200`.
+
 ---
 
-## 8. Test HTTPS (từ VPS hoặc Mac)
+## 8. Test HTTPS (từ Mac)
 
 ```bash
 curl -s 'https://apinhatkyvumua.taho.cat/kho-thoc/?type=ping'
@@ -191,12 +219,13 @@ curl -s -H 'Origin: https://batagic.github.io' \
 
 ---
 
-## 9. Cutover GitHub Pages (trên máy dev)
+## 9. Cutover GitHub Pages (trên Mac)
 
-Sửa `assets/js/data/config.js`:
+Sửa `assets/js/data/config.js` — **trailing `/` bắt buộc**:
 
 ```javascript
-const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc';
+const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc/';
+// const API_URL = 'http://localhost:3001';
 ```
 
 ```bash
@@ -208,6 +237,15 @@ git push
 Đợi 1–2 phút → mở ẩn danh:  
 `https://batagic.github.io/keep-house-clean/nhat-ky.html`
 
+DevTools → Network → request phải là:
+
+```text
+https://apinhatkyvumua.taho.cat/kho-thoc/?type=profiles
+Status: 200
+```
+
+(Không được là `/kho-thoc?type=...` với status **301**.)
+
 ---
 
 ## 10. Kiểm tra RAM
@@ -216,6 +254,17 @@ git push
 free -h
 docker stats --no-stream
 ```
+
+---
+
+## Xử lý lỗi nhanh
+
+| Triệu chứng | Cách sửa |
+|-------------|----------|
+| rsync `mkdir failed` | `mkdir -p /opt/nhatkyvumua/repo` trên VPS trước |
+| `dig` trống | Thêm A record Hostinger; `dig @8.8.8.8`; flush DNS Mac |
+| Network **301** | `API_URL` thêm `/` cuối; Nginx dùng config repo (bước 7c) |
+| CORS | `CORS_ORIGINS=https://batagic.github.io` trong `.env` |
 
 ---
 

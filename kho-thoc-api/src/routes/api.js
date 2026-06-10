@@ -1,6 +1,7 @@
 const express = require('express');
 const { readProfiles, writeProfile } = require('../services/profiles');
 const { readLogs, writeLog, deleteLog } = require('../services/logs');
+const { redeemWithPasscode } = require('../services/redeem');
 
 const router = express.Router();
 
@@ -47,7 +48,17 @@ router.post('/', async (req, res) => {
     let result;
 
     switch (params.type) {
+      case 'redeem':
+        result = await redeemWithPasscode(params);
+        break;
       case 'log':
+        if (String(params.tasks || '') === 'REDEEM') {
+          res.status(403).json({
+            result: 'error',
+            message: 'Đổi quà cần mã xác nhận. Dùng type=redeem.',
+          });
+          return;
+        }
         result = await writeLog(params);
         break;
       case 'delete_log':
@@ -62,7 +73,8 @@ router.post('/', async (req, res) => {
     res.json(result);
   } catch (err) {
     console.error('POST error:', err);
-    res.status(500).json({ result: 'error', message: err.message });
+    const status = err.status || 500;
+    res.status(status).json({ result: 'error', message: err.message });
   }
 });
 

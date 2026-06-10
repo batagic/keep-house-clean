@@ -23,8 +23,9 @@ keep-house-clean/
 | [architech.md](./architech.md) | Kiến trúc hạ tầng (GitHub Pages + API) |
 | [kehoach.md](./kehoach.md) | Đánh giá & lộ trình migrate VPS thay Apps Script |
 | [HUONG-DAN-CAI-DAT.md](./HUONG-DAN-CAI-DAT.md) | Hướng dẫn cài đặt (local + VPS tổng quát) |
-| [deploy/vps/HUONG-DAN-DEPLOY-VPS.md](../deploy/vps/HUONG-DAN-DEPLOY-VPS.md) | **Deploy VPS** — GitHub Pages gọi API Docker |
-| [DEPLOY-PHASE1.md](./DEPLOY-PHASE1.md) | Checklist triển khai Phase 1 trên VPS |
+| [deploy/vps/RUNBOOK-VPS.md](../deploy/vps/RUNBOOK-VPS.md) | **Runbook deploy VPS** — lệnh copy-paste từng bước |
+| [deploy/vps/HUONG-DAN-DEPLOY-VPS.md](../deploy/vps/HUONG-DAN-DEPLOY-VPS.md) | Deploy VPS chi tiết + xử lý lỗi |
+| [DEPLOY-PHASE1.md](./DEPLOY-PHASE1.md) | Checklist Phase 1 + bài học deploy |
 | [kho-thoc-api/README.md](../kho-thoc-api/README.md) | API Node.js + Docker |
 | [style.md](./style.md) | Design system & UI guidelines |
 | [infa/project-directory-architecture.html](./infa/project-directory-architecture.html) | Kiến trúc thư mục dự án (interactive) |

@@ -1,0 +1,178 @@
+@import url('../shared/variables.css');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Mulish', sans-serif;
+  background: var(--cream);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+.admin-wrap {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.admin-logo {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.75rem;
+  color: var(--green-deep);
+  margin-bottom: 0.25rem;
+}
+
+.admin-sub {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+.admin-card {
+  background: white;
+  border-radius: var(--radius-card);
+  padding: 2rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.admin-card h1 {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.5rem;
+  color: var(--green-deep);
+  margin-bottom: 1.25rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--green-mid);
+}
+
+.btn-main {
+  display: inline-block;
+  background: var(--green-mid);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-main:hover { background: var(--green-deep); }
+
+.btn-main:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-block;
+  background: transparent;
+  color: var(--text-muted);
+  border: 2px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 0.65rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-danger {
+  background: var(--red-penalty);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.65rem 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.error-msg {
+  color: var(--red-penalty);
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}
+
+.status-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.status-box.inactive {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.status-box strong {
+  color: var(--green-deep);
+}
+
+.passcode-reveal {
+  background: #fffbeb;
+  border: 2px dashed var(--amber);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.passcode-reveal .code {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 2.5rem;
+  letter-spacing: 0.35em;
+  color: var(--earth);
+  margin: 0.5rem 0;
+}
+
+.passcode-reveal .hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.admin-header .btn-secondary {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+}
+
+.hidden { display: none !important; }

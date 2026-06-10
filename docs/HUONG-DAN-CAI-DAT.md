@@ -181,25 +181,49 @@ Lặp lại **cùng các bước** trên VPS qua SSH. Khác biệt chính:
 
 | Hạng mục | Local | VPS |
 |----------|-------|-----|
-| `EEDT_DOCKER_NETWORK` | `docker_eedt-net` (kiểm tra thực tế) | có thể `eedt_default` — chạy `docker inspect` |
+| `EEDT_DOCKER_NETWORK` | `docker_eedt-net` (kiểm tra thực tế) | thường `docker_eedt-net` — chạy `docker inspect` |
 | `BASE_PATH` | để trống | `/kho-thoc` |
-| `API_URL` frontend | `http://localhost:3001` | `https://api.<domain>/kho-thoc` |
+| `API_URL` frontend | `http://localhost:3001` | `https://apinhatkyvumua.taho.cat/kho-thoc/` (**có `/` cuối**) |
 | HTTPS | không bắt buộc | **bắt buộc** (GitHub Pages) |
+| Thư mục deploy | repo local | `/opt/nhatkyvumua/kho-thoc-api` |
 
-### B1. SSH vào VPS, vào thư mục dự án
+> **Runbook đầy đủ:** [deploy/vps/RUNBOOK-VPS.md](../deploy/vps/RUNBOOK-VPS.md)  
+> **Xử lý lỗi deploy:** [deploy/vps/HUONG-DAN-DEPLOY-VPS.md](../deploy/vps/HUONG-DAN-DEPLOY-VPS.md)
+
+### B1. Đưa code lên VPS
+
+**Cách nhanh — rsync từ Mac** (code chưa push GitHub):
 
 ```bash
-cd /path/to/keep-house-clean/kho-thoc-api
+# Trên VPS trước:
+mkdir -p /opt/nhatkyvumua/repo
+
+# Trên Mac:
+rsync -avz --exclude node_modules --exclude .env \
+  /Users/thao/DATA/Development/projects/NhatKyVuMua/keep-house-clean/ \
+  root@64.176.85.165:/opt/nhatkyvumua/repo/
+
+# Trên VPS:
+cd /opt/nhatkyvumua
+rsync -a repo/kho-thoc-api/ ./kho-thoc-api/ --exclude node_modules --exclude .env
+mkdir -p kho-thoc-api/data
+chmod +x kho-thoc-api/scripts/*.sh
 ```
 
-### B2. Tạo DB (mật khẩu **riêng** cho VPS hoặc cùng local — tùy bạn)
+### B2. SSH vào VPS, vào thư mục API
+
+```bash
+cd /opt/nhatkyvumua/kho-thoc-api
+```
+
+### B3. Tạo DB (mật khẩu **riêng** cho VPS — không dùng mật khẩu local)
 
 ```bash
 KHO_THOC_DB_PASSWORD='mat_khau_vps' ./scripts/setup-db.sh
 KHO_THOC_DB_PASSWORD='mat_khau_vps' ./scripts/verify-db.sh
 ```
 
-### B3. `.env` production
+### B4. `.env` production
 
 ```env
 PORT=3001
@@ -209,7 +233,7 @@ CORS_ORIGINS=https://batagic.github.io
 EEDT_DOCKER_NETWORK=<tên_network_thực_tế>
 ```
 
-### B4. Deploy container
+### B5. Deploy container
 
 ```bash
 docker compose up -d --build
@@ -217,38 +241,36 @@ docker compose exec kho-thoc-api node scripts/migrate.js
 free -h && docker stats --no-stream   # kiểm tra RAM
 ```
 
-### B5. Nginx + HTTPS
+### B6. Nginx + HTTPS
 
-Thêm vào config site (sau khi có SSL):
-
-```nginx
-location /kho-thoc/ {
-    proxy_pass http://kho-thoc-api:3001/kho-thoc/;
-    proxy_http_version 1.1;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-}
-```
-
-Reload Nginx, test:
+SSL terminate trên **Host Nginx** (không phải `eedt-nginx` container). Chi tiết: [SSL-GIAI-THICH.md](../deploy/vps/SSL-GIAI-THICH.md).
 
 ```bash
-curl -s 'https://api.<domain>/kho-thoc/?type=ping'
+# HTTP tạm → certbot → copy config từ repo
+certbot --nginx -d apinhatkyvumua.taho.cat
+cp /opt/nhatkyvumua/repo/deploy/vps/nginx/apinhatkyvumua.taho.cat.conf \
+   /etc/nginx/sites-available/apinhatkyvumua.taho.cat
+nginx -t && systemctl reload nginx
 ```
 
-### B6. Cutover frontend
+Test:
+
+```bash
+curl -s 'https://apinhatkyvumua.taho.cat/kho-thoc/?type=ping'
+curl -sI 'https://apinhatkyvumua.taho.cat/kho-thoc?type=ping' | head -1   # phải 200, không 301
+```
+
+### B7. Cutover frontend
 
 `assets/js/data/config.js`:
 
 ```javascript
-const API_URL = 'https://api.<domain>/kho-thoc';
+const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc/'; // trailing / bắt buộc
 ```
 
-Commit + push → GitHub Pages tự cập nhật.
+Commit + push → GitHub Pages tự cập nhật. Kiểm tra ẩn danh — Network tab status **200**.
 
-### B7. Backup
+### B8. Backup
 
 ```bash
 docker exec eedt-postgres pg_dump -U kho_thoc kho_thoc > backup_kho_thoc_$(date +%F).sql
@@ -266,7 +288,10 @@ Cron hàng ngày (khuyến nghị).
 | `password authentication failed` | Sai mật khẩu trong `.env` | Khớp với `KHO_THOC_DB_PASSWORD` lúc setup |
 | `network ... not found` | Sai `EEDT_DOCKER_NETWORK` | `docker inspect eedt-postgres` → sửa `.env` |
 | `could not translate host name "eedt-postgres"` | Chạy `npm run dev` trên host nhưng URL dùng hostname Docker | Đổi host → `localhost` |
-| CORS error từ GitHub Pages | Thiếu origin | Thêm `https://batagic.github.io` vào `CORS_ORIGINS` |
+| CORS error từ GitHub Pages | Thiếu origin hoặc Nginx 301 | `CORS_ORIGINS=https://batagic.github.io`; `API_URL` có `/` cuối; Nginx không redirect 301 |
+| Network tab **301** | `API_URL` thiếu `/` cuối | `.../kho-thoc/` trong `config.js` |
+| rsync `mkdir failed` | Thư mục VPS chưa tồn tại | `mkdir -p /opt/nhatkyvumua/repo` trước rsync |
+| `dig` trống | DNS chưa propagate | A record Hostinger; `dig @8.8.8.8` |
 | Mixed content | Frontend HTTPS gọi API HTTP | Bật HTTPS cho API (Nginx + Let's Encrypt) |
 | `database "kho_thoc" does not exist` | Chưa chạy setup-db | `./scripts/setup-db.sh` |
 

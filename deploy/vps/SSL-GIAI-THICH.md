@@ -59,3 +59,12 @@ https://apinhatkyvumua.taho.cat/kho-thoc/?type=ping
 ```
 
 → Phải có **HTTPS trên cổng 443** cho domain `apinhatkyvumua.taho.cat` (Host Nginx + certbot là cách thường dùng).
+
+## Lưu ý CORS + trailing slash
+
+Frontend GitHub Pages gọi `${API_URL}?type=profiles`. Vì vậy:
+
+- `config.js`: `API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc/'` (**có `/` cuối**)
+- Nginx: `location /kho-thoc { proxy_pass http://127.0.0.1:3001; }` — **không** `return 301` từ `/kho-thoc` sang `/kho-thoc/`
+
+Nếu thiếu `/` cuối, URL thành `/kho-thoc?type=...` → Nginx trả **301** → trình duyệt chặn `fetch` cross-origin.

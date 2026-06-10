@@ -3,6 +3,7 @@ const cors = require('cors');
 const { port, basePath, corsOrigins } = require('./config');
 const { pool } = require('./db');
 const apiRouter = require('./routes/api');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 
@@ -40,6 +41,8 @@ app.get('/health', async (_req, res) => {
 });
 
 const mount = basePath || '/';
+const adminMount = basePath ? `${basePath}/admin` : '/admin';
+app.use(adminMount, adminRouter);
 app.use(mount, apiRouter);
 
 app.use((err, _req, res, _next) => {

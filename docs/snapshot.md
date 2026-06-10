@@ -7,7 +7,7 @@
 
 ## 1. Tóm tắt một dòng
 
-Đang migrate backend **Google Apps Script + Sheets** → **VPS Docker API + PostgreSQL**. Phase 1 (code) **xong và test local OK**; **chưa deploy production** lên VPS / chưa cutover `API_URL` trên GitHub Pages.
+Đang migrate backend **Google Apps Script + Sheets** → **VPS Docker API + PostgreSQL**. Phase 1 deploy VPS **đã chạy** (API + HTTPS OK); cutover `API_URL` trên GitHub Pages **đang hoàn tất** (cần `API_URL` có trailing `/`).
 
 ---
 
@@ -17,12 +17,12 @@
 |----------|------------|
 | Đánh giá & kế hoạch migrate | ✅ `docs/kehoach.md` |
 | API `kho-thoc-api` (Node + Express + pg) | ✅ |
-| DB user `kho_thoc` / database `kho_thoc` trên `eedt-postgres` | ✅ local · ⏳ VPS |
+| DB user `kho_thoc` / database `kho_thoc` trên `eedt-postgres` | ✅ local · ✅ VPS |
 | Test API local (Docker :3001) | ✅ |
-| Import CSV Sheets → Postgres | ⏳ có file `data/*.csv`, cần xác nhận đã import |
-| Deploy VPS `/opt/nhatkyvumua` | ⏳ runbook sẵn, **chưa xác nhận hoàn tất** |
-| HTTPS `apinhatkyvumua.taho.cat` | ⏳ cert **chưa** có trong LE (cần `certbot`) |
-| Cutover `API_URL` GitHub Pages | ⏳ vẫn `localhost:3001` (dev) / GAS (production live) |
+| Import CSV Sheets → Postgres | ⏳ có file `data/*.csv`, cần xác nhận đã import VPS |
+| Deploy VPS `/opt/nhatkyvumua` | ✅ API ping OK trên `:3001` |
+| HTTPS `apinhatkyvumua.taho.cat` | ✅ certbot + Nginx host |
+| Cutover `API_URL` GitHub Pages | ⏳ `.../kho-thoc/` (trailing `/` bắt buộc) |
 | Phase 2 Auth (passcode/JWT) | ❌ chưa làm |
 | Phase 3 Multi-tenant | ❌ chưa làm |
 
@@ -30,20 +30,19 @@
 
 ## 3. Kiến trúc
 
-### Production (hiện tại — user đang dùng)
-
-```
-https://batagic.github.io/keep-house-clean/nhat-ky.html
-        → Google Apps Script → Google Sheets
-```
-
-### Mục tiêu (đang triển khai)
+### Production (sau cutover)
 
 ```
 https://batagic.github.io/keep-house-clean/nhat-ky.html   (frontend — giữ nguyên)
-        → https://apinhatkyvumua.taho.cat/kho-thoc        (API VPS)
+        → https://apinhatkyvumua.taho.cat/kho-thoc/       (API VPS — có / cuối)
                 → kho-thoc-api (Docker :3001)
                 → eedt-postgres / DB kho_thoc
+```
+
+### Rollback
+
+```
+config.js → API_URL về Google Apps Script → push
 ```
 
 ### Local dev
@@ -66,17 +65,17 @@ http://localhost:5500/nhat-ky.html
 | Superuser PG | `eedt` (không có role `postgres`) |
 | Nginx Docker | `eedt-nginx` — `8082→80` (app eedt, HTTP) |
 | **SSL terminate** | **Host Nginx** — `systemctl nginx` active, listen `:443` |
-| Cert LE hiện có | `taho.cat`, `course.taho.cat`, `tienganhcodaisy.taho.cat` |
-| Cert API cần tạo | `apinhatkyvumua.taho.cat` |
-| Thư mục dự án (kế hoạch) | `/opt/nhatkyvumua/kho-thoc-api` |
+| Cert LE | `apinhatkyvumua.taho.cat` (+ các subdomain khác) |
+| Thư mục dự án | `/opt/nhatkyvumua/kho-thoc-api` · repo mirror `/opt/nhatkyvumua/repo` |
+| IP VPS | `64.176.85.165` |
 | RAM | ~1 GB — dùng chung Postgres, không spin Postgres mới |
 
-**Đã xác nhận trên VPS (10/06/2026):**
+**Đã xác nhận (10/06/2026):**
 
 ```bash
-sudo systemctl status nginx   # active
-sudo ss -tlnp | grep ':443'   # nginx listen 443
-sudo ls /etc/letsencrypt/live/  # chưa có apinhatkyvumua.taho.cat
+curl -s 'http://127.0.0.1:3001/kho-thoc/?type=ping'   # {"result":"ok",...}
+dig +short apinhatkyvumua.taho.cat @8.8.8.8           # 64.176.85.165
+curl -s 'https://apinhatkyvumua.taho.cat/kho-thoc/?type=ping'  # OK sau certbot
 ```
 
 ---
@@ -86,7 +85,7 @@ sudo ls /etc/letsencrypt/live/  # chưa có apinhatkyvumua.taho.cat
 | Mục | Giá trị |
 |-----|---------|
 | Frontend GitHub Pages | `https://batagic.github.io/keep-house-clean/nhat-ky.html` |
-| API production (sau deploy) | `https://apinhatkyvumua.taho.cat/kho-thoc` |
+| API production | `https://apinhatkyvumua.taho.cat/kho-thoc/` (**có `/` cuối** trong `config.js`) |
 | API local | `http://localhost:3001` (BASE_PATH rỗng) / `http://localhost:3001/kho-thoc` (VPS) |
 | GAS rollback | `https://script.google.com/macros/s/AKfycbwrQ4WC4WnZ4X33RQScOnOG5RFHAVblqIYEhNVfHJENAAzRe-rGEN-5ICobJFp-oTHYeg/exec` |
 | Google Sheet ID | `1JhOR_Ry5Z9h__wH288zVS2KtYPUD-8PgCWS1KZoErmU` |
@@ -99,14 +98,12 @@ sudo ls /etc/letsencrypt/live/  # chưa có apinhatkyvumua.taho.cat
 File: `assets/js/data/config.js`
 
 ```javascript
-const API_URL = 'http://localhost:3001';   // ← đang dev local
-// Production (chưa bật):
-// const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc';
-// Rollback GAS: script.google.com/...
+const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc/'; // trailing / bắt buộc
+// Local dev: const API_URL = 'http://localhost:3001';
 const API_USE_PLAIN_TEXT = API_URL.includes('script.google.com');
 ```
 
-**Lưu ý:** Sửa `config.js` → chỉ cần hard refresh trình duyệt; không cần restart server.
+**Lưu ý:** `API_URL` production **phải** kết thúc bằng `/` — frontend ghép `?type=...` ngay sau. Thiếu `/` → Nginx 301 → CORS fail trên GitHub Pages.
 
 ---
 
@@ -130,7 +127,8 @@ const API_USE_PLAIN_TEXT = API_URL.includes('script.google.com');
 
 ### VPS
 
-- **Chưa xác nhận** đã chạy `setup-db.sh` — cần mật khẩu **riêng** cho production
+- Đã chạy `setup-db.sh` + `verify-db.sh`
+- Mật khẩu production **riêng** (không dùng `kho_thoc_dev_local`)
 
 ---
 
@@ -219,32 +217,24 @@ VPS production: prefix `/kho-thoc` (`BASE_PATH=/kho-thoc` trong `.env`).
 
 ## 12. Bước tiếp theo (resume checklist)
 
-### A. Commit code (khuyến nghị trước khi deploy VPS)
+### A. Deploy lại từ đầu
 
-```bash
-git add kho-thoc-api deploy docs assets/js
-git commit -m "Phase 1: kho-thoc-api, deploy VPS docs, frontend API_USE_PLAIN_TEXT"
-git push
-```
+Mở **[deploy/vps/RUNBOOK-VPS.md](../deploy/vps/RUNBOOK-VPS.md)** — lệnh copy-paste đầy đủ.
 
-### B. Deploy VPS — theo `deploy/vps/RUNBOOK-VPS.md`
+### B. Bài học deploy lần 1 (tránh lặp lỗi)
 
-1. `rsync` hoặc `git clone` → `/opt/nhatkyvumua`
-2. `KHO_THOC_DB_PASSWORD='...' ./scripts/setup-db.sh` trên VPS
-3. Tạo `.env` production (`BASE_PATH=/kho-thoc`, `CORS_ORIGINS=https://batagic.github.io`)
-4. `docker compose up -d --build` + `migrate.js`
-5. Import CSV nếu cần
-6. Host Nginx HTTP → `certbot --nginx -d apinhatkyvumua.taho.cat`
-7. `curl https://apinhatkyvumua.taho.cat/kho-thoc/?type=ping`
+| Lỗi gặp | Cách tránh |
+|---------|------------|
+| rsync `mkdir failed` | `mkdir -p /opt/nhatkyvumua/repo` trên VPS **trước** rsync |
+| `dig` trống | A record Hostinger; kiểm tra `dig @8.8.8.8`; flush DNS Mac |
+| Network tab **301** | `API_URL = '.../kho-thoc/'` (có `/` cuối); Nginx không `return 301` nội bộ |
 
-### C. Cutover production
+### C. Việc còn lại
 
-```javascript
-// assets/js/data/config.js
-const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc';
-```
-
-`git push` → test `nhat-ky.html` trên GitHub Pages (ẩn danh).
+- [ ] Push `config.js` với trailing `/` nếu chưa
+- [ ] Import CSV lên VPS (nếu cần)
+- [ ] Test end-to-end ẩn danh — Network status **200** (không 301)
+- [ ] `pg_dump` cron backup
 
 ### D. Sau Phase 1
 
@@ -275,10 +265,12 @@ const API_URL = 'https://apinhatkyvumua.taho.cat/kho-thoc';
 
 ## 15. Câu hỏi mở / chưa xác nhận
 
-- [ ] Đã deploy `/opt/nhatkyvumua` trên VPS chưa?
-- [ ] Đã import CSV lên Postgres (local / VPS) chưa?
-- [ ] DNS `apinhatkyvumua.taho.cat` → IP VPS đã propagate chưa?
-- [ ] `EEDT_DOCKER_NETWORK` trên VPS có trùng `docker_eedt-net` không? (chạy `docker inspect eedt-postgres` trên VPS)
+- [x] Deploy `/opt/nhatkyvumua` trên VPS
+- [x] DNS `apinhatkyvumua.taho.cat` → `64.176.85.165`
+- [x] HTTPS + API ping
+- [ ] Import CSV lên Postgres VPS
+- [ ] End-to-end GitHub Pages (Network 200)
+- [ ] Cron backup `pg_dump`
 
 ---
 
