@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kho Thóc Gia Đình – Gamification Việc Nhà</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --green-deep: #1a5c38;
+      --green-mid:  #2d8a55;
+      --green-light:#4abe7a;
+      --amber:      #f5a623;
+      --amber-light:#fde68a;
+      --cream:      #fdf8ee;
+      --earth:      #7c4b1e;
+      --red-penalty:#c0392b;
+      --text-main:  #1e1e1e;
+      --text-muted: #6b7280;
+      --radius-card:1.5rem;
+      --shadow-soft:0 4px 24px rgba(0,0,0,0.07);
+      --shadow-card:0 8px 32px rgba(0,0,0,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(--text-main); overflow-x: hidden; }
+    h1, h2, h3, h4, h5 { font-family: 'Baloo 2', sans-serif; }
+
+    /* NOISE TEXTURE */
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: .4;
+    }
+
+    /* NAV */
+    .nav { position: fixed; top:0; left:0; right:0; z-index: 100; background: rgba(253,248,238,.92); backdrop-filter: blur(12px); border-bottom: 2px solid rgba(245,166,35,.2); padding: .9rem 2rem; display: flex; align-items: center; justify-content: space-between; transition: box-shadow .3s; }
+    .nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.08); }
+    .nav-logo { display: flex; align-items: center; gap:.7rem; text-decoration: none; font-weight: 900; font-size: 1.3rem; color: var(--green-deep); font-family: 'Baloo 2', sans-serif;}
+    .nav-logo .logo-icon { width:2.4rem; height:2.4rem; background: linear-gradient(135deg, var(--green-mid), var(--amber)); border-radius:.7rem; display:grid; place-items:center; font-size:1.1rem; box-shadow: 0 2px 8px rgba(45,138,85,.3); }
+    .nav-links { display:flex; gap:2rem; list-style:none; }
+    .nav-links a { text-decoration:none; font-weight:700; font-size:.9rem; color: var(--text-muted); transition: color .2s; }
+    .nav-links a:hover { color: var(--green-mid); }
+    .nav-btn { background: var(--amber); color: var(--earth) !important; padding:.5rem 1.3rem; border-radius:2rem; font-weight:800 !important; cursor: pointer; border: none; font-family: 'Baloo 2'; font-size: .9rem; transition: transform .2s; }
+    .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245,166,35,.4); }
+
+    /* LAYOUT */
+    .container { max-width:1150px; margin:0 auto; padding: 0 2rem; }
+    section { padding: 4rem 0; }
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-label { font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.85rem; letter-spacing:.15em; text-transform:uppercase; color: var(--green-mid); margin-bottom:.5rem; }
+    .section-title { font-size:clamp(2rem, 4vw, 2.8rem); font-weight:900; color: var(--green-deep); line-height:1.2; }
+    
+    /* 1. HERO INFOGRAPHIC */
+    .hero { background: linear-gradient(150deg, var(--green-deep) 0%, #2d6a4f 50%, #1b4332 100%); padding: 8rem 0 5rem; text-align: center; color: white; position: relative; }
+    .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; margin-bottom: 1rem; line-height: 1.1; }
+    .hero h1 span { color: var(--amber); }
+    .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto 3rem; }
+    
+    .infographic-flow { display: flex; justify-content: center; align-items: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 2rem; }
+    .info-step { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); padding: 1.5rem; border-radius: 1.5rem; width: 220px; text-align: center; position: relative; }
+    .info-icon { font-size: 3rem; margin-bottom: 1rem; display: inline-block; background: #fff; width: 80px; height: 80px; line-height: 80px; border-radius: 50%; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+    .info-title { font-family: 'Baloo 2'; font-weight: 800; font-size: 1.2rem; color: #fff; }
+    .info-arrow { color: var(--amber); font-size: 2rem; }
+    @media (max-width: 992px) { .infographic-flow { flex-direction: column; } .info-arrow { transform: rotate(90deg); } }
+
+    /* 2. BOARD GAME RANKS */
+    .ranks-section { background: #fff; }
+    .ranks-track { display:flex; gap:0; background: var(--cream); border-radius: var(--radius-card); border: 2px solid #e5e7eb; overflow: hidden; box-shadow: var(--shadow-soft); flex-wrap: wrap;}
+    .rank-item { flex:1; min-width: 180px; padding: 2rem 1rem; text-align:center; position:relative; border-right: 2px solid #e5e7eb; }
+    .rank-item:last-child { border-right: none; }
+    .rank-item.active { background: linear-gradient(135deg, #f0faf4, #fffbeb); }
+    .rank-emoji { font-size:2.8rem; margin-bottom:.8rem; }
+    .rank-name { font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.2rem; color:var(--green-deep); }
+    .rank-exp  { font-size:.9rem; color:var(--text-muted); font-weight: 600; margin-bottom: .8rem;}
+    .rank-badge { display:inline-block; font-size:.8rem; font-weight:700; padding:.4rem .8rem; border-radius:1rem; border: 1px solid currentColor;}
+    @media (max-width: 768px) { .rank-item { border-right: none; border-bottom: 2px solid #e5e7eb; } }
+
+    /* 3. CONVERSION TABLE */
+    .conversion-section { background: var(--cream); }
+    .conv-box { background: #fff; border-radius: var(--radius-card); padding: 3rem; box-shadow: var(--shadow-card); max-width: 800px; margin: 0 auto; border: 2px solid var(--amber-light); text-align: center;}
+    .conv-table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+    .conv-table th { background: linear-gradient(135deg, var(--green-deep), var(--green-mid)); color: #fff; font-family: 'Baloo 2'; font-size: 1.2rem; padding: 1rem; }
+    .conv-table th:first-child { border-radius: 1rem 0 0 0; }
+    .conv-table th:last-child { border-radius: 0 1rem 0 0; }
+    .conv-table td { padding: 1.2rem 1rem; font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid #e5e7eb; color: var(--text-main); }
+    .conv-table tr:last-child td { border-bottom: none; }
+    .conv-table tr:hover td { background: #f8fafc; }
+    .val-g { color: #b45309; font-family: 'Baloo 2'; font-size: 1.5rem; }
+    .val-v { color: var(--green-deep); font-family: 'Baloo 2'; font-size: 1.5rem; }
+
+    /* 4. TASKS TABLE (MẪU) */
+    .tasks-section { background: #fff; }
+    .task-group { margin-bottom: 2.5rem; }
+    .task-group-title { display: flex; align-items: center; gap: .8rem; font-family: 'Baloo 2'; font-size: 1.5rem; font-weight: 800; color: var(--green-deep); margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 2px solid #e5e7eb; }
+    .tasks-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:1rem; }
+    .task-row { background:var(--cream); border-radius:1rem; padding:1rem; display:flex; align-items:center; gap:1rem; border:2px solid transparent; transition: transform .2s; }
+    .task-row:hover { border-color:var(--green-light); transform:translateY(-2px); background: #fff; box-shadow: var(--shadow-soft); }
+    .task-row .t-icon { font-size:1.8rem; width:2.5rem; text-align:center; }
+    .task-row .t-info { flex:1; }
+    .task-row .t-name { font-weight:800; font-size:1rem; color:var(--text-main); }
+    .task-row .t-sub  { font-size:.85rem; color:var(--text-muted); }
+    .task-row .t-reward { display:flex; flex-direction:column; align-items:flex-end; gap:3px; font-family:'Baloo 2',sans-serif; flex-shrink:0; }
+    .val-grain { color:#b45309; background:var(--amber-light); border-radius:1rem; padding:.15rem .6rem; white-space:nowrap; font-weight: 800; font-size: .95rem;}
+    .val-exp   { color:#065f46; background:#d1fae5; border-radius:1rem; padding:.15rem .6rem; white-space:nowrap; font-weight: 700; font-size: .75rem;}
+    .task-row.epic { background: linear-gradient(135deg, #fefce8 0%, #fff 100%); border-color: #fde047; }
+    .task-row.epic .t-name { color: #854d0e; font-weight: 900; }
+
+    /* 5. REWARDS (LONG TERM) */
+    .rewards-section { background: var(--cream); }
+    .filter-tabs { display:flex; gap:.7rem; flex-wrap:wrap; justify-content: center; margin-bottom:2.5rem; }
+    .tab-btn { background:#fff; border:2px solid #e5e7eb; color:var(--text-muted); font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.9rem; padding:.5rem 1.2rem; border-radius:2rem; cursor:pointer; transition: all .2s; }
+    .tab-btn:hover, .tab-btn.active { background:var(--green-deep); border-color:var(--green-deep); color:#fff; }
+    
+    .rewards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.5rem; }
+    .reward-card { background:#fff; border-radius:var(--radius-card); border:2px solid #e5e7eb; overflow:hidden; box-shadow:var(--shadow-soft); display:flex; flex-direction:column; }
+    .rw-top { padding:1.5rem; border-bottom:1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: flex-start;}
+    .rw-emoji { font-size:3rem; line-height: 1; }
+    .rw-cost { background:var(--amber-light); color:var(--earth); font-family:'Baloo 2'; font-weight:800; padding:.3rem .8rem; border-radius:1rem; }
+    .rw-body { padding:1.5rem; flex:1; }
+    .rw-name { font-size:1.2rem; font-weight:900; color:var(--green-deep); margin-bottom:1rem; }
+    .tier-list { display:flex; flex-direction:column; gap:.6rem; margin-bottom: 1rem;}
+    .tier-item { display:flex; align-items:flex-start; gap:.8rem; background:var(--cream); border-radius:.8rem; padding:.8rem; border-left:3px solid var(--green-light); }
+    .tier-cost { font-family:'Baloo 2'; font-weight:900; font-size:.85rem; background:#fff; color:var(--green-deep); padding:.2rem .6rem; border-radius:1rem; flex-shrink:0; border: 1px solid #e5e7eb;}
+    .tier-desc { font-size:.85rem; color:var(--text-muted); line-height:1.5; }
+    .rw-why { background:#f0faf4; border-radius:1rem; padding:.8rem 1rem; border-left:3px solid var(--green-mid); font-size:.85rem; color:var(--text-muted); line-height:1.5; margin-bottom: 1rem; }
+    .rw-why strong { color:var(--green-deep); font-weight:800; }
+    .rw-tags { display: flex; gap: .5rem; }
+    .rw-tag { font-size:.75rem; font-weight:700; padding:.2rem .8rem; border-radius:1rem; background:#e0f2fe; color:#0369a1; }
+
+    /* 6. PRIVILEGE CARDS (PRINT & CUT) */
+    .cards-section { background: #fff; }
+    .print-hint { background: linear-gradient(135deg, var(--green-deep), #1b4332); color: #fff; padding: 1.5rem 2rem; border-radius: 1rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; box-shadow: var(--shadow-card); }
+    .print-hint h4 { font-size: 1.3rem; margin-bottom: .2rem; }
+    
+    .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:2rem; }
+    
+    /* STYLE CUT-OUT CARDS */
+    .cut-card { 
+      background: #fff; 
+      border: 3px dashed #9ca3af; /* Dashed line for cutting */
+      border-radius: 1rem; 
+      padding: 2rem 1.5rem; 
+      text-align: center; 
+      position: relative;
+      /* Background patterns to make it look like a ticket */
+      background-image: radial-gradient(circle at top left, transparent 15px, #fff 16px), radial-gradient(circle at top right, transparent 15px, #fff 16px), radial-gradient(circle at bottom left, transparent 15px, #fff 16px), radial-gradient(circle at bottom right, transparent 15px, #fff 16px);
+      background-size: 51% 51%; background-repeat: no-repeat;
+      background-position: top left, top right, bottom left, bottom right;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .cut-icon { position: absolute; top: -12px; left: 20px; font-size: 1.2rem; color: #6b7280; background: #fff; padding: 0 5px;}
+    
+    .cc-emoji { font-size:3.5rem; margin-bottom:1rem; line-height: 1; }
+    .cc-name { font-family: 'Baloo 2'; font-size:1.3rem; font-weight:900; margin-bottom:.5rem; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px;}
+    .cc-cost { display:inline-block; font-family:'Baloo 2'; font-weight:800; font-size:1rem; padding:.3rem 1rem; border-radius:2rem; margin-bottom:1rem; border: 2px solid currentColor;}
+    .cc-desc { font-size:.9rem; line-height:1.6; color: var(--text-muted); font-weight: 600; padding-top: 1rem; border-top: 1px solid #e5e7eb;}
+    .cc-valid { position: absolute; bottom: 10px; width: 100%; left: 0; font-size: 0.7rem; color: #9ca3af; text-transform: uppercase; font-weight: bold;}
+
+    /* Card Themes */
+    .theme-blue .cc-name { color: #1e3a8a; } .theme-blue .cc-cost { color: #2563eb; background: #eff6ff;} .theme-blue { border-color: #93c5fd; }
+    .theme-orange .cc-name { color: #7c2d12; } .theme-orange .cc-cost { color: #ea580c; background: #fff7ed;} .theme-orange { border-color: #fdba74; }
+    .theme-purple .cc-name { color: #581c87; } .theme-purple .cc-cost { color: #9333ea; background: #faf5ff;} .theme-purple { border-color: #d8b4fe; }
+    .theme-red .cc-name { color: #7f1d1d; } .theme-red .cc-cost { color: #dc2626; background: #fef2f2;} .theme-red { border-color: #fca5a5; }
+    .theme-green .cc-name { color: #14532d; } .theme-green .cc-cost { color: #16a34a; background: #f0fdf4;} .theme-green { border-color: #86efac; }
+    .theme-yellow .cc-name { color: #713f12; } .theme-yellow .cc-cost { color: #ca8a04; background: #fefce8;} .theme-yellow { border-color: #fde047; }
+
+    /* FOOTER */
+    footer { background:#0d2b1a; color:rgba(255,255,255,.55); padding:3rem 0; border-top:3px solid var(--green-mid); text-align: center;}
+    .footer-logo { font-family:'Baloo 2'; font-weight:900; font-size:1.5rem; color:#fff; margin-bottom: 1rem;}
+
+    /* =========================================
+       7. PRINT MODE (A4 Landscape / A3 Optimal)
+       ========================================= */
+    @media print {
+      @page {
+        size: A4 landscape; /* Ưu tiên in ngang cho đẹp */
+        margin: 10mm 15mm;
+      }
+      
+      /* Tắt toàn bộ animation & background overlay để in sạch */
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+      body::before { display: none !important; }
+      
+      /* Bật in màu nền (đối với Chrome/Edge) */
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        background: #fff !important;
+      }
+
+      /* Ẩn các thành phần không cần thiết khi in */
+      .nav, footer, .print-hint, .filter-tabs, .hero p, .hero h1 span { 
+        display: none !important; 
+      }
+      
+      /* Reset Padding & Margin cho Print */
+      section { padding: 1.5rem 0 !important; }
+      .container { max-width: 100% !important; padding: 0 !important; }
+      
+      /* Chống cắt vỡ Layout (Page Breaks) */
+      .ranks-section, .conversion-section, .tasks-section, .rewards-section, .cards-section {
+        page-break-inside: auto;
+      }
+      .rank-item, .task-group, .reward-card, .cut-card, .conv-box, .info-step {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      
+      /* Thu gọn Hero */
+      .hero { 
+        padding: 1rem 0 !important; 
+        background: none !important; 
+        color: var(--green-deep) !important;
+        border-bottom: 2px solid #000;
+        margin-bottom: 1rem;
+      }
+      .hero h1 { font-size: 24pt !important; color: #000 !important;}
+      .info-step { 
+        border-color: var(--green-deep) !important; 
+        color: #000 !important; 
+        padding: 1rem !important;
+      }
+      .info-title { color: var(--green-deep) !important; }
+      
+      /* Bảng quy đổi */
+      .conv-box { border: 1px solid #000 !important; box-shadow: none !important; padding: 1rem !important; }
+      .conv-table th { background: #e5e7eb !important; color: #000 !important; }
+      
+      /* Lưới thẻ in */
+      .cards-grid { 
+        grid-template-columns: repeat(3, 1fr) !important; /* Ép 3 cột cho A4 ngang */
+        gap: 10mm !important;
+      }
+      .cut-card {
+        border: 1.5pt dashed #000 !important; /* Chuyển nét đứt thành đen rõ ràng để dễ cắt */
+        box-shadow: none !important;
+      }
+      .cut-icon { color: #000 !important; }
+
+      .rewards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV (Ẩn khi in) -->
+<nav class="nav" id="mainNav">
+  <a href="#" class="nav-logo"><span class="logo-icon">🌾</span>Kho Thóc Gia Đình</a>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">Cách Hoạt Động</a></li>
+    <li><a href="#ranks">Cấp Bậc</a></li>
+    <li><a href="#tasks">Nhiệm Vụ</a></li>
+    <li><a href="#conversion">Bảng Quy Đổi</a></li>
+    <li><a href="#rewards">Kho Quà</a></li>
+  </ul>
+  <button class="nav-btn" onclick="window.print()"><i class="fas fa-print"></i> In Bản Này</button>
+</nav>
+
+<!-- 1. HERO INFOGRAPHIC -->
+<section class="hero" id="how-it-works">
+  <div class="container">
+    <h1>Biến Việc Nhà Thành <span>Vụ Mùa Bội Thu</span></h1>
+    <p>Gamification giáo dục tài chính cho gia đình. In bảng này dán lên tủ lạnh và bắt đầu hành trình ngay hôm nay!</p>
+    
+    <div class="infographic-flow">
+      <div class="info-step">
+        <span class="info-icon">🧹</span>
+        <div class="info-title">1. Làm việc nhà</div>
+        <div style="font-size:.85rem; margin-top:.5rem;">Hoàn thành nhiệm vụ được giao trên bảng.</div>
+      </div>
+      <i class="fas fa-arrow-right info-arrow"></i>
+      
+      <div class="info-step">
+        <span class="info-icon">🌾</span>
+        <div class="info-title">2. Nhận Gạo thưởng</div>
+        <div style="font-size:.85rem; margin-top:.5rem;">Ba mẹ xác nhận & cộng Gạo + Điểm kinh nghiệm (EXP).</div>
+      </div>
+      <i class="fas fa-arrow-right info-arrow"></i>
+      
+      <div class="info-step">
+        <span class="info-icon">🎁</span>
+        <div class="info-title">3. Đổi quà/Đặc quyền</div>
+        <div style="font-size:.85rem; margin-top:.5rem;">Dùng Gạo đổi thẻ bài hoặc tích lũy mua quà thật.</div>
+      </div>
+      <i class="fas fa-arrow-right info-arrow"></i>
+      
+      <div class="info-step">
+        <span class="info-icon">⭐</span>
+        <div class="info-title">4. Lên cấp Quản Gia</div>
+        <div style="font-size:.85rem; margin-top:.5rem;">Tích đủ EXP để thăng hạng và nhận bonus Gạo.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. BOARD GAME RANKS -->
+<section class="ranks-section" id="ranks">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Hệ Thống Thăng Cấp</div>
+      <h2 class="section-title">5 Cấp Bậc Quản Gia</h2>
+    </div>
+    
+    <div class="ranks-track">
+      <div class="rank-item active">
+        <div class="rank-emoji">🌱</div>
+        <div class="rank-name">Tân Binh</div>
+        <div class="rank-exp">0 – 200 EXP</div>
+        <span class="rank-badge" style="background:#d1fae5;color:#065f46">Cơ Bản</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">🌿</div>
+        <div class="rank-name">Thợ Cày</div>
+        <div class="rank-exp">200 – 500 EXP</div>
+        <span class="rank-badge" style="background:#dcfce7;color:#166534">+5% bonus Gạo</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">🌾</div>
+        <div class="rank-name">Điền Chủ</div>
+        <div class="rank-exp">500 – 1.000 EXP</div>
+        <span class="rank-badge" style="background:#fef9c3;color:#854d0e">+10% bonus Gạo</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">🏡</div>
+        <div class="rank-name">Lão Làng</div>
+        <div class="rank-exp">1.000 – 2.000 EXP</div>
+        <span class="rank-badge" style="background:#fed7aa;color:#9a3412">+15% bonus Gạo</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">👑</div>
+        <div class="rank-name">Đại Điền Chủ</div>
+        <div class="rank-exp">2.000+ EXP</div>
+        <span class="rank-badge" style="background:#fde68a;color:#713f12">+20% · Đặc Quyền</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. CONVERSION TABLE -->
+<section class="conversion-section" id="conversion">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Tỷ giá cố định minh bạch</div>
+      <h2 class="section-title">Bảng Quy Đổi Gạo Ra VNĐ</h2>
+    </div>
+    
+    <div class="conv-box">
+      <h3 style="font-family:'Baloo 2'; font-size:1.5rem; color:var(--text-muted); margin-bottom: 1rem;">Công thức: 1 Hạt Gạo = 100 VNĐ</h3>
+      <table class="conv-table">
+        <thead>
+          <tr>
+            <th>Số lượng Gạo 🌾</th>
+            <th>Mệnh giá VNĐ 💵</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="val-g">1 🌾</td>
+            <td class="val-v">100đ</td>
+          </tr>
+          <tr>
+            <td class="val-g">10 🌾</td>
+            <td class="val-v">1.000đ</td>
+          </tr>
+          <tr>
+            <td class="val-g">50 🌾</td>
+            <td class="val-v">5.000đ</td>
+          </tr>
+          <tr>
+            <td class="val-g">100 🌾</td>
+            <td class="val-v">10.000đ</td>
+          </tr>
+          <tr>
+            <td class="val-g">500 🌾</td>
+            <td class="val-v">50.000đ</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 4. TASKS TABLE (MẪU) -->
+<section class="tasks-section" id="tasks">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Danh sách tham khảo</div>
+      <h2 class="section-title">Bảng Nhiệm Vụ Mẫu Theo Cấp Độ</h2>
+    </div>
+
+    <!-- Dễ -->
+    <div class="task-group">
+      <div class="task-group-title"><span style="font-size: 2rem;">🌱</span> Cấp độ 1: Tập sự (Khuyên dùng < 10 tuổi)</div>
+      <div class="tasks-grid">
+        <div class="task-row"><div class="t-icon">🪑</div><div class="t-info"><div class="t-name">Thiết lập bàn chỉ huy</div><div class="t-sub">Dọn bàn học · ~10 phút</div></div><div class="t-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🗑️</div><div class="t-info"><div class="t-name">Dọn sạch phế liệu</div><div class="t-sub">Đổ rác · ~10 phút</div></div><div class="t-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🐾</div><div class="t-info"><div class="t-name">Thu dọn Giang sơn</div><div class="t-sub">Dọn phòng riêng · ~10 phút</div></div><div class="t-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🍽️</div><div class="t-info"><div class="t-name">Bảo dưỡng pháp bảo</div><div class="t-sub">Lau dọn bàn ăn · ~10 phút</div></div><div class="t-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">👕</div><div class="t-info"><div class="t-name">Triệu hồi đồ giặt</div><div class="t-sub">Gấp & cất đồ · ~15 phút</div></div><div class="t-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
+      </div>
+    </div>
+
+    <!-- Vừa -->
+    <div class="task-group">
+      <div class="task-group-title"><span style="font-size: 2rem;">🌿</span> Cấp độ 2: Trợ thủ (Khuyên dùng 10-12 tuổi)</div>
+      <div class="tasks-grid">
+        <div class="task-row"><div class="t-icon">🍽️</div><div class="t-info"><div class="t-name">Phá băng bồn rửa</div><div class="t-sub">Rửa bát · ~15 phút</div></div><div class="t-reward"><span class="val-grain">+15 🌾</span><span class="val-exp">+10 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🧹</div><div class="t-info"><div class="t-name">Tổng tấn công bụi bẩn</div><div class="t-sub">Quét & lau nhà · ~20 phút</div></div><div class="t-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🌿</div><div class="t-info"><div class="t-name">Hộ vệ thảo dược</div><div class="t-sub">Tưới cây · ~20 phút</div></div><div class="t-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🧺</div><div class="t-info"><div class="t-name">Chăm sóc Long bào</div><div class="t-sub">Giặt / Phơi quần áo · ~20 phút</div></div><div class="t-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🧼</div><div class="t-info"><div class="t-name">Thanh tẩy bảo vật</div><div class="t-sub">Giặt giày · ~35 phút</div></div><div class="t-reward"><span class="val-grain">+35 🌾</span><span class="val-exp">+30 EXP</span></div></div>
+      </div>
+    </div>
+
+    <!-- Khó -->
+    <div class="task-group">
+      <div class="task-group-title"><span style="font-size: 2rem;">🔥</span> Cấp độ 3: Quản gia (Khuyên dùng 13-15 tuổi)</div>
+      <div class="tasks-grid">
+        <div class="task-row"><div class="t-icon">📚</div><div class="t-info"><div class="t-name">Tu luyện kiến thức</div><div class="t-sub">Tự học · 1 tiếng</div></div><div class="t-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
+        <div class="task-row"><div class="t-icon">🛒</div><div class="t-info"><div class="t-name">Viễn chinh lương thực</div><div class="t-sub">Đi chợ · ~30 phút</div></div><div class="t-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
+        <div class="task-row epic"><div class="t-icon">🍳</div><div class="t-info"><div class="t-name">Trợ lý Đầu bếp</div><div class="t-sub">Nấu 1 bữa cơm hoàn chỉnh</div></div><div class="t-reward"><span class="val-grain">+100 🌾</span><span class="val-exp">+80 EXP</span></div></div>
+        <div class="task-row epic"><div class="t-icon">🏰</div><div class="t-info"><div class="t-name">Đại chiến Kho Thóc</div><div class="t-sub">Tổng vệ sinh toàn bộ nhà cửa</div></div><div class="t-reward"><span class="val-grain">+150 🌾</span><span class="val-exp">+100 EXP</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. REWARDS (LONG TERM) -->
+<section class="rewards-section" id="rewards">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Mục tiêu tích lũy</div>
+      <h2 class="section-title">Kho Quà Tặng Dài Hạn</h2>
+    </div>
+
+    <!-- Filter (Ẩn khi in) -->
+    <div class="filter-tabs">
+      <button class="tab-btn active" onclick="filterCards('all', this)">Tất Cả</button>
+      <button class="tab-btn" onclick="filterCards('family', this)">🏠 Gia Đình</button>
+      <button class="tab-btn" onclick="filterCards('freedom', this)">🗺️ Tự Do</button>
+      <button class="tab-btn" onclick="filterCards('food', this)">🍜 Ăn Uống</button>
+      <button class="tab-btn" onclick="filterCards('social', this)">👫 Bạn Bè</button>
+      <button class="tab-btn" onclick="filterCards('learning', this)">📚 Học Hỏi</button>
+    </div>
+
+    <div class="rewards-grid" id="rewardsGrid">
+      
+      <!-- Sách / Học hỏi -->
+      <div class="reward-card" data-tag="learning">
+        <div class="rw-top">
+          <div class="rw-emoji">📚</div>
+          <div class="rw-cost">800 – 2.400 🌾</div>
+        </div>
+        <div class="rw-body">
+          <h3 class="rw-name">Gói "Mở Mang Bờ Cõi"</h3>
+          <div class="tier-list">
+            <div class="tier-item"><span class="tier-cost">800 🌾</span><span class="tier-desc">1 cuốn truyện tranh do con tự chọn (manga, comic...)</span></div>
+            <div class="tier-item"><span class="tier-cost">1.600 🌾</span><span class="tier-desc">1 cuốn tiểu thuyết/sách bìa cứng theo sở thích</span></div>
+            <div class="tier-item"><span class="tier-cost">2.400 🌾</span><span class="tier-desc">1 bộ sách khoa học/kỹ năng (2-3 cuốn)</span></div>
+          </div>
+          <div class="rw-why"><strong>💡 Ý nghĩa:</strong> Con học cách đặt mục tiêu và nhận ra đầu tư tri thức có giá trị lâu dài.</div>
+          <div class="rw-tags"><span class="rw-tag" style="background:#eff6ff; color:#1d4ed8">📚 Học Hỏi</span></div>
+        </div>
+      </div>
+
+      <!-- Ăn uống -->
+      <div class="reward-card" data-tag="food">
+        <div class="rw-top">
+          <div class="rw-emoji">🍲</div>
+          <div class="rw-cost">1.200 – 1.600 🌾</div>
+        </div>
+        <div class="rw-body">
+          <h3 class="rw-name">Mâm Cỗ "Mừng Vụ Mùa"</h3>
+          <div class="tier-list">
+            <div class="tier-item"><span class="tier-cost">1.200 🌾</span><span class="tier-desc">1 món ăn yêu thích do con đặt (gà rán, pizza...)</span></div>
+            <div class="tier-item"><span class="tier-cost">1.600 🌾</span><span class="tier-desc">Bữa ăn thịnh soạn cả nhà — con làm thực đơn trưởng.</span></div>
+          </div>
+          <div class="rw-why"><strong>💡 Ý nghĩa:</strong> Tạo kỷ niệm bữa cơm gia đình đáng nhớ và tự hào về lao động.</div>
+          <div class="rw-tags"><span class="rw-tag" style="background:#fdf4ff; color:#7e22ce">🍜 Ăn Uống</span></div>
+        </div>
+      </div>
+
+      <!-- Bạn bè -->
+      <div class="reward-card" data-tag="social">
+        <div class="rw-top">
+          <div class="rw-emoji">🏰</div>
+          <div class="rw-cost">2.400 – 4.000 🌾</div>
+        </div>
+        <div class="rw-body">
+          <h3 class="rw-name">Lệnh Bài "Mở Cổng Thành"</h3>
+          <div class="tier-list">
+            <div class="tier-item"><span class="tier-cost">2.400 🌾</span><span class="tier-desc">Mời 2 bạn đến nhà chơi buổi chiều (game, ăn vặt)</span></div>
+            <div class="tier-item"><span class="tier-cost">3.200 🌾</span><span class="tier-desc">Mời 4 bạn đến nhà chơi cả ngày — ba mẹ lo đồ ăn</span></div>
+            <div class="tier-item"><span class="tier-cost">4.000 🌾</span><span class="tier-desc">Tiệc ngủ cuối tuần cho 2–3 bạn thân tại nhà</span></div>
+          </div>
+          <div class="rw-why"><strong>💡 Ý nghĩa:</strong> Con học cách lập kế hoạch sự kiện và chia sẻ niềm vui với bạn bè.</div>
+          <div class="rw-tags"><span class="rw-tag" style="background:#fff1f2; color:#be123c">👫 Bạn Bè</span></div>
+        </div>
+      </div>
+
+      <!-- Tự do -->
+      <div class="reward-card" data-tag="freedom">
+        <div class="rw-top">
+          <div class="rw-emoji">🧭</div>
+          <div class="rw-cost">1.600 – 3.200 🌾</div>
+        </div>
+        <div class="rw-body">
+          <h3 class="rw-name">Giấy "Thông Hành"</h3>
+          <div class="tier-list">
+            <div class="tier-item"><span class="tier-cost">1.600 🌾</span><span class="tier-desc">Tự do 1 buổi đi chơi không cần hỏi trước</span></div>
+            <div class="tier-item"><span class="tier-cost">2.400 🌾</span><span class="tier-desc">Tự do cả ngày cuối tuần (về trước 9h tối)</span></div>
+            <div class="tier-item"><span class="tier-cost">3.200 🌾</span><span class="tier-desc">Miễn kiểm tra điện thoại trong 1 tuần hoàn toàn</span></div>
+          </div>
+          <div class="rw-why"><strong>💡 Ý nghĩa:</strong> Trao quyền tự chủ có kiểm soát. Xây dựng niềm tin hai chiều.</div>
+          <div class="rw-tags"><span class="rw-tag" style="background:#fef3c7; color:#92400e">🗺️ Tự Do</span></div>
+        </div>
+      </div>
+
+      <!-- Nhà hàng -->
+      <div class="reward-card" data-tag="food family">
+        <div class="rw-top">
+          <div class="rw-emoji">🍕</div>
+          <div class="rw-cost">4.000 – 16.000 🌾</div>
+        </div>
+        <div class="rw-body">
+          <h3 class="rw-name">Gói "Kinh Lý Đô Thành"</h3>
+          <div class="tier-list">
+            <div class="tier-item"><span class="tier-cost">4.000 🌾</span><span class="tier-desc">Bữa ăn nhà hàng bình dân — con chọn quán</span></div>
+            <div class="tier-item"><span class="tier-cost">8.000 🌾</span><span class="tier-desc">Bữa ăn nhà hàng tầm trung — con gọi món cả bàn</span></div>
+            <div class="tier-item"><span class="tier-cost">16.000 🌾</span><span class="tier-desc">Bữa tiệc nhà hàng sang — con làm chủ bữa ăn</span></div>
+          </div>
+          <div class="rw-why"><strong>💡 Ý nghĩa:</strong> Con nhìn hóa đơn và tự hào: "Con tự kiếm Gạo để trả bữa ăn này".</div>
+          <div class="rw-tags">
+            <span class="rw-tag" style="background:#fdf4ff; color:#7e22ce">🍜 Ăn Uống</span>
+            <span class="rw-tag" style="background:#f0fdf4; color:#166534">🏠 Gia Đình</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Đêm phim -->
+      <div class="reward-card" data-tag="family">
+        <div class="rw-top">
+          <div class="rw-emoji">🎬</div>
+          <div class="rw-cost">1.200 – 2.400 🌾</div>
+        </div>
+        <div class="rw-body">
+          <h3 class="rw-name">Vé "Đêm Phim Gia Đình"</h3>
+          <div class="tier-list">
+            <div class="tier-item"><span class="tier-cost">1.200 🌾</span><span class="tier-desc">Con chọn phim tối thứ 6 — cả nhà xem cùng</span></div>
+            <div class="tier-item"><span class="tier-cost">1.600 🌾</span><span class="tier-desc">Con chọn phim + ba mẹ chuẩn bị bắp rang nước ngọt</span></div>
+            <div class="tier-item"><span class="tier-cost">2.400 🌾</span><span class="tier-desc">Marathon phim cả ngày cuối tuần (2-3 phim)</span></div>
+          </div>
+          <div class="rw-why"><strong>💡 Ý nghĩa:</strong> Kỷ niệm gia đình gắn với bộ phim con chọn bằng nỗ lực của mình.</div>
+          <div class="rw-tags"><span class="rw-tag" style="background:#f0fdf4; color:#166534">🏠 Gia Đình</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 6. PRIVILEGE CARDS (PRINT & CUT) -->
+<section class="cards-section" id="print-cards">
+  <div class="container">
+    
+    <!-- Hướng dẫn in (Ẩn khi in) -->
+    <div class="print-hint">
+      <div>
+        <h4>🎴 Thẻ Đặc Quyền - Print & Cut</h4>
+        <p style="margin: 0; opacity: 0.8; font-size: .95rem;">Dùng Gạo đổi thẻ dùng ngay. Hãy in trang này, lấy kéo cắt theo đường nét đứt để con sưu tầm!</p>
+      </div>
+      <button class="nav-btn" style="background: #fff; color: var(--green-deep) !important;" onclick="window.print()">
+        <i class="fas fa-print"></i> In Thẻ Bài
+      </button>
+    </div>
+
+    <!-- Dàn thẻ cắt (Thiết kế layout tối ưu in A4) -->
+    <div class="cards-grid">
+      
+      <!-- Thẻ 1 -->
+      <div class="cut-card theme-yellow">
+        <i class="fas fa-cut cut-icon"></i>
+        <div class="cc-emoji">🏮</div>
+        <div class="cc-name">ĐÈN DẦU THẮP MUỘN</div>
+        <div class="cc-cost">Giá: 350 🌾</div>
+        <div class="cc-desc">Cày phim hoặc đọc truyện muộn thêm 45 phút so với giờ ngủ quy định.</div>
+        <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
+      </div>
+
+      <!-- Thẻ 2 -->
+      <div class="cut-card theme-green">
+        <i class="fas fa-cut cut-icon"></i>
+        <div class="cc-emoji">🌾</div>
+        <div class="cc-name">BÙ NHÌN THẾ THÂN</div>
+        <div class="cc-cost">Giá: 900 🌾</div>
+        <div class="cc-desc">Miễn toàn bộ việc nhà trong 1 ngày — bù nhìn gác đồng thay con.</div>
+        <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
+      </div>
+
+      <!-- Thẻ 3 -->
+      <div class="cut-card theme-blue">
+        <i class="fas fa-cut cut-icon"></i>
+        <div class="cc-emoji">⚡</div>
+        <div class="cc-name">HẠT NẾP THẦN LỰC</div>
+        <div class="cc-cost">Giá: 2.000 🌾</div>
+        <div class="cc-desc">+1 tiếng chơi game hoặc dùng máy tính so với hạn mức ngày hôm đó.</div>
+        <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
+      </div>
+
+      <!-- Thẻ 4 -->
+      <div class="cut-card theme-red">
+        <i class="fas fa-cut cut-icon"></i>
+        <div class="cc-emoji">🍱</div>
+        <div class="cc-name">KHUÔN BÁNH CHƯNG</div>
+        <div class="cc-cost">Giá: 1.600 🌾</div>
+        <div class="cc-desc">Quyền làm Bếp Trưởng ngày Chủ Nhật — con chọn menu, bố mẹ phụ bếp.</div>
+        <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
+      </div>
+
+      <!-- Thẻ 5 -->
+      <div class="cut-card theme-purple">
+        <i class="fas fa-cut cut-icon"></i>
+        <div class="cc-emoji">🎲</div>
+        <div class="cc-name">PHIÊN CHỢ TỰ DO</div>
+        <div class="cc-cost">Giá: 850 🌾</div>
+        <div class="cc-desc">Không bị hỏi bài hay kiểm tra sách vở trong trọn vẹn 1 buổi tối.</div>
+        <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
+      </div>
+
+      <!-- Thẻ 6 -->
+      <div class="cut-card theme-orange">
+        <i class="fas fa-cut cut-icon"></i>
+        <div class="cc-emoji">🚜</div>
+        <div class="cc-name">LỆNH TRƯNG THU ĐẤT</div>
+        <div class="cc-cost">Giá: 600 🌾</div>
+        <div class="cc-desc">Yêu cầu bố hoặc mẹ làm giúp 1 việc nhà của con trong ngày hôm đó.</div>
+        <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
+      </div>
+
+      <!-- Thẻ 7 -->
+      <div class="cut-card theme-red">
+        <i class="fas fa-cut cut-icon"></i>
+        <div class="cc-emoji">🍿</div>
+        <div class="cc-name">BẢO KHÍ GIÒN RỤM</div>
+        <div class="cc-cost">Giá: 200 🌾</div>
+        <div class="cc-desc">Quyền được cấp 1 túi bimbim/snack tự chọn ngoài khẩu phần ăn hàng ngày.</div>
+        <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
+      </div>
+
+      <!-- Thẻ 8 -->
+      <div class="cut-card theme-blue">
+        <i class="fas fa-cut cut-icon"></i>
+        <div class="cc-emoji">🍦</div>
+        <div class="cc-name">HÀN BĂNG NGỌC THẠCH</div>
+        <div class="cc-cost">Giá: 250 🌾</div>
+        <div class="cc-desc">Đổi lấy 1 cây kem mát lạnh giúp khôi phục thể lực tức thì sau chuỗi ngày cày cuốc.</div>
+        <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
+      </div>
+
+      <!-- Thẻ 9 -->
+      <div class="cut-card theme-green">
+        <i class="fas fa-cut cut-icon"></i>
+        <div class="cc-emoji">🌳</div>
+        <div class="cc-name">MẬT ĐẠO TIÊU DAO</div>
+        <div class="cc-cost">Giá: 300 🌾</div>
+        <div class="cc-desc">Nhận đặc quyền rời khỏi "thành" đi dạo thư giãn 30 phút hoàn toàn tự do.</div>
+        <div class="cc-valid">Chỉ dùng 1 lần - Trình thẻ cho ba mẹ</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">🌾 Kho Thóc Gia Đình</div>
+    <p>Giải pháp Gamification giúp con trẻ yêu việc nhà và hiểu giá trị lao động.</p>
+    <p style="margin-top: 1rem; opacity: 0.5; font-size: 0.85rem;">© 2024 - Dành cho gia đình hiện đại</p>
+  </div>
+</footer>
+
+<script>
+  // 1. Hiệu ứng thanh Nav khi cuộn
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // 2. Lọc phần thưởng
+  function filterCards(tag, btn) {
+    // Đổi màu nút active
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Lọc data-tag
+    document.querySelectorAll('.reward-card').forEach(card => {
+      const tags = card.dataset.tag || '';
+      if(tag === 'all' || tags.includes(tag)) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+</script>
+</body>
+</html>

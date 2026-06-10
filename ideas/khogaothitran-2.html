@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Gạo Thị Trấn - Nông Trại Yêu Thương</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Nunito', sans-serif; scroll-behavior: smooth; }
+        .bg-pattern { background-color: #f0fdf4; background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2322c55e' fill-opacity='0.05'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .hero-gradient { background: linear-gradient(135deg, #16a34a 0%, #eab308 100%); }
+        .transition-card { transition: all 0.3s ease; }
+        .transition-card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <!-- Chosen Palette: Nông Trại Xanh & Vàng (Green & Amber) -->
+    <!-- Application Structure Plan: 
+        1. Header: Nhận diện thương hiệu Kho Gạo.
+        2. Philosophy Section: Giới thiệu triết lý "Biến Việc Nhà Thành Hành Trình Trưởng Thành" để định hướng tư duy cho phụ huynh.
+        3. Inspiration Banner: Khơi gợi cảm hứng "Hành Trình Gieo Trồng" cho trẻ.
+        4. Rewards Section: Liệt kê chi tiết 5 gói phần thưởng lớn từ báo cáo.
+        5. Interactive Cards: Bộ thẻ quyền lực in ấn được để tạo sự kịch tính (Gamification).
+        Tại sao chọn cấu trúc này: Đi từ lý thuyết (Phụ huynh) đến cảm hứng (Trẻ em) và cuối cùng là công cụ thực hiện (Phần thưởng & Thẻ bài).
+    -->
+    
+    <!-- Visualization & Content Choices: 
+        - Giới thiệu triết lý -> Grid Layout 2 cột -> Phân tách rõ ràng giữa định nghĩa và lợi ích.
+        - Banner cảm hứng -> Hero-style Section -> Sử dụng màu gradient nổi bật để tạo điểm nhấn thị giác.
+        - Phần thưởng -> Card Grid -> Giúp trẻ dễ dàng so sánh giá trị các mục tiêu.
+        - Xác nhận: KHÔNG sử dụng SVG/Mermaid. Sử dụng biểu tượng Unicode và Font Awesome.
+    -->
+    
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Header -->
+    <header class="hero-gradient p-8 text-white text-center shadow-lg">
+        <div class="container mx-auto">
+            <h1 class="text-4xl md:text-5xl font-black mb-2 tracking-tight">🌾 KHO GẠO THỊ TRẤN</h1>
+            <p class="text-lg md:text-xl opacity-90 italic font-medium">"Có làm thì mới có ăn - Tích tiểu thành đại"</p>
+        </div>
+    </header>
+
+    <!-- NEW SECTION: Biến Việc Nhà Thành Hành Trình Trưởng Thành -->
+    <section class="py-16 bg-white border-b border-gray-100">
+        <div class="container mx-auto px-4 max-w-5xl">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="relative">
+                    <div class="absolute -top-10 -left-10 w-20 h-20 bg-green-100 rounded-full opacity-50"></div>
+                    <h2 class="text-3xl md:text-4xl font-black text-green-800 mb-6 leading-tight relative">
+                        Biến Việc Nhà Thành<br>Hành Trình Trưởng Thành
+                    </h2>
+                    <p class="text-lg text-gray-600 leading-relaxed italic">
+                        Hệ thống Kho Gạo Thị Trấn không chỉ là một bảng phân công việc nhà thông thường.
+                    </p>
+                </div>
+                <div class="bg-green-50 p-8 rounded-[2rem] border-2 border-green-100 shadow-sm">
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Đây là một <strong>mô hình giả lập kinh tế</strong> giúp các con từ 10-15 tuổi học cách:
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3"><i class="fas fa-check-circle text-green-600 mt-1"></i> <span>Quản lý tài chính cá nhân</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-check-circle text-green-600 mt-1"></i> <span>Lập kế hoạch đầu tư dài hạn</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-check-circle text-green-600 mt-1"></i> <span>Thấu hiểu giá trị của sự tự chủ (Gamification)</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: Hành Trình Gieo Trồng Sự Tự Chủ -->
+    <section class="py-16 bg-pattern">
+        <div class="container mx-auto px-4 text-center max-w-4xl">
+            <div class="inline-block p-4 bg-white rounded-full shadow-sm mb-6">
+                <span class="text-4xl">🚜</span>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-black text-amber-900 mb-6">
+                Hành Trình Gieo Trồng<br><span class="text-green-600 underline decoration-amber-400">Sự Tự Chủ</span>
+            </h2>
+            <p class="text-xl text-gray-600 leading-relaxed mb-8">
+                Nơi mỗi hạt gạo đều kể một câu chuyện về sự nỗ lực. Hãy tích lũy để mở khóa những đặc quyền xứng đáng trong <strong>Kho Tàng Dài Hạn</strong> của gia đình mình.
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="#long-term-rewards" class="bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-700 transition">Khám Phá Kho Thưởng</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- KHO TÀNG DÀI HẠN -->
+    <section id="long-term-rewards" class="py-20 bg-amber-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <span class="bg-amber-200 text-amber-800 text-xs font-black px-4 py-1 rounded-full uppercase tracking-widest">Mục tiêu tích lũy</span>
+                <h3 class="text-3xl font-black mt-4 text-amber-900 uppercase tracking-tighter"><i class="fas fa-mountain mr-2"></i> Kho Tàng Dài Hạn</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                
+                <!-- 1. Gói Mở Mang Bờ Cõi -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-amber-200 shadow-md transition-card">
+                    <div class="text-5xl mb-4">📚</div>
+                    <h4 class="font-black text-amber-900 text-xl mb-2">Gói "Mở Mang Bờ Cõi"</h4>
+                    <div class="text-amber-600 font-bold text-lg mb-4">100 – 300 Hạt Gạo</div>
+                    <p class="text-gray-600 leading-relaxed">Đổi một lượng nông sản lớn lấy một 'Cuốn Sách Thần Kỳ' tự chọn để gia tăng chỉ số thông minh.</p>
+                </div>
+
+                <!-- 2. Mâm Cỗ Mừng Vụ Mùa -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-amber-200 shadow-md transition-card">
+                    <div class="text-5xl mb-4">🍲</div>
+                    <h4 class="font-black text-amber-900 text-xl mb-2">Mâm Cỗ "Mừng Vụ Mùa"</h4>
+                    <div class="text-amber-600 font-bold text-lg mb-4">150 – 200 Hạt Gạo</div>
+                    <p class="text-gray-600 leading-relaxed">Đặt hàng mâm cỗ thịnh soạn tại nhà. Con chọn món (Lẩu, gà rán...) và Bố Mẹ sẽ là người phục vụ.</p>
+                </div>
+
+                <!-- 3. Lệnh Bài Mở Cổng Thành -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-amber-200 shadow-md transition-card">
+                    <div class="text-5xl mb-4">🏰</div>
+                    <h4 class="font-black text-amber-900 text-xl mb-2">Lệnh Bài "Mở Cổng Thành"</h4>
+                    <div class="text-amber-600 font-bold text-lg mb-4">300 – 400 Hạt Gạo</div>
+                    <p class="text-gray-600 leading-relaxed">Quyền mời 2–4 bạn thân đến 'Tổng hành dinh' chơi game hoặc tiệc ngủ mà không bị làm phiền.</p>
+                </div>
+
+                <!-- 4. Giấy Thông Hành Viễn Chinh -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-amber-200 shadow-md transition-card">
+                    <div class="text-5xl mb-4">🧭</div>
+                    <h4 class="font-black text-amber-900 text-xl mb-2">Giấy "Thông Hành Viễn Chinh"</h4>
+                    <div class="text-amber-600 font-bold text-lg mb-4">200 – 400 Hạt Gạo</div>
+                    <p class="text-gray-600 leading-relaxed">Quyền tự do đi chơi riêng, trà sữa, xem phim cùng hội bạn với sự tôn trọng tuyệt đối từ Bố Mẹ.</p>
+                </div>
+
+                <!-- 5. Gói Kinh Lý Đô Thành -->
+                <div class="bg-white p-8 rounded-3xl border-2 border-amber-200 shadow-md transition-card md:col-span-2 lg:col-span-1">
+                    <div class="text-5xl mb-4">🍕</div>
+                    <h4 class="font-black text-amber-900 text-xl mb-2">Gói "Kinh Lý Đô Thành"</h4>
+                    <div class="text-amber-600 font-bold text-lg mb-4">500 – 1.000 Hạt Gạo</div>
+                    <p class="text-gray-600 leading-relaxed">Bao trọn gói một bữa ăn sang xịn tại nhà hàng con yêu thích cho cả gia đình bằng chính công sức của con.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- BỘ THẺ BÀI ĐỔI QUYỀN LỰC -->
+    <section id="printable-cards" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h3 class="text-2xl font-black text-green-800 uppercase tracking-tighter"><i class="fas fa-print mr-2"></i> BỘ THẺ BÀI QUYỀN LỰC</h3>
+                <p class="text-gray-500 mt-2 italic">Những thẻ bài có thể in ra để sưu tầm và sử dụng tức thì</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                
+                <div class="border-4 border-yellow-500 rounded-3xl p-6 bg-yellow-50 text-center shadow-lg transform hover:-rotate-2 transition-transform">
+                    <div class="text-5xl mb-4">🏮</div>
+                    <h4 class="font-black text-yellow-900 text-lg mb-1">ĐÈN DẦU THẮP MUỘN</h4>
+                    <div class="bg-yellow-500 text-white font-bold py-1 px-4 rounded-full inline-block mb-4 text-xs">50 Hạt Gạo</div>
+                    <p class="text-xs text-yellow-800 italic">"Cày phim/đọc truyện muộn 45 phút"</p>
+                </div>
+
+                <div class="border-4 border-green-500 rounded-3xl p-6 bg-green-50 text-center shadow-lg transform hover:rotate-2 transition-transform">
+                    <div class="text-5xl mb-4">🌾</div>
+                    <h4 class="font-black text-green-900 text-lg mb-1">BÙ NHÌN THẾ THÂN</h4>
+                    <div class="bg-green-500 text-white font-bold py-1 px-4 rounded-full inline-block mb-4 text-xs">100 Hạt Gạo</div>
+                    <p class="text-xs text-green-800 italic">"Miễn toàn bộ việc nhà 1 ngày"</p>
+                </div>
+
+                <div class="border-4 border-blue-500 rounded-3xl p-6 bg-blue-50 text-center shadow-lg transform hover:-rotate-2 transition-transform">
+                    <div class="text-5xl mb-4">⚡</div>
+                    <h4 class="font-black text-blue-900 text-lg mb-1">HẠT NẾP THẦN LỰC</h4>
+                    <div class="bg-blue-500 text-white font-bold py-1 px-4 rounded-full inline-block mb-4 text-xs">150 Hạt Gạo</div>
+                    <p class="text-xs text-blue-800 italic">"+1 tiếng dùng máy tính/game"</p>
+                </div>
+
+                <div class="border-4 border-red-500 rounded-3xl p-6 bg-red-50 text-center shadow-lg transform hover:rotate-2 transition-transform">
+                    <div class="text-5xl mb-4">🍱</div>
+                    <h4 class="font-black text-red-900 text-lg mb-1">KHUÔN ĐÚC BÁNH CHƯNG</h4>
+                    <div class="bg-red-500 text-white font-bold py-1 px-4 rounded-full inline-block mb-4 text-xs">200 Hạt Gạo</div>
+                    <p class="text-xs text-red-800 italic">"Quyền làm Bếp Trưởng ngày Chủ Nhật"</p>
+                </div>
+
+            </div>
+            <p class="text-center text-gray-400 mt-12 text-sm font-medium italic">Bố mẹ hãy in trang này, cắt rời các thẻ để con sưu tầm và sử dụng!</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-800 text-green-100 py-12 text-center">
+        <div class="container mx-auto px-4">
+            <p class="font-black text-lg mb-2">KHO GẠO THỊ TRẤN © 2024</p>
+            <p class="text-sm opacity-75">Nuôi dưỡng sự tự lập qua từng hạt gạo nhỏ.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

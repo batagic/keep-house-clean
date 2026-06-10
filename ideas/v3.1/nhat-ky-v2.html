@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nhật Ký Vụ Mùa – Kho Thóc Gia Đình</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep:  #1a5c38;
+      --green-mid:   #2d8a55;
+      --green-light: #4abe7a;
+      --amber:       #f5a623;
+      --amber-light: #fde68a;
+      --cream:       #fdf8ee;
+      --earth:       #7c4b1e;
+      --red:         #c0392b;
+      --text-main:   #1e1e1e;
+      --text-muted:  #6b7280;
+      --radius:      1.2rem;
+      --shadow:      0 4px 24px rgba(0,0,0,.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Mulish', sans-serif;
+      background: #f4fbf7;
+      color: var(--text-main);
+      padding-bottom: 4rem;
+    }
+
+    /* ── NAV BAR ── */
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--green-deep);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 700;
+      transition: color .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--green-mid); }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+    .page-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 2.2rem;
+      color: var(--green-deep);
+      margin-bottom: .5rem;
+      text-align: center;
+    }
+    .page-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-main {
+      background: var(--green-mid);
+      color: white;
+      border: none;
+      padding: .6rem 1.2rem;
+      font-weight: 700;
+      border-radius: .6rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .2s;
+    }
+    .btn-main:hover { background: var(--green-deep); }
+    .btn-secondary {
+      background: #edf7f1;
+      color: var(--green-deep);
+      border: 1px dashed var(--green-mid);
+      padding: .5rem 1rem;
+      font-weight: 700;
+      border-radius: .6rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ═════════ UI THẺ BÉ DASHBOARD TÍCH HỢP ═════════ */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .profile-card {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .profile-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--green-light);
+    }
+    .profile-card.active {
+      border-color: var(--green-mid);
+      background: #f0faf4;
+      box-shadow: 0 8px 30px rgba(45,138,85,0.12);
+    }
+    .profile-card.active::after {
+      content: '✓';
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      color: var(--green-mid);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .profile-avatar { font-size: 2.2rem; }
+    .profile-info { flex: 1; }
+    .profile-name {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+      line-height: 1.2;
+    }
+    .profile-level-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      background: var(--green-deep);
+      color: white;
+      padding: 0.1rem 0.5rem;
+      border-radius: 1rem;
+      font-weight: 700;
+      margin-top: 0.2rem;
+    }
+    .profile-stats-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .p-stat-box {
+      padding: 0.5rem;
+      border-radius: 0.6rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+    }
+    .p-stat-box span {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 0.1rem;
+    }
+    .p-stat-box.grain { color: var(--amber); background: #fffbeb; }
+    .p-stat-box.money { color: var(--green-deep); background: #edf7f1; }
+
+    .profile-progress-block {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .profile-bar-bg {
+      background: #e2e8f0;
+      border-radius: 1rem;
+      height: 8px;
+      overflow: hidden;
+      margin-top: 0.25rem;
+    }
+    .profile-bar-fill {
+      background: linear-gradient(90deg, var(--green-light), var(--green-mid));
+      height: 100%;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    /* ═════════ UI NHIỆM VỤ THU GỌN CHỐNG KÉO TRANG ═════════ */
+    .tasks-compact-container {
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .tasks-compact-container::-webkit-scrollbar { width: 6px; }
+    .tasks-compact-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    .tasks-compact-container::-webkit-scrollbar-thumb { background: #c5e3d1; border-radius: 10px; }
+
+    .tasks-compact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.5rem;
+    }
+    .task-compact-card {
+      display: flex;
+      align-items: center;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .task-compact-card:hover {
+      border-color: var(--green-light);
+      background: #fcfdfc;
+    }
+    .task-compact-card.checked {
+      background: #edf8f2;
+      border-color: var(--green-mid);
+    }
+    .task-cb {
+      margin-right: 0.75rem;
+      transform: scale(1.25);
+      accent-color: var(--green-mid);
+      cursor: pointer;
+    }
+    .task-compact-details {
+      flex: 1;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+    .task-compact-rewards {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #c47d3a;
+      background: #fdf5ed;
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.4rem;
+      white-space: nowrap;
+      margin-left: 0.5rem;
+    }
+    .task-compact-card.checked .task-compact-rewards {
+      background: var(--green-mid);
+      color: white;
+    }
+
+    /* ═════════ UI THẺ QUÀ NHỎ ĐỔI MÀU KHI SELECTED ═════════ */
+    .rewards-small-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.6rem;
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 0.2rem;
+    }
+    .rewards-small-grid::-webkit-scrollbar { width: 5px; }
+    .rewards-small-grid::-webkit-scrollbar-thumb { background: #ffe0b3; border-radius: 10px; }
+
+    .reward-small-card {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.8rem;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 115px;
+    }
+    .reward-small-card:hover {
+      border-color: var(--amber);
+      transform: translateY(-2px);
+    }
+    .reward-small-card.selected {
+      background: #fffbeb;
+      border-color: var(--amber);
+      box-shadow: 0 4px 12px rgba(245,166,35,0.12);
+    }
+    .rw-s-emoji { font-size: 1.8rem; margin-bottom: 0.2rem; }
+    .rw-s-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      height: 28px;
+    }
+    .rw-s-cost {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--amber);
+      background: rgba(245,166,35,0.08);
+      padding: 0.15rem 0.5rem;
+      border-radius: 1rem;
+      width: 90%;
+    }
+
+    /* ── LỊCH SỬ NHẬT KÝ ── */
+    .history-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-top: 2rem;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .8rem 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    .history-item:last-child { border-bottom: none; }
+    .h-date { font-weight: 700; color: var(--green-deep); margin-bottom: .2rem; }
+    .h-note { font-size: .85rem; color: var(--text-muted); }
+    .h-gains { font-weight: 700; font-size: .95rem; }
+    .btn-delete {
+      background: none; border: none; color: #cbd5e1;
+      cursor: pointer; font-size: 1.1rem; padding: .2rem .5rem;
+      transition: color .2s;
+    }
+    .btn-delete:hover { color: var(--red); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.4); display: flex; align-items: center;
+      justify-content: center; opacity: 0; pointer-events: none;
+      transition: opacity .3s; z-index: 1000;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-box {
+      background: white; border-radius: var(--radius);
+      padding: 2rem; width: 100%; max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.15);
+    }
+    .modal-title { font-family: 'Baloo 2', sans-serif; font-size: 1.5rem; margin-bottom: 1rem; color: var(--green-deep); }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-weight: 700; margin-bottom: .4rem; font-size: .9rem; }
+    .form-control {
+      width: 100%; padding: .6rem; border: 1px solid #e2e8f0;
+      border-radius: .6rem; font-family: inherit; font-size: .95rem;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: #1a5c38; color: white; padding: .8rem 2rem;
+      border-radius: 2rem; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+      opacity: 0; transition: transform .4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity .3s;
+      z-index: 9999; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">🌾 Kho Thóc Gia Đình</a>
+    <div class="nav-links">
+      <a href="index.html">Tổng Quan</a>
+      <a href="nhat-ky.html" class="active">Nhật Ký Vụ Mùa</a>
+      <a href="kho-qua.html">Kho Quà</a>
+      <a href="quy-doi.html">Quy Đổi</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2 class="page-title">🌾 Nhật Ký Vụ Mùa Gieo Hạt</h2>
+    <p class="page-subtitle">Chọn tài khoản của bé bên dưới để ghi nhận việc nhà và quản lý điểm số tích lũy trực tiếp.</p>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+      <button class="btn-secondary" onclick="openModal()"><i class="fas fa-plus"></i> Đăng ký bé mới</button>
+    </div>
+
+    <div class="profile-grid" id="profileGrid">
+      </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+      
+      <div style="background: white; border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow);">
+        <h3 style="font-family:'Baloo 2'; margin-top:0; margin-bottom:1rem; color:var(--green-deep); display:flex; justify-content:space-between; align-items:center;">
+          <span>🌾 Việc Nhà Hôm Nay</span>
+          <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">Chọn nhanh đa mục</span>
+        </h3>
+        
+        <div class="tasks-compact-container">
+          <div class="tasks-compact-grid" id="tasksCompactGrid">
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+          <input type="text" id="logNote" placeholder="Ghi chú thêm (không bắt buộc)..." style="flex:1; padding:0.6rem; border:1px solid #e2e8f0; border-radius:0.6rem; font-size:0.9rem;" />
+          <button class="btn-main" onclick="submitDailyLog()">Ghi Nhật Ký</button>
+        </div>
+      </div>
+
+      <div style="background: white; border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow);">
+        <h3 style="font-family:'Baloo 2'; margin-top:0; margin-bottom:1rem; color:var(--amber);">
+          🎁 Quà Có Thể Đổi 
+          <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted); font-family:'Mulish';">(Click chọn quà muốn lấy)</span>
+        </h3>
+        <div class="rewards-small-grid" id="rewardsSmallGrid">
+          </div>
+      </div>
+
+    </div>
+
+    <div class="history-card">
+      <h3 style="font-family: 'Baloo 2', sans-serif; color: var(--green-deep); margin-bottom: 1rem; border-bottom: 2px solid #edf7f1; padding-bottom: .5rem;">
+        📜 Sổ Bản Tin Vụ Mùa Gần Đây
+      </h3>
+      <div id="historyList">
+        <p style="text-align: center; color: var(--text-muted); padding: 1rem;">Vui lòng chọn một bé phía trên để hiển thị lịch sử nhật ký.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h4 class="modal-title">👶 Đăng Ký Tài Khoản Bé Mới</h4>
+      <div class="form-group">
+        <label>Tên của con:</label>
+        <input type="text" id="pName" class="form-control" placeholder="Ví dụ: Đậu Đậu, Khoai Tây..."/>
+      </div>
+      <div class="form-group">
+        <label>Biểu tượng đại diện (Emoji):</label>
+        <input type="text" id="pAvatar" class="form-control" placeholder="Ví dụ: 👦, 👧, 🦁" value="👶"/>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1.5rem;">
+        <button class="btn-secondary" style="border:none; background:#f1f5f9; color:var(--text-main);" onclick="closeModal()">Hủy</button>
+        <button class="btn-main" onclick="confirmAddProfile()">Tạo Tài Khoản</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // GIỮ NGUYÊN TOÀN BỘ DANH SÁCH NHIỆM VỤ NGUYÊN BẢN CỦA BẠN
+    const TASKS = [
+      { id: 't1', name: 'Quét nhà phòng khách', grain: 10, exp: 50, emoji: '🧹' },
+      { id: 't2', name: 'Lau nhà sạch sẽ', grain: 20, exp: 100, emoji: '🧼' },
+      { id: 't3', name: 'Rửa bát đũa gọn gàng', grain: 15, exp: 70, emoji: '🍽️' },
+      { id: 't4', name: 'Phơi quần áo', grain: 15, exp: 70, emoji: '👕' },
+      { id: 't5', name: 'Gấp quần áo cất vào tủ', grain: 15, exp: 70, emoji: '🧺' },
+      { id: 't6', name: 'Đổ rác đúng nơi quy định', grain: 10, exp: 40, emoji: '🗑️' },
+      { id: 't7', name: 'Dọn dẹp bàn học ngăn nắp', grain: 15, exp: 80, emoji: '📚' },
+      { id: 't8', name: 'Tự giặt tất/vớ của mình', grain: 10, exp: 50, emoji: '🧦' },
+      { id: 't9', name: 'Tưới cây cảnh', grain: 10, exp: 40, emoji: '🌱' },
+      { id: 't10', name: 'Cho thú cưng ăn', grain: 10, exp: 40, emoji: '🐱' },
+      { id: 't11', name: 'Hút bụi thảm/sofa', grain: 20, exp: 100, emoji: '💨' },
+      { id: 't12', name: 'Lau cửa kính', grain: 25, exp: 120, emoji: '🪟' },
+      { id: 't13', name: 'Dọn phòng ngủ cá nhân', grain: 20, exp: 90, emoji: '🛏️' },
+      { id: 't14', name: 'Chuẩn bị sách vở ngày mai', grain: 10, exp: 60, emoji: '🎒' },
+      { id: 't15', name: 'Giúp mẹ nấu cơm', grain: 20, exp: 100, emoji: '🧑‍🍳' }
+    ];
+
+    // GIỮ NGUYÊN TOÀN BỘ DANH SÁCH PHẦN THƯỞNG NGUYÊN BẢN CỦA BẠN
+    const REWARDS = [
+      { id: 'r1', name: 'Kem mát lạnh tự chọn', cost: 100, emoji: '🍦' },
+      { id: 'r2', name: '30 phút xem Youtube/iPad', cost: 150, emoji: '📱' },
+      { id: 'r3', name: 'Một gói bánh/bim bim yêu thích', cost: 80, emoji: '🍿' },
+      { id: 'r4', name: 'Được đi nhà sách cuối tuần', cost: 300, emoji: '📚' },
+      { id: 'r5', name: 'Được miễn 1 ngày việc nhà', cost: 400, emoji: '🎟️' },
+      { id: 'r6', name: 'Đi chơi công viên/khu vui chơi', cost: 500, emoji: '🎡' },
+      { id: 'r7', name: 'Mua một món đồ chơi nhỏ (<50k)', cost: 600, emoji: '🧸' },
+      { id: 'r8', name: 'Bữa tối ăn gà rán KFC/Jollibee', cost: 800, emoji: '🍗' },
+      { id: 'r9', name: 'Được thức khuya thêm 45 phút', cost: 200, emoji: '🌙' },
+      { id: 'r10', name: 'Đi xem phim rạp cùng ba mẹ', cost: 1000, emoji: '🎬' },
+      { id: 'r11', name: 'Món quà bí mật từ Ba Mẹ', cost: 1500, emoji: '🎁' }
+    ];
+
+    let profiles = [];
+    let currentProfile = null;
+
+    // LOCALSTORAGE STORAGE ENGINE
+    function loadData() {
+      const saved = localStorage.getItem('family_grain_profiles');
+      if(saved) {
+        profiles = JSON.parse(saved);
+      } else {
+        profiles = [
+          { id: 'p_minh', name: 'Gia Minh', avatar: '👦' },
+          { id: 'p_an', name: 'Tuệ An', avatar: '👧' }
+        ];
+        localStorage.setItem('family_grain_profiles', JSON.stringify(profiles));
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('family_grain_profiles', JSON.stringify(profiles));
+    }
+
+    function getState(pid) {
+      const saved = localStorage.getItem(`state_${pid}`);
+      return saved ? JSON.parse(saved) : { totalGrain: 0, totalExp: 0 };
+    }
+
+    function saveState(pid, state) {
+      localStorage.setItem(`state_${pid}`, JSON.stringify(state));
+    }
+
+    function getLogs(pid) {
+      const saved = localStorage.getItem(`logs_${pid}`);
+      return saved ? JSON.parse(saved) : {};
+    }
+
+    function getLog(pid, date) {
+      return getLogs(pid)[date] || null;
+    }
+
+    function saveLog(pid, date, logData) {
+      const logs = getLogs(pid);
+      logs[date] = logData;
+      localStorage.setItem(`logs_${pid}`, JSON.stringify(logs));
+    }
+
+    function delLog(pid, date) {
+      const logs = getLogs(pid);
+      delete logs[date];
+      localStorage.setItem(`logs_${pid}`, JSON.stringify(logs));
+    }
+
+    // ── GIAO DIỆN RENDERING ENGINE ──
+
+    // 1. Thẻ bé tích hợp các thông số (Số gạo, EXP, Tiền quy đổi, Level, Progress bar)
+    function renderProfiles() {
+      const grid = document.getElementById('profileGrid');
+      if(!grid) return;
+      
+      grid.innerHTML = profiles.map(p => {
+        const state = getState(p.id);
+        const isActive = currentProfile && currentProfile.id === p.id;
+        
+        const lvl = Math.floor(state.totalExp / 1000) + 1;
+        const currentLvlExp = state.totalExp % 1000;
+        const pct = (currentLvlExp / 1000) * 100;
+        
+        // Quy đổi tỉ giá: 10 gạo = 1.000đ (Tương đương 1 gạo = 100đ)
+        const moneyEquivalent = state.totalGrain * 100;
+
+        return `
+          <div class="profile-card ${isActive ? 'active' : ''}" onclick="selectProfile('${p.id}')">
+            <div class="profile-header">
+              <span class="profile-avatar">${p.avatar || '👶'}</span>
+              <div class="profile-info">
+                <h4 class="profile-name">${p.name}</h4>
+                <span class="profile-level-badge">Cấp ${lvl}</span>
+              </div>
+            </div>
+            
+            <div class="profile-stats-container">
+              <div class="p-stat-box grain">
+                <span>Thóc tích lũy</span>
+                🌾 ${state.totalGrain} Gạo
+              </div>
+              <div class="p-stat-box money">
+                <span>Quỹ tiền mặt</span>
+                💰 ${moneyEquivalent.toLocaleString('vi-VN')} đ
+              </div>
+            </div>
+            
+            <div class="profile-progress-block">
+              <div style="display:flex; justify-content:space-between; margin-bottom: 2px;">
+                <span>Tiến trình cấp:</span>
+                <span>${currentLvlExp}/1000 EXP</span>
+              </div>
+              <div class="profile-bar-bg">
+                <div class="profile-bar-fill" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 2. Danh sách nhiệm vụ đa cột thu gọn gọn gàng
+    function renderTasks() {
+      const container = document.getElementById('tasksCompactGrid');
+      if(!container) return;
+
+      container.innerHTML = TASKS.map(t => {
+        return `
+          <div class="task-compact-card" id="taskCard_${t.id}" onclick="toggleTaskSelection('${t.id}')">
+            <input type="checkbox" class="task-cb" id="taskCB_${t.id}" onclick="event.stopPropagation(); toggleTaskSelection('${t.id}')" />
+            <div class="task-compact-details">
+              ${t.emoji || '✨'} ${t.name}
+            </div>
+            <div class="task-compact-rewards">
+              +${t.grain}🌾 / +${t.exp}xp
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Click chọn nhanh việc nhà bằng cách nhấn trực tiếp lên thẻ
+    function toggleTaskSelection(id) {
+      const cb = document.getElementById(`taskCB_${id}`);
+      const card = document.getElementById(`taskCard_${id}`);
+      if(!cb || !card) return;
+      
+      cb.checked = !cb.checked;
+      if(cb.checked) {
+        card.classList.add('checked');
+      } else {
+        card.classList.remove('checked');
+      }
+    }
+
+    // 3. Kho quà dạng card nhỏ xếp lưới, đổi màu khi được tick chọn (selected)
+    function renderRewards() {
+      const container = document.getElementById('rewardsSmallGrid');
+      if(!container) return;
+      if(!currentProfile) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted); text-align:center; grid-column: 1/-1; padding: 2rem;">Vui lòng chọn tài khoản một bé để xem kho quà tặng...</p>';
+        return;
+      }
+
+      const state = getState(currentProfile.id);
+
+      container.innerHTML = REWARDS.map(rw => {
+        const canAfford = state.totalGrain >= rw.cost;
+        const opacityStyle = canAfford ? '' : 'opacity: 0.55; filter: grayscale(20%);';
+        
+        return `
+          <div class="reward-small-card" style="${opacityStyle}" onclick="toggleRewardSelection(this)">
+            <div class="rw-s-emoji">${rw.emoji || '🎁'}</div>
+            <div class="rw-s-name" title="${rw.name}">${rw.name}</div>
+            <div class="rw-s-cost">${rw.cost} 🌾</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleRewardSelection(element) {
+      element.classList.toggle('selected');
+    }
+
+    // 4. Nhật ký lịch sử gieo hạt vụ mùa
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      if(!list) return;
+      if(!currentProfile) {
+        list.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 1rem;">Vui lòng chọn một bé phía trên để hiển thị lịch sử nhật ký.</p>`;
+        return;
+      }
+
+      const logs = getLogs(currentProfile.id);
+      const dates = Object.keys(logs).sort((a,b) => b.localeCompare(a));
+
+      if(dates.length === 0) {
+        list.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 2rem;">🌾 Kho điểm hiện đang trống. Hãy làm việc nhà để ghi nhận vụ mùa gieo hạt đầu tiên!</p>`;
+        return;
+      }
+
+      let html = dates.map(date => {
+        const log = logs[date];
+        return `
+          <div class="history-item">
+            <div>
+              <div class="h-date">${date}</div>
+              <div class="h-note">${log.note ? '💬 ' + log.note : '✨ Ghi nhận hoàn thành công việc định kỳ'}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div class="h-gains" style="color: var(--green-deep); text-align: right;">
+                <div>+${log.grain} Hạt Gạo 🌾</div>
+                <div style="font-size: .75rem; color: var(--text-muted);">+${log.exp} EXP</div>
+              </div>
+              <button class="btn-delete" title="Xóa bản ghi này" onclick="deleteLog('${date}')">🗑</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      list.innerHTML = html;
+    }
+
+    // ĐIỀU HƯỚNG TÀI KHOẢN
+    function selectProfile(id) {
+      currentProfile = profiles.find(p => p.id === id);
+      renderProfiles();
+      renderTasks();
+      renderRewards();
+      renderHistory();
+    }
+
+    // LƯU NHẬT KÝ HÀNG NGÀY
+    function submitDailyLog() {
+      if(!currentProfile) {
+        alert('Vui lòng click chọn tài khoản bé trước khi ghi nhật ký!');
+        return;
+      }
+
+      let sumGrain = 0;
+      let sumExp = 0;
+      let hasChecked = false;
+
+      TASKS.forEach(t => {
+        const cb = document.getElementById(`taskCB_${t.id}`);
+        if(cb && cb.checked) {
+          sumGrain += t.grain;
+          sumExp += t.exp;
+          hasChecked = true;
+        }
+      });
+
+      if(!hasChecked) {
+        alert('Vui lòng tích chọn ít nhất một công việc nhà đã hoàn thành!');
+        return;
+      }
+
+      const now = new Date();
+      const dateString = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+      const noteInput = document.getElementById('logNote');
+      const noteText = noteInput ? noteInput.value.trim() : '';
+
+      // Cộng dồn điểm vào State
+      const state = getState(currentProfile.id);
+      state.totalGrain += sumGrain;
+      state.totalExp += sumExp;
+      
+      saveState(currentProfile.id, state);
+      saveLog(currentProfile.id, dateString, { grain: sumGrain, exp: sumExp, note: noteText });
+
+      if(noteInput) noteInput.value = '';
+
+      // Tải lại toàn bộ giao diện đồng bộ
+      renderProfiles();
+      renderTasks();
+      renderRewards();
+      renderHistory();
+
+      showToast(`🌾 Tuyệt vời! Đã cộng +${sumGrain} Gạo và +${sumExp} EXP cho ${currentProfile.name}!`);
+    }
+
+    function deleteLog(date) {
+      if(!currentProfile) return;
+      const log = getLog(currentProfile.id, date);
+      if(!log) return;
+      if(!confirm(`Xóa log ngày ${date}? Sẽ trừ ${log.grain} 🌾 và ${log.exp} EXP của con.`)) return;
+
+      const state = getState(currentProfile.id);
+      state.totalGrain = Math.max(0, state.totalGrain - log.grain);
+      state.totalExp   = Math.max(0, state.totalExp   - log.exp);
+      
+      saveState(currentProfile.id, state);
+      delLog(currentProfile.id, date);
+
+      renderProfiles();
+      renderTasks();
+      renderRewards();
+      renderHistory();
+      showToast(`🗑 Đã hủy bản ghi ngày ${date}`);
+    }
+
+    // MODAL DIALOG CONTROLLER
+    function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+    function confirmAddProfile() {
+      const nameInp = document.getElementById('pName');
+      const avaInp = document.getElementById('pAvatar');
+      const name = nameInp ? nameInp.value.trim() : '';
+      const avatar = avaInp ? avaInp.value.trim() : '👶';
+
+      if(!name) { alert('Vui lòng nhập tên của bé!'); return; }
+
+      const newId = 'p_' + Date.now();
+      profiles.push({ id: newId, name: name, avatar: avatar });
+      saveData();
+
+      nameInp.value = '';
+      closeModal();
+      renderProfiles();
+      showToast(`👶 Đăng ký thành công tài khoản cho bé ${name}!`);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // RUN TIME KHI TẢI TRANG
+    window.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      renderProfiles();
+      renderTasks();
+      renderRewards();
+    });
+
+    // Phím tắt bàn phím tiện ích
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Enter' && document.getElementById('modalOverlay').classList.contains('open')) confirmAddProfile();
+      if(e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Gạo Thị Trấn - Hệ Thống Quản Trị Mục Tiêu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fdfaf5;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 380px;
+            max-height: 450px;
+        }
+
+        .reward-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .reward-card:hover {
+            transform: translateY(-8px);
+            border-color: #fbbf24;
+            box-shadow: 0 20px 25px -5px rgba(251, 191, 36, 0.1), 0 10px 10px -5px rgba(251, 191, 36, 0.04);
+        }
+
+        .bg-harvest {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+
+        .nav-link {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #16a34a;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Chosen Palette: Nông Trại Trầm Ấm (Warm Farm) -->
+    <!-- Application Structure Plan: 
+        Ứng dụng được thiết kế tối ưu để trẻ em và phụ huynh dễ dàng tra cứu lộ trình thăng tiến:
+        1. Phần Hero: Khơi gợi cảm hứng về sự trưởng thành.
+        2. Financial Engine: Bộ tính toán quy đổi 10 Gạo = 5.000đ để định hình giá trị lao động.
+        3. Interactive Rewards: Sử dụng Chart.js để so sánh trực quan độ khó giữa các mục tiêu gốc (Mở mang bờ cõi, Kinh lý đô thành...).
+        4. Detailed Catalog: Các thẻ chi tiết giải thích ý nghĩa của từng phần thưởng, giữ nguyên tên gọi từ báo cáo gốc.
+        5. Admin Guide: Mẹo dành cho phụ huynh để duy trì hệ thống bền vững.
+    -->
+    
+    <!-- Visualization & Content Choices: 
+        - So sánh nỗ lực -> Bar Chart (Chart.js) -> Hiển thị mức gạo mục tiêu cho 5 danh mục chính.
+        - Quy đổi tài chính -> Interactive Calculator -> Phản hồi thời gian thực khi nhập số liệu.
+        - Trình bày danh mục -> Grid Layout với các thẻ có màu sắc riêng biệt theo cấp độ.
+        - Xác nhận: KHÔNG sử dụng SVG/Mermaid. Sử dụng Canvas cho biểu đồ.
+    -->
+    
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-orange-100 py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🌾</span>
+                <h1 class="font-bold text-xl text-green-800 tracking-tight">KHO GẠO THỊ TRẤN</h1>
+            </div>
+            <div class="hidden md:flex gap-8 font-semibold text-slate-500 text-sm uppercase tracking-wide">
+                <span onclick="scrollToSection('home')" class="nav-link">Tổng Quan</span>
+                <span onclick="scrollToSection('economy')" class="nav-link">Kinh Tế</span>
+                <span onclick="scrollToSection('rewards')" class="nav-link">Kho Thưởng</span>
+                <span onclick="scrollToSection('parent-tips')" class="nav-link">Hướng Dẫn</span>
+            </div>
+            <button onclick="scrollToSection('economy')" class="bg-green-600 text-white px-6 py-2 rounded-full font-bold hover:bg-green-700 shadow-lg shadow-green-200 transition">Quy Đổi</button>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 pb-20">
+
+        <!-- Hero Section -->
+        <section id="home" class="py-20 flex flex-col items-center text-center">
+            <div class="bg-harvest p-4 rounded-3xl mb-8 shadow-inner inline-block">
+                <span class="text-5xl">🚜</span>
+            </div>
+            <h2 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">
+                Hành Trình Gieo Trồng <br>
+                <span class="text-green-600">Sự Tự Chủ</span>
+            </h2>
+            <p class="max-w-2xl text-xl text-slate-600 leading-relaxed">
+                Nơi mỗi hạt gạo đều kể một câu chuyện về sự nỗ lực. Hãy tích lũy để mở khóa những đặc quyền xứng đáng trong <strong>Kho Tàng Dài Hạn</strong> của gia đình mình.
+            </p>
+        </section>
+
+        <!-- Economics Section -->
+        <section id="economy" class="py-12">
+            <div class="bg-white rounded-[2rem] p-10 shadow-sm border border-orange-50 mb-16">
+                <div class="mb-12 text-center">
+                    <h3 class="text-3xl font-bold text-slate-900 mb-3">Trung Tâm Tài Chính</h3>
+                    <p class="text-slate-500">Quy chuẩn lao động: 10 Hạt Gạo tương ứng với 5.000 VNĐ</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    <div class="bg-slate-50 p-10 rounded-[1.5rem] border border-slate-100 shadow-inner">
+                        <label class="block text-xs font-black text-slate-400 mb-6 uppercase tracking-[0.2em]">Số gạo hiện có:</label>
+                        <div class="relative">
+                            <input type="number" id="grainInput" oninput="updateCalculator()" placeholder="0" class="w-full bg-white border-2 border-green-100 rounded-2xl py-5 px-8 text-4xl font-bold text-green-700 focus:outline-none focus:border-green-500 transition shadow-sm">
+                            <span class="absolute right-8 top-1/2 -translate-y-1/2 text-3xl">🌾</span>
+                        </div>
+                        <div class="mt-10 space-y-6">
+                            <div class="flex justify-between items-end">
+                                <span class="text-slate-500 font-medium">Giá trị quy đổi:</span>
+                                <span id="cashOutput" class="text-3xl font-black text-orange-600">0 VNĐ</span>
+                            </div>
+                            <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                                <div id="calcProgress" class="h-full bg-green-500 transition-all duration-700 ease-out" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 shrink-0 bg-green-100 rounded-xl flex items-center justify-center text-green-600 font-bold">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-800">Hiểu giá trị lao động</h4>
+                                <p class="text-slate-500 text-sm">Biết chính xác mỗi việc nhà giúp con tiến gần hơn bao nhiêu đến mục tiêu tài chính.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 shrink-0 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 font-bold">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-800">Lập kế hoạch chi tiêu</h4>
+                                <p class="text-slate-500 text-sm">Dùng gạo để "mua" sự tự do hoặc đầu tư vào những phần thưởng lớn hơn.</p>
+                            </div>
+                        </div>
+                        <div class="pt-6 border-t border-slate-100">
+                            <p class="text-slate-600 italic leading-relaxed">"Tiền không tự nhiên sinh ra, nó là kết quả của sự chăm chỉ được định danh bằng những hạt gạo."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rewards Section -->
+        <section id="rewards" class="py-12">
+            <div class="mb-12 text-center">
+                <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">Thị Trường Thưởng</span>
+                <h3 class="text-4xl font-bold text-slate-900 mb-4">Danh Mục Kho Tàng Dài Hạn</h3>
+                <p class="text-slate-600 max-w-2xl mx-auto">So sánh mức độ nỗ lực cần thiết để đạt được các cột mốc quan trọng trong thị trấn.</p>
+            </div>
+
+            <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 mb-16">
+                <div class="chart-container">
+                    <canvas id="rewardsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card: Mở mang bờ cõi -->
+                <div class="reward-card bg-white p-8 rounded-[2rem] flex flex-col border-b-4 border-b-emerald-500">
+                    <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-3xl mb-6">📚</div>
+                    <h4 class="font-bold text-xl text-slate-800 mb-2">Mở mang bờ cõi</h4>
+                    <p class="text-emerald-600 font-black text-2xl mb-4">300 Hạt Gạo</p>
+                    <p class="text-slate-500 text-sm leading-relaxed flex-grow">Đổi nông sản lấy tri thức. Nhận ngay một cuốn sách tự chọn để mở rộng tầm nhìn và kiến thức.</p>
+                </div>
+
+                <!-- Card: Mâm cỗ vụ mùa -->
+                <div class="reward-card bg-white p-8 rounded-[2rem] flex flex-col border-b-4 border-b-amber-500">
+                    <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl mb-6">🍲</div>
+                    <h4 class="font-bold text-xl text-slate-800 mb-2">Mâm cỗ vụ mùa</h4>
+                    <p class="text-amber-600 font-black text-2xl mb-4">200 Hạt Gạo</p>
+                    <p class="text-slate-500 text-sm leading-relaxed flex-grow">Tận hưởng thành quả với thực đơn con yêu thích nhất, được bố mẹ phục vụ tận nơi tại gia đình.</p>
+                </div>
+
+                <!-- Card: Lệnh bài cổng thành -->
+                <div class="reward-card bg-white p-8 rounded-[2rem] flex flex-col border-b-4 border-b-blue-500">
+                    <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl mb-6">🏰</div>
+                    <h4 class="font-bold text-xl text-slate-800 mb-2">Lệnh bài cổng thành</h4>
+                    <p class="text-blue-600 font-black text-2xl mb-4">400 Hạt Gạo</p>
+                    <p class="text-slate-500 text-sm leading-relaxed flex-grow">Quyền mời bạn thân đến nhà tổ chức tiệc ngủ hoặc chơi game suốt cuối tuần mà không bị làm phiền.</p>
+                </div>
+
+                <!-- Card: Thông hành viễn chinh -->
+                <div class="reward-card bg-white p-8 rounded-[2rem] flex flex-col border-b-4 border-b-purple-500">
+                    <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center text-3xl mb-6">🧭</div>
+                    <h4 class="font-bold text-xl text-slate-800 mb-2">Thông hành viễn chinh</h4>
+                    <p class="text-purple-600 font-black text-2xl mb-4">400 Hạt Gạo</p>
+                    <p class="text-slate-500 text-sm leading-relaxed flex-grow">Tự do khám phá bên ngoài cùng bạn bè với sự tin tưởng và tôn trọng riêng tư tuyệt đối từ bố mẹ.</p>
+                </div>
+
+                <!-- Card: Kinh lý đô thành -->
+                <div class="reward-card bg-white p-8 rounded-[2rem] flex flex-col md:col-span-2 border-b-4 border-b-rose-500">
+                    <div class="flex flex-col md:flex-row gap-8 items-start md:items-center">
+                        <div class="w-20 h-20 bg-rose-50 rounded-[1.5rem] flex items-center justify-center text-5xl shrink-0 shadow-sm">🍕</div>
+                        <div>
+                            <h4 class="font-bold text-2xl text-slate-800 mb-2">Kinh lý đô thành</h4>
+                            <p class="text-rose-600 font-black text-3xl mb-3">1.000 Hạt Gạo</p>
+                            <p class="text-slate-500 text-base leading-relaxed">Phần thưởng danh giá nhất. Bao trọn gói một bữa tối sang trọng tại nhà hàng cao cấp cho cả gia đình bằng chính công sức của con.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Parent Guide Section -->
+        <section id="parent-tips" class="py-12">
+            <div class="bg-slate-900 text-white rounded-[2.5rem] p-12 overflow-hidden relative shadow-2xl">
+                <div class="relative z-10 grid lg:grid-cols-3 gap-12">
+                    <div class="lg:col-span-1">
+                        <h3 class="text-3xl font-bold mb-6">Góc Quản Trị Viên</h3>
+                        <p class="text-slate-400 leading-relaxed mb-8">Dành riêng cho Bố Mẹ để vận hành Kho Gạo Thị Trấn một cách hiệu quả và nhân văn.</p>
+                        <div class="flex items-center gap-4 text-green-400 font-bold">
+                            <span class="text-2xl">🛡️</span>
+                            <span>Cam kết công bằng</span>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 grid md:grid-cols-2 gap-8">
+                        <div class="p-8 bg-white/5 rounded-2xl border border-white/10">
+                            <h4 class="text-lg font-bold mb-3 text-orange-300">Tính nhất quán</h4>
+                            <p class="text-sm text-slate-400">Giữ nguyên giá niêm yết giúp trẻ xây dựng niềm tin vào hệ thống và học cách tiết kiệm bền bỉ.</p>
+                        </div>
+                        <div class="p-8 bg-white/5 rounded-2xl border border-white/10">
+                            <h4 class="text-lg font-bold mb-3 text-green-300">Lễ đổi thưởng</h4>
+                            <p class="text-sm text-slate-400">Hãy biến mỗi lần đổi gạo thành một sự kiện nhỏ để tôn vinh giá trị lao động của con.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute -bottom-10 -right-10 text-[15rem] opacity-5 select-none pointer-events-none">🌾</div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-100 py-12">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex justify-center items-center gap-2 mb-6">
+                <span class="text-xl">🌾</span>
+                <span class="font-black text-slate-800 uppercase tracking-widest">Kho Gạo Thị Trấn</span>
+            </div>
+            <p class="text-slate-400 text-sm max-w-md mx-auto mb-8">Hệ thống giáo dục tài chính và kỹ năng sống thông qua mô hình trò chơi hóa việc nhà.</p>
+            <div class="text-[10px] text-slate-300 uppercase tracking-widest">
+                © 2024 Kho Gạo Thị Trấn | Phát triển vì tương lai trẻ thơ
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function updateCalculator() {
+            const input = document.getElementById('grainInput');
+            const output = document.getElementById('cashOutput');
+            const progress = document.getElementById('calcProgress');
+            
+            const grains = parseInt(input.value) || 0;
+            const cash = (grains / 10) * 5000;
+            
+            output.innerText = cash.toLocaleString('vi-VN') + ' VNĐ';
+            const percent = Math.min((grains / 1000) * 100, 100);
+            progress.style.width = percent + '%';
+        }
+
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            const offset = 80;
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        function initCharts() {
+            const ctx = document.getElementById('rewardsChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'Mâm cỗ vụ mùa', 
+                        'Mở mang bờ cõi', 
+                        'Lệnh bài cổng thành', 
+                        'Thông hành viễn chinh', 
+                        'Kinh lý đô thành'
+                    ],
+                    datasets: [{
+                        label: 'Số Hạt Gạo Cần Có',
+                        data: [200, 300, 400, 400, 1000],
+                        backgroundColor: [
+                            'rgba(245, 158, 11, 0.6)',
+                            'rgba(16, 185, 129, 0.6)',
+                            'rgba(59, 130, 246, 0.6)',
+                            'rgba(139, 92, 246, 0.6)',
+                            'rgba(244, 63, 94, 0.6)'
+                        ],
+                        borderColor: [
+                            '#d97706',
+                            '#059669',
+                            '#2563eb',
+                            '#7c3aed',
+                            '#e11d48'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 15,
+                        hoverBorderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleFont: { size: 14, weight: 'bold' },
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Nỗ lực cần thiết: ${context.parsed.y} 🌾`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9', drawBorder: false },
+                            ticks: { font: { weight: '600' } },
+                            title: {
+                                display: true,
+                                text: 'Số lượng Hạt Gạo',
+                                font: { weight: 'bold', size: 12 }
+                            }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { 
+                                font: { weight: '600', size: 11 },
+                                color: '#64748b'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = function() {
+            initCharts();
+            updateCalculator();
+        };
+    </script>
+</body>
+</html>

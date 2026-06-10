@@ -1,0 +1,70 @@
+/* ─────────── NAV ─────────── */
+    .nav {
+      position: fixed; top:0; left:0; right:0; z-index: 100;
+      background: rgba(253,248,238,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(245,166,35,.2);
+      padding: .9rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: box-shadow .3s;
+    }
+    .nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.08); }
+
+    .nav-logo {
+      display: flex; align-items: center; gap:.7rem;
+      text-decoration: none;
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 900; font-size: 1.3rem;
+      color: var(--green-deep);
+    }
+    .nav-logo .logo-icon {
+      width:2.4rem; height:2.4rem;
+      background: linear-gradient(135deg, var(--green-mid), var(--amber));
+      border-radius:.7rem;
+      display:grid; place-items:center;
+      font-size:1.1rem;
+      box-shadow: 0 2px 8px rgba(45,138,85,.3);
+    }
+
+    .nav-links { display:flex; gap:2rem; list-style:none; }
+    .nav-links a {
+      text-decoration:none; font-weight:700; font-size:.9rem;
+      color: var(--text-muted);
+      transition: color .2s;
+      letter-spacing:.02em;
+    }
+    .nav-links a:hover { color: var(--green-mid); }
+    .nav-links a.active { color: var(--green-deep); }
+
+    .nav-cta {
+      background: var(--green-deep);
+      color: #fff !important;
+      padding:.5rem 1.3rem;
+      border-radius:2rem;
+      font-weight:800 !important;
+      font-size:.88rem !important;
+      transition: background .2s, transform .2s !important;
+    }
+    .nav-cta:hover { background: var(--green-mid) !important; transform: translateY(-1px); }
+
+    .nav-mobile-btn { display:none; background:none; border:none; cursor:pointer; font-size:1.4rem; color:var(--green-deep); }
+
+    .nav-btn {
+      background: var(--amber);
+      color: var(--earth) !important;
+      padding: .5rem 1.3rem;
+      border-radius: 2rem;
+      font-weight: 800 !important;
+      cursor: pointer;
+      border: none;
+      font-family: 'Baloo 2', sans-serif;
+      font-size: .9rem;
+      transition: transform .2s, box-shadow .2s;
+      white-space: nowrap;
+    }
+    .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245,166,35,.4); }
+
+    @media(max-width:768px){
+      .nav-links { display:none; }
+      .nav-mobile-btn { display:block; }
+    }

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kho Thóc Gia Đình – Gamification Việc Nhà</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --green-deep: #1a5c38;
+      --green-mid:  #2d8a55;
+      --green-light:#4abe7a;
+      --amber:      #f5a623;
+      --amber-light:#fde68a;
+      --cream:      #fdf8ee;
+      --earth:      #7c4b1e;
+      --earth-light:#c47d3a;
+      --red-penalty:#c0392b;
+      --text-main:  #1e1e1e;
+      --text-muted: #6b7280;
+      --white:      #ffffff;
+      --radius-card:1.5rem;
+      --shadow-soft:0 4px 24px rgba(0,0,0,0.07);
+      --shadow-card:0 8px 32px rgba(0,0,0,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Mulish', sans-serif;
+      background: var(--cream);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    h1,h2,h3,h4,h5 { font-family: 'Baloo 2', sans-serif; }
+
+    /* ── NOISE TEXTURE overlay ── */
+    body::before {
+      content:'';
+      position:fixed; inset:0; pointer-events:none; z-index:9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity:.4;
+    }
+
+    /* ─────────── NAV ─────────── */
+    .nav {
+      position: fixed; top:0; left:0; right:0; z-index: 100;
+      background: rgba(253,248,238,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(245,166,35,.2);
+      padding: .9rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: box-shadow .3s;
+    }
+    .nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.08); }
+
+    .nav-logo {
+      display: flex; align-items: center; gap:.7rem;
+      text-decoration: none;
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 900; font-size: 1.3rem;
+      color: var(--green-deep);
+    }
+    .nav-logo .logo-icon {
+      width:2.4rem; height:2.4rem;
+      background: linear-gradient(135deg, var(--green-mid), var(--amber));
+      border-radius:.7rem;
+      display:grid; place-items:center;
+      font-size:1.1rem;
+      box-shadow: 0 2px 8px rgba(45,138,85,.3);
+    }
+
+    .nav-links { display:flex; gap:2rem; list-style:none; }
+    .nav-links a {
+      text-decoration:none; font-weight:700; font-size:.9rem;
+      color: var(--text-muted);
+      transition: color .2s;
+      letter-spacing:.02em;
+    }
+    .nav-links a:hover { color: var(--green-mid); }
+    .nav-links a.active { color: var(--green-deep); }
+
+    .nav-cta {
+      background: var(--green-deep);
+      color: #fff !important;
+      padding:.5rem 1.3rem;
+      border-radius:2rem;
+      font-weight:800 !important;
+      font-size:.88rem !important;
+      transition: background .2s, transform .2s !important;
+    }
+    .nav-cta:hover { background: var(--green-mid) !important; transform: translateY(-1px); }
+
+    .nav-mobile-btn { display:none; background:none; border:none; cursor:pointer; font-size:1.4rem; color:var(--green-deep); }
+
+    @media(max-width:768px){
+      .nav-links { display:none; }
+      .nav-mobile-btn { display:block; }
+    }
+
+    /* ─────────── HERO ─────────── */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(150deg, var(--green-deep) 0%, #2d6a4f 50%, #1b4332 100%);
+      display: flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding: 8rem 2rem 6rem;
+      position:relative; overflow:hidden;
+    }
+
+    /* animated grain field */
+    .hero-field {
+      position:absolute; bottom:0; left:0; right:0; height:220px;
+      background: linear-gradient(to top, rgba(26,92,56,.9) 0%, transparent 100%);
+      display:flex; align-items:flex-end; justify-content:center; gap:0;
+      overflow:hidden;
+    }
+    .stalk {
+      width:18px; height:0;
+      background: linear-gradient(to top, var(--green-mid), var(--green-light));
+      border-radius:2px 2px 0 0;
+      position:relative;
+      animation: grow 1.5s ease-out forwards;
+    }
+    .stalk::after {
+      content:'🌾'; position:absolute; top:-1.4rem; left:50%;
+      transform:translateX(-50%); font-size:1.1rem;
+      opacity:0; animation: fadeIn .4s ease forwards;
+    }
+    @keyframes grow { from{height:0} to{height:var(--h,140px)} }
+    @keyframes fadeIn { from{opacity:0; transform:translateX(-50%) translateY(6px)} to{opacity:1; transform:translateX(-50%) translateY(0)} }
+
+    .hero-badge {
+      display:inline-block;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.3);
+      color: var(--amber-light);
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem;
+      letter-spacing:.12em; text-transform:uppercase;
+      padding:.4rem 1.2rem; border-radius:2rem;
+      margin-bottom:1.5rem;
+      backdrop-filter:blur(4px);
+      animation: slideDown .6s ease both;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 900; color: #fff;
+      line-height:1.1; margin-bottom:1.2rem;
+      animation: slideDown .7s .1s ease both;
+    }
+    .hero-title .highlight { color: var(--amber); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: rgba(255,255,255,.8); max-width:600px;
+      line-height:1.7; margin-bottom:2.5rem;
+      font-weight:500;
+      animation: slideDown .7s .2s ease both;
+    }
+
+    .hero-btns {
+      display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+      animation: slideDown .7s .3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--amber); color: var(--earth);
+      padding:.85rem 2rem; border-radius:3rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem;
+      text-decoration:none; border:none; cursor:pointer;
+      box-shadow: 0 4px 20px rgba(245,166,35,.5);
+      transition: transform .2s, box-shadow .2s;
+      display:inline-flex; align-items:center; gap:.5rem;
+    }
+    .btn-primary:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(245,166,35,.5); }
+
+    .btn-outline {
+      background: rgba(255,255,255,.1); color:#fff;
+      border: 2px solid rgba(255,255,255,.4);
+      padding:.85rem 2rem; border-radius:3rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem;
+      text-decoration:none;
+      transition: background .2s, transform .2s;
+      display:inline-flex; align-items:center; gap:.5rem;
+    }
+    .btn-outline:hover { background:rgba(255,255,255,.2); transform:translateY(-3px); }
+
+    @keyframes slideDown {
+      from { opacity:0; transform:translateY(-20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* hero stats row */
+    .hero-stats {
+      display:flex; gap:2rem; justify-content:center; flex-wrap:wrap;
+      margin-top:3rem; position:relative; z-index:2;
+      animation: slideDown .7s .45s ease both;
+    }
+    .hero-stat {
+      text-align:center; color:#fff;
+    }
+    .hero-stat-num {
+      font-family:'Baloo 2',sans-serif; font-weight:900; font-size:2rem;
+      color: var(--amber);
+    }
+    .hero-stat-label { font-size:.8rem; opacity:.7; letter-spacing:.05em; }
+
+    /* wave divider */
+    .wave { display:block; width:100%; overflow:hidden; line-height:0; }
+    .wave svg { display:block; }
+
+    /* ─────────── SECTION BASE ─────────── */
+    section { padding: 5rem 2rem; }
+    .container { max-width:1100px; margin:0 auto; }
+
+    .section-label {
+      font-family:'Baloo 2',sans-serif; font-weight:800;
+      font-size:.78rem; letter-spacing:.15em; text-transform:uppercase;
+      color: var(--green-mid); margin-bottom:.5rem;
+    }
+    .section-title {
+      font-size:clamp(1.8rem, 4vw, 2.8rem); font-weight:900;
+      color: var(--green-deep); margin-bottom:1rem; line-height:1.2;
+    }
+    .section-sub {
+      font-size:1.05rem; color:var(--text-muted);
+      max-width:560px; line-height:1.7;
+    }
+
+    /* ─────────── WHY / BENEFITS ─────────── */
+    .benefits { background: #fff; }
+
+    .benefits-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1.5rem; margin-top:3rem;
+    }
+
+    .benefit-card {
+      background: var(--cream);
+      border: 2px solid transparent;
+      border-radius: var(--radius-card);
+      padding:2rem;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+      position:relative; overflow:hidden;
+    }
+    .benefit-card::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(135deg, var(--green-light) 0%, var(--amber) 100%);
+      opacity:0; transition:opacity .3s; border-radius:inherit;
+      z-index:0;
+    }
+    .benefit-card:hover { border-color: var(--green-light); transform:translateY(-5px); box-shadow:var(--shadow-card); }
+    .benefit-card:hover::before { opacity:.05; }
+
+    .benefit-card > * { position:relative; z-index:1; }
+
+    .benefit-icon {
+      width:3.2rem; height:3.2rem;
+      background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+      border-radius:1rem; display:grid; place-items:center;
+      font-size:1.4rem; margin-bottom:1.2rem;
+      box-shadow: 0 4px 12px rgba(45,138,85,.25);
+    }
+    .benefit-card h4 {
+      font-size:1.15rem; font-weight:800; margin-bottom:.5rem;
+      color:var(--green-deep);
+    }
+    .benefit-card p { font-size:.93rem; color:var(--text-muted); line-height:1.65; }
+
+    /* ─────────── HOW IT WORKS ─────────── */
+    .how { background: var(--cream); }
+
+    .steps {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:1rem; margin-top:3rem; counter-reset:step;
+    }
+
+    .step {
+      background:#fff; border-radius:var(--radius-card);
+      padding:2rem 1.5rem; text-align:center;
+      box-shadow:var(--shadow-soft);
+      position:relative;
+      counter-increment:step;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .step:hover { transform:translateY(-4px); box-shadow:var(--shadow-card); }
+
+    .step-num {
+      width:2.8rem; height:2.8rem; border-radius:50%;
+      background: linear-gradient(135deg,var(--green-deep),var(--green-mid));
+      color:#fff; font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.1rem;
+      display:grid; place-items:center; margin:0 auto 1rem;
+      box-shadow: 0 4px 12px rgba(45,138,85,.3);
+    }
+    .step-emoji { font-size:2.5rem; margin-bottom:.8rem; }
+    .step h4 { font-size:1rem; font-weight:800; color:var(--green-deep); margin-bottom:.4rem; }
+    .step p { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+
+    /* currency explainer */
+    .currency-cards {
+      display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:3rem;
+    }
+    @media(max-width:640px){ .currency-cards { grid-template-columns:1fr; } }
+
+    .currency-card {
+      border-radius:var(--radius-card); padding:2rem;
+      display:flex; gap:1.2rem; align-items:flex-start;
+      box-shadow:var(--shadow-soft);
+    }
+    .currency-card.green { background:#f0faf4; border:2px solid #c6f0d8; }
+    .currency-card.amber { background:#fffbeb; border:2px solid #fde68a; }
+
+    .currency-card .icon-box {
+      width:3.5rem; height:3.5rem; border-radius:1rem;
+      display:grid; place-items:center; font-size:1.5rem;
+      flex-shrink:0;
+    }
+    .currency-card.green .icon-box { background:#d1fae5; }
+    .currency-card.amber .icon-box { background:#fef3c7; }
+
+    .currency-card h4 { font-size:1.1rem; font-weight:800; margin-bottom:.4rem; }
+    .currency-card.green h4 { color:var(--green-deep); }
+    .currency-card.amber h4 { color:#92400e; }
+    .currency-card p { font-size:.9rem; color:var(--text-muted); line-height:1.6; }
+
+    /* exchange rate callout */
+    .rate-callout {
+      margin-top:2rem;
+      background: linear-gradient(135deg, var(--green-deep) 0%, #1b4332 100%);
+      border-radius:var(--radius-card); padding:2rem 2.5rem;
+      display:flex; align-items:center; gap:2rem; flex-wrap:wrap;
+      justify-content:center; text-align:center;
+      box-shadow: 0 8px 32px rgba(26,92,56,.3);
+    }
+    .rate-callout .rate-item {
+      display:flex; flex-direction:column; align-items:center; gap:.3rem;
+    }
+    .rate-callout .rate-num {
+      font-family:'Baloo 2',sans-serif; font-weight:900; font-size:2.2rem;
+      color: var(--amber);
+    }
+    .rate-callout .rate-label { font-size:.8rem; color:rgba(255,255,255,.7); letter-spacing:.06em; }
+    .rate-callout .rate-eq {
+      font-size:2rem; color:rgba(255,255,255,.3);
+    }
+    .rate-callout a {
+      margin-left:auto;
+      background:var(--amber); color:var(--earth);
+      padding:.6rem 1.5rem; border-radius:2rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.9rem;
+      text-decoration:none;
+      transition: transform .2s, box-shadow .2s;
+      white-space:nowrap;
+    }
+    .rate-callout a:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(245,166,35,.4); }
+    @media(max-width:640px){ .rate-callout a { margin-left:0; } }
+
+    /* ─────────── RANKS ─────────── */
+    .ranks { background:#fff; }
+
+    .ranks-track {
+      display:flex; gap:0; margin-top:3rem;
+      overflow-x:auto; padding-bottom:1rem;
+    }
+    .rank-item {
+      min-width:180px; flex:1;
+      background:var(--cream); border:2px solid #e5e7eb;
+      border-radius:0; padding:1.5rem 1rem; text-align:center;
+      position:relative;
+      transition: all .25s;
+    }
+    .rank-item:first-child { border-radius:var(--radius-card) 0 0 var(--radius-card); }
+    .rank-item:last-child  { border-radius:0 var(--radius-card) var(--radius-card) 0; }
+
+    .rank-item:not(:first-child)::before {
+      content:''; position:absolute; left:0; top:50%;
+      transform:translateY(-50%);
+      width:0; height:0;
+      border-top:12px solid transparent;
+      border-bottom:12px solid transparent;
+      border-left:14px solid #e5e7eb;
+    }
+
+    .rank-item:hover {
+      background: linear-gradient(135deg, #f0faf4, #fffbeb);
+      border-color:var(--green-light);
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-card);
+      z-index:1;
+    }
+
+    .rank-emoji { font-size:2.2rem; margin-bottom:.6rem; }
+    .rank-name { font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.95rem; color:var(--green-deep); margin-bottom:.3rem; }
+    .rank-exp  { font-size:.8rem; color:var(--text-muted); }
+    .rank-badge {
+      display:inline-block; font-size:.72rem; font-weight:700;
+      padding:.2rem .6rem; border-radius:1rem; margin-top:.4rem;
+    }
+
+    /* ─────────── PENALTY ─────────── */
+    .penalty {
+      background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+      border-top:4px solid var(--red-penalty);
+    }
+    .penalty-box {
+      background:#fff; border-radius:var(--radius-card);
+      border:2px solid #fecaca;
+      padding:2.5rem; box-shadow:var(--shadow-soft);
+      display:flex; gap:2rem; align-items:flex-start; flex-wrap:wrap;
+    }
+    .penalty-icon-wrap {
+      width:5rem; height:5rem; flex-shrink:0;
+      background:#fee2e2; border-radius:50%;
+      display:grid; place-items:center;
+      font-size:2.2rem;
+      box-shadow:0 4px 16px rgba(192,57,43,.2);
+    }
+    .penalty-content { flex:1; }
+    .penalty-content h3 {
+      font-size:1.5rem; font-weight:900; color:var(--red-penalty);
+      margin-bottom:.5rem;
+    }
+    .penalty-content > p { color:var(--text-muted); margin-bottom:1.2rem; }
+    .penalty-rules { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media(max-width:600px){ .penalty-rules { grid-template-columns:1fr; } }
+
+    .penalty-rule {
+      background:#fff5f5; border:1px solid #fecaca;
+      border-radius:1rem; padding:1rem 1.2rem;
+      display:flex; gap:.8rem; align-items:flex-start;
+    }
+    .penalty-rule i { color:var(--red-penalty); margin-top:.15rem; }
+    .penalty-rule strong { display:block; font-weight:700; font-size:.92rem; margin-bottom:.2rem; }
+    .penalty-rule span { font-size:.85rem; color:var(--text-muted); line-height:1.5; }
+    .penalty-rule .highlight { color:var(--red-penalty); font-weight:700; }
+
+    /* ─────────── CTA ─────────── */
+    .cta-section {
+      background: linear-gradient(135deg, var(--green-deep) 0%, #1b4332 100%);
+      text-align:center; padding:6rem 2rem;
+      position:relative; overflow:hidden;
+    }
+    .cta-section::before {
+      content:'🌾'; font-size:18rem; opacity:.04;
+      position:absolute; right:-3rem; top:-3rem; pointer-events:none; line-height:1;
+    }
+    .cta-section h2 { font-size:clamp(1.8rem,4vw,3rem); font-weight:900; color:#fff; margin-bottom:1rem; }
+    .cta-section p  { color:rgba(255,255,255,.75); font-size:1.05rem; max-width:520px; margin:0 auto 2.5rem; line-height:1.7; }
+    .cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+    .btn-white {
+      background:#fff; color:var(--green-deep);
+      padding:.85rem 2rem; border-radius:3rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem;
+      text-decoration:none;
+      transition:transform .2s, box-shadow .2s;
+      display:inline-flex; align-items:center; gap:.5rem;
+    }
+    .btn-white:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.15); }
+
+    /* ─────────── FOOTER ─────────── */
+    footer {
+      background:#0d2b1a; color:rgba(255,255,255,.55);
+      padding:3rem 2rem;
+      border-top:3px solid var(--green-mid);
+    }
+    .footer-inner {
+      max-width:1100px; margin:0 auto;
+      display:flex; gap:2rem; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    .footer-brand a {
+      text-decoration:none; font-family:'Baloo 2',sans-serif; font-weight:900;
+      font-size:1.2rem; color:#fff; display:flex; align-items:center; gap:.5rem;
+    }
+    .footer-nav { display:flex; gap:1.5rem; flex-wrap:wrap; }
+    .footer-nav a { color:rgba(255,255,255,.55); text-decoration:none; font-size:.88rem; font-weight:600; transition:color .2s; }
+    .footer-nav a:hover { color:var(--amber); }
+    .footer-copy { font-size:.8rem; opacity:.5; }
+
+    /* ─────────── RESPONSIVE ─────────── */
+    @media(max-width:768px){
+      section { padding:3.5rem 1.2rem; }
+      .rate-callout { flex-direction:column; }
+      .penalty-box { flex-direction:column; }
+    }
+
+    /* ─────────── SCROLL REVEAL ─────────── */
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* tasks preview */
+    .tasks-preview {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+      gap:1rem; margin-top:2rem;
+    }
+
+    /* Style cho Nhiệm vụ Sử thi (Epic) */
+    .task-row.epic { border: 1px solid #47ea08; background: linear-gradient(135deg, #fefce8 0%, #fff 100%); position: relative; }
+    .task-row.epic::before { content: "♛"; position: absolute; right: 10px; top: 5px; font-size: 1.2rem; color: #eab308; }
+    .task-name.epic { color: #854d0e; font-weight: 900; }
+
+    /* Style cho Highlight */
+    .task-row.highlight { border: 1px solid var(--amber); background-color: #fffbeb; }
+
+    .task-row {
+      background:#fff; border-radius:1rem; padding:.85rem 1rem;
+      display:flex; align-items:center; gap:.75rem;
+      box-shadow:var(--shadow-soft);
+      border:2px solid transparent;
+      transition: border-color .2s, transform .2s;
+      min-width: 0; /* prevent flex blowout */
+    }
+    .task-row:hover { border-color:var(--green-light); transform:translateX(4px); }
+    .task-row .task-icon { font-size:1.4rem; width:2rem; text-align:center; flex-shrink:0; }
+    .task-row .task-info { flex:1; min-width:0; overflow:hidden; }
+    .task-row .task-name { font-weight:700; font-size:.88rem; color:var(--green-deep); }
+    .task-row .task-sub  { font-size:.75rem; color:var(--text-muted); }
+    .task-row .task-reward {
+      display:flex; flex-direction:column; align-items:flex-end; gap:2px;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem;
+      flex-shrink:0;
+    }
+    .val-grain { color:#b45309; background:var(--amber-light); border-radius:1rem; padding:.15rem .55rem; white-space:nowrap; }
+    .val-exp   { color:#059669; padding:.15rem .55rem; white-space:nowrap; }
+
+    @media(max-width:480px){
+      .tasks-preview { grid-template-columns: 1fr; }
+      .task-row .task-name { white-space:normal; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav-logo">
+    <span class="logo-icon">🌾</span>
+    Kho Thóc Gia Đình
+  </a>
+    <ul class="nav-links">
+    <li><a href="index.html" class="active">Trang Chủ</a></li>
+    <li><a href="kho-qua.html">Kho Quà</a></li>
+    <li><a href="quy-doi.html">Quy Đổi</a></li>
+    <li><a href="nhat-ky.html">Nhật ký</a></li>
+    <li><a href="print.html">🖨️ In</a></li>
+    <li><a href="quy-doi.html" class="nav-cta">🌾 Tính Gạo</a></li>
+  </ul>
+  <button class="nav-mobile-btn" onclick="toggleMobileMenu()">☰</button>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-badge">🎮 Gamification cho gia đình · Dành cho teen 10–15 tuổi</div>
+  <h1 class="hero-title">
+    Biến Việc Nhà Thành<br/>
+    <span class="highlight">Vụ Mùa Bội Thu!</span>
+  </h1>
+  <p class="hero-sub">
+    Tích lũy <strong>Hạt Gạo</strong> từ việc nhà, thăng cấp Quản Gia,
+    và đổi lấy những đặc quyền giải trí cực chất. Học cách quản lý tài chính ngay từ nhỏ!
+  </p>
+  <div class="hero-btns">
+    <a href="#how-it-works" class="btn-primary">🌱 Xem Cách Hoạt Động</a>
+    <a href="kho-qua.html" class="btn-outline">🎁 Kho Quà Tặng</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">5</div>
+      <div class="hero-stat-label">Cấp Bậc Quản Gia</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">20+</div>
+      <div class="hero-stat-label">Nhiệm Vụ Mỗi Tuần</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">10🌾</div>
+      <div class="hero-stat-label">= 1.000 VNĐ</div>
+    </div>
+  </div>
+
+  <div class="hero-field" id="heroField"></div>
+</section>
+
+<div class="wave">
+  <svg viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:60px;background:var(--cream);">
+    <path d="M0,80 L0,30 Q300,0 600,30 Q900,60 1200,20 L1200,80 Z" fill="#1b4332"/>
+  </svg>
+</div>
+
+<!-- ── BENEFITS (dành cho ba mẹ) ── -->
+<section class="benefits" id="benefits">
+  <div class="container">
+    <p class="section-label reveal">🌿 Tại sao nên dùng</p>
+    <h2 class="section-title reveal">Lợi Ích Cho Cả Gia Đình</h2>
+    <p class="section-sub reveal">Không chỉ là bảng phân công việc nhà — đây là mô hình giáo dục tài chính và kỹ năng sống thực thụ.</p>
+
+    <div class="benefits-grid">
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">💰</div>
+        <h4>Hiểu Giá Trị Đồng Tiền</h4>
+        <p>Khi con thấy rửa bát = 20 Gạo = 2.000đ, con sẽ hiểu lao động tạo ra giá trị thật sự — không phải tiền xin ba mẹ nữa.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🧠</div>
+        <h4>Kỹ Năng Lập Kế Hoạch</h4>
+        <p>Muốn mua giày 500k? Con tự tính: cần 5.000 Gạo, mỗi ngày kiếm được bao nhiêu, mất bao lâu. Toán học ứng dụng thực tế!</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🏠</div>
+        <h4>Tinh Thần Trách Nhiệm</h4>
+        <p>Thay vì nhắc nhở mệt mỏi, hệ thống tự vận hành. Con chủ động làm việc vì chính lợi ích của mình, không phải vì bị ép.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🤝</div>
+        <h4>Gắn Kết Gia Đình</h4>
+        <p>"Lễ đổi thưởng" hàng tuần trở thành khoảnh khắc cả nhà cùng nhau nhìn lại, tôn vinh và ăn mừng thành quả lao động.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🎮</div>
+        <h4>Động Lực Dài Hạn</h4>
+        <p>Hệ thống cấp bậc, thẻ bài, kho quà — biến việc nhà nhàm chán thành game nhập vai có cốt truyện và mục tiêu rõ ràng.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">⚖️</div>
+        <h4>Công Bằng & Minh Bạch</h4>
+        <p>Mọi quy tắc đều được niêm yết rõ ràng. Không có tranh cãi về "công bằng" vì mọi thứ đều có giá niêm yết cố định.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how" id="how-it-works">
+  <div class="container">
+    <p class="section-label reveal">⚙️ Cơ chế vận hành</p>
+    <h2 class="section-title reveal">Cách Hoạt Động Của Kho Thóc</h2>
+    <p class="section-sub reveal">Đơn giản như một game — chỉ cần 5 phút để hiểu, cả tuần để trải nghiệm.</p>
+
+    <div class="currency-cards reveal">
+      <div class="currency-card green">
+        <div class="icon-box">📈</div>
+        <div>
+          <h4>Điểm Sành Sỏi (EXP)</h4>
+          <p>Đo lường <strong>cấp độ kỹ năng</strong> của con. Tích lũy EXP để thăng hạng từ Tân Binh lên Đại Điền Chủ và mở khóa các đặc quyền mới.</p>
+        </div>
+      </div>
+      <div class="currency-card amber">
+        <div class="icon-box">🌾</div>
+        <div>
+          <h4>Hạt Gạo (Tiền Tệ)</h4>
+          <p>Đồng tiền trong game. Dùng để <strong>đổi phần thưởng</strong> ngắn hạn (thẻ bài đặc quyền) hoặc tích lũy dài hạn để quy ra tiền mặt thật.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="rate-callout reveal">
+      <div class="rate-item">
+        <span class="rate-num">10 🌾</span>
+        <span class="rate-label">Hạt Gạo</span>
+      </div>
+      <span class="rate-eq">=</span>
+      <div class="rate-item">
+        <span class="rate-num">1.000đ</span>
+        <span class="rate-label">Tiền Mặt</span>
+      </div>
+      <span class="rate-eq">→</span>
+      <div class="rate-item">
+        <span class="rate-num">5.000 🌾</span>
+        <span class="rate-label">= Giày 500k</span>
+      </div>
+      <a href="quy-doi.html">Tính Ngay →</a>
+    </div>
+
+    <div class="steps reveal" style="margin-top:3rem">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-emoji">📋</div>
+        <h4>Nhận Nhiệm Vụ</h4>
+        <p>Ba mẹ và con cùng thống nhất danh sách việc nhà + số Gạo tương ứng mỗi tuần.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-emoji">⚡</div>
+        <h4>Hoàn Thành & Tích Lũy</h4>
+        <p>Làm xong việc, con ghi vào sổ kho. Ba mẹ xác nhận và cộng Gạo + EXP.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-emoji">🏆</div>
+        <h4>Thăng Cấp</h4>
+        <p>Đủ EXP thì lên hạng. Mỗi cấp mở ra đặc quyền và bonus Gạo mới.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-emoji">🎁</div>
+        <h4>Đổi Phần Thưởng</h4>
+        <p>Dùng Gạo đổi thẻ bài đặc quyền hoặc tích lũy để quy ra tiền mua đồ thật.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TASKS PREVIEW ── -->
+<section style="background:#fff; padding:3rem 2rem 5rem;">
+  <div class="container">
+    <p class="section-label reveal">🌾 Ví dụ nhiệm vụ</p>
+    <h2 class="section-title reveal">Đồng Điền – Bảng Nhiệm Vụ Mẫu</h2>
+    <p class="section-sub reveal">Một số công việc nhà phổ biến và số Hạt Gạo tương ứng. Ba mẹ và con có thể tự điều chỉnh!</p>
+
+    <div class="tasks-preview reveal">
+      <!-- Nhiệm vụ Sử thi -->
+      <div class="task-row epic">
+        <span class="task-icon">🏰</span>
+        <div class="task-info">
+          <div class="task-name epic">Đại chiến Kho Thóc</div>
+          <div class="task-sub">Tổng vệ sinh toàn bộ nhà cửa</div>
+        </div>
+        <div class="task-reward"><span class="val-grain">+150 🌾</span><span class="val-exp">+100 EXP</span></div>
+      </div>
+      <div class="task-row epic">
+        <span class="task-icon">🍳</span>
+        <div class="task-info">
+          <div class="task-name epic">Trợ lý Đầu bếp</div>
+          <div class="task-sub">Nấu 1 bữa cơm hoàn chỉnh</div>
+        </div>
+        <div class="task-reward"><span class="val-grain">+100 🌾</span><span class="val-exp">+80 EXP</span></div>
+      </div>
+      <!-- Highlighted -->
+      <div class="task-row highlight"><span class="task-icon">🍽️</span><div class="task-info"><div class="task-name">Phá băng bồn rửa</div><div class="task-sub">Rửa bát · ~15 phút</div></div><div class="task-reward"><span class="val-grain">+15 🌾</span><span class="val-exp">+10 EXP</span></div></div>
+      <div class="task-row highlight"><span class="task-icon">🧹</span><div class="task-info"><div class="task-name">Tổng tấn công bụi bẩn</div><div class="task-sub">Quét &amp; lau nhà · ~20 phút</div></div><div class="task-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
+      <div class="task-row highlight"><span class="task-icon">🪑</span><div class="task-info"><div class="task-name">Thiết lập bàn chỉ huy</div><div class="task-sub">Dọn bàn học · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+      <!-- Normal -->
+      <div class="task-row"><span class="task-icon">👕</span><div class="task-info"><div class="task-name">Triệu hồi đồ giặt</div><div class="task-sub">Gấp &amp; cất đồ · ~15 phút</div></div><div class="task-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🗑️</span><div class="task-info"><div class="task-name">Dọn sạch phế liệu</div><div class="task-sub">Đổ rác · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🧺</span><div class="task-info"><div class="task-name">Chăm sóc Long bào</div><div class="task-sub">Giặt / Phơi quần áo · ~20 phút</div></div><div class="task-reward"><span class="val-grain">+25 🌾</span><span class="val-exp">+20 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🧼</span><div class="task-info"><div class="task-name">Thanh tẩy bảo vật</div><div class="task-sub">Giặt giày · ~35 phút</div></div><div class="task-reward"><span class="val-grain">+35 🌾</span><span class="val-exp">+30 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">📚</span><div class="task-info"><div class="task-name">Tu luyện kiến thức</div><div class="task-sub">Tự học · 1 tiếng</div></div><div class="task-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🌿</span><div class="task-info"><div class="task-name">Hộ vệ thảo dược</div><div class="task-sub">Tưới cây · ~20 phút</div></div><div class="task-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+15 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🛒</span><div class="task-info"><div class="task-name">Viễn chinh lương thực</div><div class="task-sub">Đi chợ · ~30 phút</div></div><div class="task-reward"><span class="val-grain">+30 🌾</span><span class="val-exp">+25 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🐾</span><div class="task-info"><div class="task-name">Thu dọn Giang sơn</div><div class="task-sub">Dọn phòng riêng · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🍽️</span><div class="task-info"><div class="task-name">Bảo dưỡng pháp bảo</div><div class="task-sub">Lau dọn bàn ăn · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+10 🌾</span><span class="val-exp">+5 EXP</span></div></div>
+      <div class="task-row"><span class="task-icon">🔱</span><div class="task-info"><div class="task-name">Giải cứu thuỷ cung</div><div class="task-sub">Dọn nhà vệ sinh · ~10 phút</div></div><div class="task-reward"><span class="val-grain">+20 🌾</span><span class="val-exp">+10 EXP</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RANKS ── -->
+<section class="ranks" id="ranks">
+  <div class="container">
+    <p class="section-label reveal">🏅 Hệ thống tiến trình</p>
+    <h2 class="section-title reveal">5 Cấp Bậc Quản Gia</h2>
+    <p class="section-sub reveal">Con bắt đầu là Tân Binh rồi từng bước lên Đại Điền Chủ với càng nhiều đặc quyền hơn.</p>
+
+    <div class="ranks-track reveal">
+      <div class="rank-item">
+        <div class="rank-emoji">🌱</div>
+        <div class="rank-name">Tân Binh</div>
+        <div class="rank-exp">0 – 200 EXP</div>
+        <span class="rank-badge" style="background:#d1fae5;color:#065f46">Mới Vào Làng</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">🌿</div>
+        <div class="rank-name">Thợ Cày</div>
+        <div class="rank-exp">200 – 500 EXP</div>
+        <span class="rank-badge" style="background:#dcfce7;color:#166534">+5% bonus Gạo</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">🌾</div>
+        <div class="rank-name">Điền Chủ</div>
+        <div class="rank-exp">500 – 1.000 EXP</div>
+        <span class="rank-badge" style="background:#fef9c3;color:#854d0e">+10% bonus Gạo</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">🏡</div>
+        <div class="rank-name">Lão Làng</div>
+        <div class="rank-exp">1.000 – 2.000 EXP</div>
+        <span class="rank-badge" style="background:#fed7aa;color:#9a3412">+15% · Đặc quyền</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">👑</div>
+        <div class="rank-name">Đại Điền Chủ</div>
+        <div class="rank-exp">2.000+ EXP</div>
+        <span class="rank-badge" style="background:#fde68a;color:#713f12">+20% · Tất cả QH</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PENALTY ── -->
+<section class="penalty">
+  <div class="container">
+    <div class="penalty-box reveal">
+      <div class="penalty-icon-wrap">⛈️</div>
+      <div class="penalty-content">
+        <h3>🚫 Luật Thiên Tai — Cơ Chế Phạt</h3>
+        <p>Nông trại có thể gặp thiên tai nếu người nông dân lười biếng. Công bằng là nền tảng của hệ thống!</p>
+        <div class="penalty-rules">
+          <div class="penalty-rule">
+            <i class="fas fa-leaf"></i>
+            <div>
+              <strong>Bỏ hoang ruộng vườn</strong>
+              <span>Quên làm việc đã nhận: <span class="highlight">Phạt –20 Gạo</span> vào Kho.</span>
+            </div>
+          </div>
+          <div class="penalty-rule">
+            <i class="fas fa-bug"></i>
+            <div>
+              <strong>Làm dối, làm ẩu (Gạo mốc)</strong>
+              <span>Phạt làm lại từ đầu. Nhiệm vụ tiếp theo <span class="highlight">chỉ nhận 50% Gạo</span>.</span>
+            </div>
+          </div>
+          <div class="penalty-rule">
+            <i class="fas fa-triangle-exclamation"></i>
+            <div>
+              <strong>Vi phạm cam kết</strong>
+              <span>Đổi thưởng xong không giữ lời: <span class="highlight">Mất thẻ bài, phạt thêm –50 Gạo</span>.</span>
+            </div>
+          </div>
+          <div class="penalty-rule">
+            <i class="fas fa-circle-xmark"></i>
+            <div>
+              <strong>Liên tiếp bỏ việc</strong>
+              <span>3 ngày liên tiếp không làm gì: <span class="highlight">Đóng băng Kho 24h</span> — không đổi thưởng được.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="container" style="position:relative;z-index:1;">
+    <h2 class="reveal">Gia Đình Bạn Sẵn Sàng<br/>Mở Kho Thóc Chưa? 🌾</h2>
+    <p class="reveal">Một hệ thống đơn giản, vui vẻ và hiệu quả để dạy con tuổi teen về giá trị lao động, quản lý tài chính và tinh thần trách nhiệm.</p>
+    <div class="cta-btns">
+      <a href="kho-qua.html" class="btn-white">🎁 Xem Kho Quà Tặng</a>
+      <a href="quy-doi.html" class="btn-primary">🌾 Tính Gạo → Tiền</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html">🌾 Kho Thóc Gia Đình</a>
+      <p class="footer-copy" style="margin-top:.3rem">Gamification dành cho gia đình hiện đại</p>
+    </div>
+        <nav class="footer-nav">
+      <a href="index.html">Trang Chủ</a>
+      <a href="kho-qua.html">Kho Quà</a>
+      <a href="quy-doi.html">Quy Đổi</a>
+      <a href="print.html">🖨️ In</a>
+    </nav>
+    <p class="footer-copy">© 2024 Kho Thóc Gia Đình · Tạo ra để kết nối & thấu hiểu ❤️</p>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Hero stalks
+  const field = document.getElementById('heroField');
+  const count = Math.floor(window.innerWidth / 22);
+  for(let i = 0; i < count; i++){
+    const s = document.createElement('div');
+    s.className = 'stalk';
+    const h = 80 + Math.random() * 120;
+    s.style.setProperty('--h', h+'px');
+    s.style.animationDelay = (Math.random() * .8) + 's';
+    s.style.opacity = (.5 + Math.random() * .5).toString();
+    setTimeout(()=>{ s.style.setProperty('--after-opacity','1'); }, (Math.random()*800)+1200);
+    field.appendChild(s);
+  }
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e,i) => {
+      if(e.isIntersecting){
+        setTimeout(()=> e.target.classList.add('visible'), i * 80);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => obs.observe(r));
+
+  // Mobile menu stub
+  function toggleMobileMenu(){ alert('Menu mobile — có thể mở rộng sau!'); }
+</script>
+</body>
+</html>

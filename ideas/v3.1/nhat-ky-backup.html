@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nhật Ký Vụ Mùa – Kho Thóc Gia Đình</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep:  #1a5c38;
+      --green-mid:   #2d8a55;
+      --green-light: #4abe7a;
+      --amber:       #f5a623;
+      --amber-light: #fde68a;
+      --cream:       #fdf8ee;
+      --earth:       #7c4b1e;
+      --red:         #c0392b;
+      --text-main:   #1e1e1e;
+      --text-muted:  #6b7280;
+      --radius:      1.2rem;
+      --shadow:      0 4px 24px rgba(0,0,0,.08);
+      --shadow-lg:   0 8px 32px rgba(0,0,0,.13);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Mulish',sans-serif; background:var(--cream); color:var(--text-main); overflow-x:hidden; min-height:100vh; }
+    h1,h2,h3,h4,h5 { font-family:'Baloo 2',sans-serif; }
+
+    /* ── NAV ── */
+    .nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(253,248,238,.93); backdrop-filter:blur(12px); border-bottom:2px solid rgba(245,166,35,.2); padding:.9rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+    .nav-logo { display:flex; align-items:center; gap:.6rem; text-decoration:none; font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.2rem; color:var(--green-deep); }
+    .nav-logo .logo-icon { width:2.2rem; height:2.2rem; background:linear-gradient(135deg,var(--green-mid),var(--amber)); border-radius:.6rem; display:grid; place-items:center; font-size:1rem; }
+    .nav-links { display:flex; gap:1.8rem; list-style:none; }
+    .nav-links a { text-decoration:none; font-weight:700; font-size:.88rem; color:var(--text-muted); transition:color .2s; }
+    .nav-links a:hover { color:var(--green-mid); }
+    .nav-links a.active { color:var(--green-deep); }
+    .nav-cta { background:var(--green-deep) !important; color:#fff !important; padding:.45rem 1.2rem; border-radius:2rem; font-weight:800 !important; }
+    @media(max-width:768px){ .nav-links { display:none; } }
+
+    /* ── HERO ── */
+    .page-hero { background:linear-gradient(135deg,#1a5c38 0%,#2d8a55 60%,#f5a623 100%); padding:7rem 2rem 3.5rem; text-align:center; }
+    .page-hero .badge { display:inline-block; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.3); color:var(--amber-light); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; padding:.35rem 1rem; border-radius:2rem; margin-bottom:1rem; }
+    .page-hero h1 { font-size:clamp(1.8rem,5vw,3rem); font-weight:900; color:#fff; margin-bottom:.6rem; }
+    .page-hero p { color:rgba(255,255,255,.8); font-size:.98rem; max-width:500px; margin:0 auto; line-height:1.7; }
+
+    /* ── MAIN LAYOUT ── */
+    .main { max-width:1100px; margin:0 auto; padding:2rem 1.5rem 5rem; }
+
+    /* ── PROFILE SELECTOR ── */
+    .profile-bar {
+      background:#fff; border-radius:var(--radius); padding:1.2rem 1.5rem;
+      box-shadow:var(--shadow); margin-bottom:1.5rem;
+      display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
+    }
+    .profile-bar label { font-weight:800; font-size:.85rem; color:var(--green-deep); white-space:nowrap; }
+    .profile-select {
+      border:2px solid #d1fae5; border-radius:.8rem; padding:.5rem 1rem;
+      font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.95rem;
+      color:var(--green-deep); background:#fff; outline:none; cursor:pointer;
+      transition:border-color .2s;
+    }
+    .profile-select:focus { border-color:var(--green-mid); }
+    .btn-add-profile {
+      background:var(--green-deep); color:#fff;
+      border:none; cursor:pointer; border-radius:.8rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.85rem;
+      padding:.5rem 1rem; display:flex; align-items:center; gap:.4rem;
+      transition:background .2s;
+    }
+    .btn-add-profile:hover { background:var(--green-mid); }
+
+    /* ── DATE BAR ── */
+    .date-bar {
+      background:#fff; border-radius:var(--radius); padding:1rem 1.5rem;
+      box-shadow:var(--shadow); margin-bottom:1.5rem;
+      display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
+    }
+    .date-bar label { font-weight:800; font-size:.85rem; color:var(--green-deep); }
+    .date-input {
+      border:2px solid #d1fae5; border-radius:.8rem; padding:.5rem 1rem;
+      font-family:'Mulish',sans-serif; font-weight:600; font-size:.92rem;
+      color:var(--text-main); outline:none; transition:border-color .2s;
+    }
+    .date-input:focus { border-color:var(--green-mid); }
+    .date-nav { display:flex; gap:.4rem; }
+    .date-btn {
+      background:var(--cream); border:2px solid #e5e7eb; border-radius:.7rem;
+      cursor:pointer; font-size:1rem; padding:.4rem .8rem;
+      transition:all .2s;
+    }
+    .date-btn:hover { background:var(--green-deep); color:#fff; border-color:var(--green-deep); }
+
+    /* ── GRID ── */
+    .content-grid {
+      display:grid; grid-template-columns:1fr 380px; gap:1.5rem; align-items:start;
+    }
+    @media(max-width:900px){ .content-grid { grid-template-columns:1fr; } }
+
+    /* ── TASK PANEL ── */
+    .panel { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+    .panel-header {
+      padding:1.2rem 1.5rem; border-bottom:2px solid var(--cream);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .panel-header h3 { font-size:1.05rem; font-weight:900; color:var(--green-deep); }
+    .panel-header .badge-count {
+      background:var(--amber-light); color:var(--earth);
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem;
+      padding:.2rem .65rem; border-radius:1rem;
+    }
+
+    /* category label */
+    .task-category {
+      padding:.6rem 1.5rem .4rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.72rem;
+      letter-spacing:.1em; text-transform:uppercase;
+      color:var(--text-muted); background:var(--cream);
+      border-bottom:1px solid #f3f4f6;
+    }
+
+    /* task check row */
+    .task-check {
+      display:flex; align-items:center; gap:1rem;
+      padding:.9rem 1.5rem; border-bottom:1px solid #f9fafb;
+      cursor:pointer; transition:background .15s;
+      user-select:none;
+    }
+    .task-check:hover { background:#f9fafb; }
+    .task-check.checked { background:#f0fdf4; }
+    .task-check.checked-epic { background:#fffbeb; }
+
+    .task-checkbox {
+      width:1.5rem; height:1.5rem; border-radius:.45rem;
+      border:2.5px solid #d1d5db; background:#fff;
+      display:grid; place-items:center; flex-shrink:0;
+      transition:all .2s;
+      font-size:.9rem; color:transparent;
+    }
+    .task-check.checked .task-checkbox { background:var(--green-deep); border-color:var(--green-deep); color:#fff; }
+    .task-check.checked-epic .task-checkbox { background:var(--amber); border-color:var(--amber); color:#fff; }
+
+    .task-check-icon { font-size:1.3rem; width:2rem; text-align:center; flex-shrink:0; }
+    .task-check-info { flex:1; min-width:0; }
+    .task-check-name { font-weight:700; font-size:.9rem; color:var(--text-main); }
+    .task-check-name.epic { color:#92400e; font-weight:900; }
+    .task-check-sub  { font-size:.75rem; color:var(--text-muted); margin-top:.1rem; }
+    .task-check-reward { display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0; }
+    .val-grain { font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem; background:var(--amber-light); color:var(--earth); padding:.15rem .55rem; border-radius:1rem; white-space:nowrap; }
+    .val-exp   { font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.75rem; color:#059669; padding:.15rem .55rem; white-space:nowrap; }
+
+    /* bonus auto */
+    .bonus-toggle {
+      padding:1rem 1.5rem;
+      display:flex; align-items:center; gap:.8rem;
+      background:#f0fdf4; border-top:2px solid #d1fae5;
+      cursor:pointer;
+    }
+    .toggle-switch {
+      width:2.8rem; height:1.5rem; border-radius:1rem;
+      background:#d1d5db; position:relative; transition:background .25s; flex-shrink:0;
+    }
+    .toggle-switch::after {
+      content:''; position:absolute; top:.2rem; left:.2rem;
+      width:1.1rem; height:1.1rem; border-radius:50%;
+      background:#fff; transition:transform .25s;
+    }
+    .toggle-switch.on { background:var(--green-mid); }
+    .toggle-switch.on::after { transform:translateX(1.3rem); }
+    .bonus-toggle span { font-size:.85rem; font-weight:700; color:var(--green-deep); }
+    .bonus-toggle small { font-size:.78rem; color:var(--text-muted); }
+
+    /* ── RIGHT PANEL ── */
+    .right-col { display:flex; flex-direction:column; gap:1.2rem; position:sticky; top:5rem; }
+
+    /* SUMMARY CARD */
+    .summary-card {
+      background:linear-gradient(135deg,var(--green-deep),#1b4332);
+      border-radius:var(--radius); padding:1.5rem; color:#fff;
+      box-shadow:0 8px 32px rgba(26,92,56,.3);
+    }
+    .summary-card h3 { font-size:1rem; font-weight:800; opacity:.8; margin-bottom:1rem; }
+    .summary-nums { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.2rem; }
+    .summary-num-box { background:rgba(255,255,255,.1); border-radius:.9rem; padding:.9rem 1rem; }
+    .summary-num { font-family:'Baloo 2',sans-serif; font-weight:900; font-size:2rem; color:var(--amber); line-height:1; }
+    .summary-num-label { font-size:.72rem; opacity:.7; margin-top:.2rem; letter-spacing:.05em; }
+    .summary-vnd { font-size:.88rem; opacity:.7; margin-bottom:1rem; }
+
+    /* rank display */
+    .rank-display {
+      background:rgba(255,255,255,.08); border-radius:.9rem; padding:.9rem 1rem;
+      display:flex; align-items:center; gap:.8rem;
+    }
+    .rank-emoji-big { font-size:2rem; }
+    .rank-name-big { font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1rem; }
+    .rank-exp-bar { height:.4rem; background:rgba(255,255,255,.15); border-radius:1rem; margin-top:.4rem; overflow:hidden; }
+    .rank-exp-fill { height:100%; background:linear-gradient(90deg,var(--green-light),var(--amber)); border-radius:1rem; transition:width .6s ease; }
+    .rank-exp-text { font-size:.72rem; opacity:.6; margin-top:.2rem; }
+
+    /* SAVE BTN */
+    .btn-save {
+      width:100%; background:var(--amber); color:var(--earth);
+      border:none; cursor:pointer; border-radius:.9rem;
+      font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1rem;
+      padding:.9rem; display:flex; align-items:center; justify-content:center; gap:.5rem;
+      box-shadow:0 4px 16px rgba(245,166,35,.4);
+      transition:transform .2s, box-shadow .2s;
+    }
+    .btn-save:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(245,166,35,.5); }
+    .btn-save:active { transform:translateY(0); }
+
+    /* REWARD SUGGESTIONS */
+    .reward-panel { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+    .reward-panel .panel-header { background:linear-gradient(90deg,#fffbeb,#fff); }
+    .reward-empty { padding:2rem; text-align:center; color:var(--text-muted); font-size:.88rem; }
+    .reward-empty .reward-empty-icon { font-size:2.5rem; margin-bottom:.5rem; }
+
+    .reward-item {
+      padding:.9rem 1.2rem; border-bottom:1px solid #f3f4f6;
+      display:flex; align-items:center; gap:.8rem;
+      transition:background .15s;
+    }
+    .reward-item:last-child { border-bottom:none; }
+    .reward-item:hover { background:#fffbeb; }
+    .reward-item .ri-emoji { font-size:1.5rem; flex-shrink:0; }
+    .reward-item .ri-info { flex:1; min-width:0; }
+    .reward-item .ri-name { font-weight:800; font-size:.88rem; color:var(--green-deep); }
+    .reward-item .ri-cost { font-size:.78rem; color:var(--text-muted); margin-top:.1rem; }
+    .reward-item .ri-status {
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.75rem;
+      padding:.2rem .6rem; border-radius:1rem; white-space:nowrap; flex-shrink:0;
+    }
+    .ri-status.can  { background:#d1fae5; color:#065f46; }
+    .ri-status.soon { background:#fef3c7; color:#92400e; }
+
+    /* HISTORY PANEL */
+    .history-panel { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+    .history-item {
+      padding:.8rem 1.2rem; border-bottom:1px solid #f3f4f6;
+      display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    }
+    .history-item:last-child { border-bottom:none; }
+    .history-date { font-size:.8rem; color:var(--text-muted); font-weight:600; }
+    .history-name { font-weight:700; font-size:.85rem; color:var(--text-main); }
+    .history-gains { display:flex; gap:.4rem; flex-wrap:wrap; justify-content:flex-end; }
+    .btn-delete {
+      background:none; border:none; cursor:pointer; color:#d1d5db; font-size:.9rem;
+      padding:.2rem; transition:color .2s; flex-shrink:0;
+    }
+    .btn-delete:hover { color:var(--red); }
+
+    /* TOAST */
+    .toast {
+      position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(80px);
+      background:#1e1e1e; color:#fff; border-radius:1rem; padding:.8rem 1.5rem;
+      font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.92rem;
+      box-shadow:0 8px 32px rgba(0,0,0,.25);
+      transition:transform .35s cubic-bezier(.4,0,.2,1), opacity .35s;
+      opacity:0; z-index:999; white-space:nowrap;
+    }
+    .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+    /* MODAL (add profile) */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200;
+      display:none; place-items:center;
+    }
+    .modal-overlay.open { display:grid; }
+    .modal {
+      background:#fff; border-radius:1.5rem; padding:2rem; width:min(90vw,400px);
+      box-shadow:0 20px 60px rgba(0,0,0,.2);
+    }
+    .modal h3 { font-size:1.2rem; font-weight:900; color:var(--green-deep); margin-bottom:1rem; }
+    .modal input {
+      width:100%; border:2px solid #d1fae5; border-radius:.8rem;
+      padding:.7rem 1rem; font-family:'Mulish',sans-serif; font-size:.95rem;
+      outline:none; transition:border-color .2s; margin-bottom:1rem;
+    }
+    .modal input:focus { border-color:var(--green-mid); }
+    .modal-btns { display:flex; gap:.7rem; }
+    .btn-confirm { flex:1; background:var(--green-deep); color:#fff; border:none; cursor:pointer; border-radius:.8rem; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.92rem; padding:.7rem; transition:background .2s; }
+    .btn-confirm:hover { background:var(--green-mid); }
+    .btn-cancel  { flex:1; background:var(--cream); color:var(--text-muted); border:2px solid #e5e7eb; cursor:pointer; border-radius:.8rem; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.92rem; padding:.7rem; transition:background .2s; }
+    .btn-cancel:hover { background:#f3f4f6; }
+
+    /* totals bar below tasks */
+    .totals-bar {
+      padding:1rem 1.5rem;
+      background:var(--cream); border-top:2px solid #e5e7eb;
+      display:flex; gap:1.5rem; flex-wrap:wrap;
+    }
+    .total-chip {
+      display:flex; align-items:center; gap:.4rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.88rem;
+    }
+
+    @media(max-width:768px){
+      .main { padding:1.5rem 1rem 4rem; }
+      .right-col { position:static; }
+    }
+
+    
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <span class="logo-icon">🌾</span>
+    Kho Thóc Gia Đình
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Trang Chủ</a></li>
+    <li><a href="kho-qua.html">Kho Quà</a></li>
+    <li><a href="quy-doi.html">Quy Đổi</a></li>
+    <li><a href="nhat-ky.html" class="active">Nhật Ký</a></li>
+    <li><a href="print.html">🖨️ In</a></li>
+    <li><a href="quy-doi.html" class="nav-cta">🌾 Tính Gạo</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="badge">📖 Ghi Chép Hàng Ngày</div>
+  <h1>Nhật Ký Vụ Mùa</h1>
+  <p>Tích vào các nhiệm vụ đã hoàn thành, xem số Gạo & EXP nhận được và khám phá quà có thể đổi ngay hôm nay!</p>
+</div>
+
+<div class="main">
+
+  <!-- PROFILE BAR -->
+  <div class="profile-bar">
+    <label>👤 Chọn bé:</label>
+    <select class="profile-select" id="profileSelect" onchange="switchProfile()"></select>
+    <button class="btn-add-profile" onclick="openModal()">➕ Thêm bé</button>
+    <span id="totalAccum" style="margin-left:auto;font-size:.82rem;color:var(--text-muted);font-weight:600;"></span>
+  </div>
+
+  <!-- DATE BAR -->
+  <div class="date-bar">
+    <label>📅 Ngày:</label>
+    <input type="date" class="date-input" id="dateInput" onchange="loadDay()"/>
+    <div class="date-nav">
+      <button class="date-btn" onclick="changeDate(-1)" title="Hôm qua">◀</button>
+      <button class="date-btn" onclick="changeDate(0)"  title="Hôm nay">Hôm nay</button>
+      <button class="date-btn" onclick="changeDate(1)"  title="Ngày mai">▶</button>
+    </div>
+  </div>
+
+  <div class="content-grid">
+
+    <!-- LEFT: TASK CHECKLIST -->
+    <div>
+      <div class="panel">
+        <div class="panel-header">
+          <h3>📋 Nhiệm Vụ Hôm Nay</h3>
+          <span class="badge-count" id="checkedCount">0 / 15</span>
+        </div>
+
+        <!-- Epic -->
+        <div class="task-category">⭐ Sử Thi — Nhiệm vụ lớn</div>
+        <div class="task-check" data-id="t1" data-grain="150" data-exp="100" data-type="epic" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🏰</span>
+          <div class="task-check-info">
+            <div class="task-check-name epic">Đại chiến Kho Thóc</div>
+            <div class="task-check-sub">Tổng vệ sinh toàn bộ nhà cửa</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+150 🌾</span>
+            <span class="val-exp">+100 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t2" data-grain="100" data-exp="80" data-type="epic" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🍳</span>
+          <div class="task-check-info">
+            <div class="task-check-name epic">Trợ lý Đầu bếp</div>
+            <div class="task-check-sub">Nấu 1 bữa cơm hoàn chỉnh</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+100 🌾</span>
+            <span class="val-exp">+80 EXP</span>
+          </div>
+        </div>
+
+        <!-- Highlight -->
+        <div class="task-category">🟡 Nhiệm vụ hằng ngày (ưu tiên)</div>
+        <div class="task-check" data-id="t3" data-grain="15" data-exp="10" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🍽️</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Phá băng bồn rửa</div>
+            <div class="task-check-sub">Rửa bát · ~15 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+15 🌾</span>
+            <span class="val-exp">+10 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t4" data-grain="25" data-exp="20" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🧹</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Tổng tấn công bụi bẩn</div>
+            <div class="task-check-sub">Quét & lau nhà · ~20 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+25 🌾</span>
+            <span class="val-exp">+20 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t5" data-grain="10" data-exp="5" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🪑</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Thiết lập bàn chỉ huy</div>
+            <div class="task-check-sub">Dọn bàn học · ~10 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+10 🌾</span>
+            <span class="val-exp">+5 EXP</span>
+          </div>
+        </div>
+
+        <!-- Normal -->
+        <div class="task-category">📝 Nhiệm vụ thường</div>
+        <div class="task-check" data-id="t6" data-grain="20" data-exp="15" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">👕</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Triệu hồi đồ giặt</div>
+            <div class="task-check-sub">Gấp & cất đồ · ~15 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+20 🌾</span>
+            <span class="val-exp">+15 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t7" data-grain="10" data-exp="5" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🗑️</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Dọn sạch phế liệu</div>
+            <div class="task-check-sub">Đổ rác · ~10 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+10 🌾</span>
+            <span class="val-exp">+5 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t8" data-grain="25" data-exp="20" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🧺</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Chăm sóc Long bào</div>
+            <div class="task-check-sub">Giặt / Phơi quần áo · ~20 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+25 🌾</span>
+            <span class="val-exp">+20 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t9" data-grain="35" data-exp="30" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🧼</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Thanh tẩy bảo vật</div>
+            <div class="task-check-sub">Giặt giày · ~35 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+35 🌾</span>
+            <span class="val-exp">+30 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t10" data-grain="30" data-exp="25" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">📚</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Tu luyện kiến thức</div>
+            <div class="task-check-sub">Tự học · 1 tiếng</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+30 🌾</span>
+            <span class="val-exp">+25 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t11" data-grain="20" data-exp="15" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🌿</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Hộ vệ thảo dược</div>
+            <div class="task-check-sub">Tưới cây · ~20 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+20 🌾</span>
+            <span class="val-exp">+15 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t12" data-grain="30" data-exp="25" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🛒</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Viễn chinh lương thực</div>
+            <div class="task-check-sub">Đi chợ · ~30 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+30 🌾</span>
+            <span class="val-exp">+25 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t13" data-grain="10" data-exp="5" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🐾</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Thu dọn Giang sơn</div>
+            <div class="task-check-sub">Dọn phòng riêng · ~10 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+10 🌾</span>
+            <span class="val-exp">+5 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t14" data-grain="10" data-exp="5" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🍽️</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Bảo dưỡng pháp bảo</div>
+            <div class="task-check-sub">Lau dọn bàn ăn · ~10 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+10 🌾</span>
+            <span class="val-exp">+5 EXP</span>
+          </div>
+        </div>
+        <div class="task-check" data-id="t15" data-grain="20" data-exp="10" onclick="toggleTask(this)">
+          <div class="task-checkbox">✓</div>
+          <span class="task-check-icon">🔱</span>
+          <div class="task-check-info">
+            <div class="task-check-name">Giải cứu thủy cung</div>
+            <div class="task-check-sub">Dọn nhà vệ sinh · ~10 phút</div>
+          </div>
+          <div class="task-check-reward">
+            <span class="val-grain">+20 🌾</span>
+            <span class="val-exp">+10 EXP</span>
+          </div>
+        </div>
+
+        <!-- bonus toggle -->
+        <div class="bonus-toggle" onclick="toggleBonus()" id="bonusRow">
+          <div class="toggle-switch" id="bonusSwitch"></div>
+          <div>
+            <span>Tự giác — không cần nhắc nhở</span><br/>
+            <small>Cộng thêm 20% Gạo cho tất cả nhiệm vụ đã tích hôm nay</small>
+          </div>
+        </div>
+
+        <!-- totals bar -->
+        <div class="totals-bar">
+          <div class="total-chip">🌾 Hôm nay: <span id="todayGrain" style="color:var(--earth);margin-left:.3rem">0</span></div>
+          <div class="total-chip">⭐ EXP: <span id="todayExp" style="color:var(--green-deep);margin-left:.3rem">0</span></div>
+          <div class="total-chip" style="margin-left:auto;font-size:.8rem;color:var(--text-muted)" id="bonusNote"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COL -->
+    <div class="right-col">
+
+      <!-- SUMMARY CARD -->
+      <div class="summary-card">
+        <h3>🌾 Tổng Kho Của <span id="profileNameDisplay">—</span></h3>
+        <div class="summary-nums">
+          <div class="summary-num-box">
+            <div class="summary-num" id="totalGrain">0</div>
+            <div class="summary-num-label">TỔNG HẠT GẠO</div>
+          </div>
+          <div class="summary-num-box">
+            <div class="summary-num" id="totalExp">0</div>
+            <div class="summary-num-label">TỔNG EXP</div>
+          </div>
+        </div>
+        <div class="summary-vnd">💵 Tương đương: <strong id="totalVnd">0 VNĐ</strong></div>
+        <div class="rank-display">
+          <div class="rank-emoji-big" id="rankEmoji">🌱</div>
+          <div style="flex:1">
+            <div class="rank-name-big" id="rankName">Tân Binh</div>
+            <div class="rank-exp-bar"><div class="rank-exp-fill" id="rankFill" style="width:0%"></div></div>
+            <div class="rank-exp-text" id="rankExpText">0 / 200 EXP</div>
+          </div>
+        </div>
+        <button class="btn-save" style="margin-top:1rem" onclick="saveDay()">💾 Lưu Ngày Hôm Nay</button>
+      </div>
+
+      <!-- REWARD SUGGESTIONS -->
+      <div class="reward-panel panel">
+        <div class="panel-header">
+          <h3>🎁 Quà Có Thể Đổi</h3>
+          <span class="badge-count" id="rewardCount">—</span>
+        </div>
+        <div id="rewardList">
+          <div class="reward-empty">
+            <div class="reward-empty-icon">🌱</div>
+            <div>Tích vào nhiệm vụ để xem<br/>quà nào có thể đổi được!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="history-panel panel">
+        <div class="panel-header">
+          <h3>📅 Lịch Sử Gần Đây</h3>
+          <span class="badge-count" id="historyCount">0 ngày</span>
+        </div>
+        <div id="historyList">
+          <div class="reward-empty" style="padding:1.5rem">
+            <div>Chưa có lịch sử nào</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>➕ Thêm Bé Mới</h3>
+    <input type="text" id="newProfileName" placeholder="Tên bé (VD: Bé An, Bé Minh...)" maxlength="30"
+      onkeydown="if(event.key==='Enter') confirmAddProfile()"/>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Huỷ</button>
+      <button class="btn-confirm" onclick="confirmAddProfile()">Thêm Bé</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   DATA SCHEMA & STORAGE
+   ═══════════════════════════════════════
+   
+   📦 Cấu trúc lưu trữ (localStorage hiện tại):
+   
+   Key: "khotho_profiles"
+   Value: Array<{ id: string, name: string }>
+   
+   Key: "khotho_state_{profileId}"
+   Value: { totalGrain: number, totalExp: number }
+   
+   Key: "khotho_log_{profileId}_{YYYY-MM-DD}"
+   Value: { tasks: string[], grain: number, exp: number, bonus: boolean, savedAt: string }
+   
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🚀 KHI SCALE LÊN NHIỀU BÉ / NHIỀU THIẾT BỊ:
+   
+   Bước 1 — Dùng IndexedDB (thay localStorage):
+     - Vẫn offline, nhưng chứa được nhiều data hơn
+     - Cùng schema, chỉ thay hàm get/set
+   
+   Bước 2 — Thêm backend đơn giản:
+     Recommended stack: Supabase (free tier)
+     
+     Tables:
+       profiles   { id, name, created_at }
+       daily_logs { id, profile_id, date, tasks[], grain, exp, bonus, saved_at }
+     
+     Mỗi thiết bị sync qua profileId
+     Ba mẹ có thể xem dashboard riêng
+   
+   Bước 3 — Auth (nếu cần):
+     Supabase Auth hoặc Google OAuth
+     Mỗi gia đình có namespace riêng
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+  const RATE = 100; // 1 Gạo = 100 VNĐ
+
+  // ── REWARDS MASTER LIST ──
+  const REWARDS = [
+    { emoji:'🍿', name:'Bảo Khí Giòn Rụm',         cost:200,   type:'card' },
+    { emoji:'🍦', name:'Hàn Băng Ngọc Thạch',       cost:250,   type:'card' },
+    { emoji:'🌳', name:'Mật Đạo Tiêu Dao',           cost:300,   type:'card' },
+    { emoji:'🏮', name:'Đèn Dầu Thắp Muộn',         cost:350,   type:'card' },
+    { emoji:'🚜', name:'Lệnh Trưng Thu Đất',         cost:600,   type:'card' },
+    { emoji:'🎲', name:'Phiên Chợ Tự Do',            cost:850,   type:'card' },
+    { emoji:'🌾', name:'Bù Nhìn Thế Thân',           cost:900,   type:'card' },
+    { emoji:'🍱', name:'Khuôn Bánh Chưng',           cost:1600,  type:'card' },
+    { emoji:'⚡', name:'Hạt Nếp Thần Lực',           cost:2000,  type:'card' },
+    { emoji:'📚', name:'Gói Mở Mang Bờ Cõi',        cost:800,   type:'long' },
+    { emoji:'🍲', name:'Mâm Cỗ Mừng Vụ Mùa',        cost:1200,  type:'long' },
+    { emoji:'🎬', name:'Vé Đêm Phim Gia Đình',       cost:1200,  type:'long' },
+    { emoji:'🧭', name:'Giấy Thông Hành Viễn Chinh', cost:1600,  type:'long' },
+    { emoji:'🏰', name:'Lệnh Bài Mở Cổng Thành',    cost:2400,  type:'long' },
+    { emoji:'🍕', name:'Gói Kinh Lý Đô Thành',       cost:4000,  type:'long' },
+  ];
+
+  // ── RANKS ──
+  const RANKS = [
+    { emoji:'🌱', name:'Tân Binh',      min:0,    max:200,  bonus:0  },
+    { emoji:'🌿', name:'Thợ Cày',       min:200,  max:500,  bonus:5  },
+    { emoji:'🌾', name:'Điền Chủ',      min:500,  max:1000, bonus:10 },
+    { emoji:'🏡', name:'Lão Làng',      min:1000, max:2000, bonus:15 },
+    { emoji:'👑', name:'Đại Điền Chủ',  min:2000, max:9999, bonus:20 },
+  ];
+
+  // ── STORAGE HELPERS ──
+  const store = {
+    get: (key)        => { try { return JSON.parse(localStorage.getItem(key)); } catch(e){ return null; } },
+    set: (key, val)   => localStorage.setItem(key, JSON.stringify(val)),
+    del: (key)        => localStorage.removeItem(key),
+  };
+
+  function getProfiles()           { return store.get('khotho_profiles') || []; }
+  function saveProfiles(p)         { store.set('khotho_profiles', p); }
+  function getState(pid)           { return store.get(`khotho_state_${pid}`) || { totalGrain:0, totalExp:0 }; }
+  function saveState(pid, s)       { store.set(`khotho_state_${pid}`, s); }
+  function getLog(pid, date)       { return store.get(`khotho_log_${pid}_${date}`) || null; }
+  function saveLog(pid, date, log) { store.set(`khotho_log_${pid}_${date}`, log); }
+  function delLog(pid, date)       { store.del(`khotho_log_${pid}_${date}`); }
+
+  // ── STATE ──
+  let currentProfile = null;
+  let bonusActive    = false;
+  let todayGrain     = 0;
+  let todayExp       = 0;
+
+  // ── INIT ──
+  function init() {
+    let profiles = getProfiles();
+    if(profiles.length === 0) {
+      profiles = [{ id: 'p1', name: 'Bé 1' }];
+      saveProfiles(profiles);
+    }
+    renderProfileSelect(profiles);
+    currentProfile = profiles[0];
+
+    // set today's date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('dateInput').value = today;
+
+    loadDay();
+    renderHistory();
+  }
+
+  // ── PROFILE ──
+  function renderProfileSelect(profiles) {
+    const sel = document.getElementById('profileSelect');
+    sel.innerHTML = profiles.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  }
+
+  function switchProfile() {
+    const profiles = getProfiles();
+    const id = document.getElementById('profileSelect').value;
+    currentProfile = profiles.find(p => p.id === id);
+    clearChecks();
+    loadDay();
+    renderHistory();
+  }
+
+  function openModal()  { document.getElementById('modalOverlay').classList.add('open'); document.getElementById('newProfileName').focus(); }
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); document.getElementById('newProfileName').value = ''; }
+
+  function confirmAddProfile() {
+    const name = document.getElementById('newProfileName').value.trim();
+    if(!name) return;
+    const profiles = getProfiles();
+    const id = 'p' + Date.now();
+    profiles.push({ id, name });
+    saveProfiles(profiles);
+    renderProfileSelect(profiles);
+    document.getElementById('profileSelect').value = id;
+    closeModal();
+    switchProfile();
+    showToast(`✅ Đã thêm ${name} vào Kho Thóc!`);
+  }
+
+  // ── DATE ──
+  function changeDate(delta) {
+    const input = document.getElementById('dateInput');
+    const d = new Date(input.value);
+    if(delta === 0) { input.value = new Date().toISOString().split('T')[0]; }
+    else { d.setDate(d.getDate() + delta); input.value = d.toISOString().split('T')[0]; }
+    clearChecks();
+    loadDay();
+  }
+
+  function getSelectedDate() { return document.getElementById('dateInput').value; }
+
+  // ── LOAD DAY (restore saved checks) ──
+  function loadDay() {
+    if(!currentProfile) return;
+    const log = getLog(currentProfile.id, getSelectedDate());
+    clearChecks();
+    if(log) {
+      log.tasks.forEach(tid => {
+        const row = document.querySelector(`.task-check[data-id="${tid}"]`);
+        if(row) applyCheck(row, true);
+      });
+      bonusActive = log.bonus || false;
+    } else {
+      bonusActive = false;
+    }
+    updateBonusUI();
+    recalc();
+    renderRewards();
+    updateSummaryPanel();
+  }
+
+  // ── TASK TOGGLE ──
+  function toggleTask(row) {
+    const checked = row.classList.contains('checked') || row.classList.contains('checked-epic');
+    applyCheck(row, !checked);
+    recalc();
+    renderRewards();
+  }
+
+  function applyCheck(row, on) {
+    const isEpic = row.dataset.type === 'epic';
+    row.classList.toggle('checked',      on && !isEpic);
+    row.classList.toggle('checked-epic', on && isEpic);
+  }
+
+  function clearChecks() {
+    document.querySelectorAll('.task-check').forEach(r => {
+      r.classList.remove('checked','checked-epic');
+    });
+  }
+
+  // ── BONUS TOGGLE ──
+  function toggleBonus() {
+    bonusActive = !bonusActive;
+    updateBonusUI();
+    recalc();
+    renderRewards();
+  }
+
+  function updateBonusUI() {
+    document.getElementById('bonusSwitch').classList.toggle('on', bonusActive);
+  }
+
+  // ── RECALCULATE ──
+  function recalc() {
+    let grain = 0, exp = 0, count = 0;
+    document.querySelectorAll('.task-check.checked, .task-check.checked-epic').forEach(row => {
+      grain += parseInt(row.dataset.grain);
+      exp   += parseInt(row.dataset.exp);
+      count++;
+    });
+
+    if(bonusActive) grain = Math.round(grain * 1.2);
+
+    todayGrain = grain;
+    todayExp   = exp;
+
+    const total = document.querySelectorAll('.task-check').length;
+    document.getElementById('checkedCount').textContent = `${count} / ${total}`;
+    document.getElementById('todayGrain').textContent = grain.toLocaleString('vi-VN');
+    document.getElementById('todayExp').textContent   = exp.toLocaleString('vi-VN');
+    document.getElementById('bonusNote').textContent  = bonusActive && grain > 0 ? `+20% tự giác đã áp dụng 🌟` : '';
+
+    updateSummaryPanel();
+  }
+
+  function updateSummaryPanel() {
+    if(!currentProfile) return;
+    const state  = getState(currentProfile.id);
+    const totG   = state.totalGrain + todayGrain;
+    const totE   = state.totalExp   + todayExp;
+
+    document.getElementById('profileNameDisplay').textContent = currentProfile.name;
+    document.getElementById('totalGrain').textContent = totG.toLocaleString('vi-VN');
+    document.getElementById('totalExp').textContent   = totE.toLocaleString('vi-VN');
+    document.getElementById('totalVnd').textContent   = (totG * RATE).toLocaleString('vi-VN') + ' VNĐ';
+    document.getElementById('totalAccum').textContent = `Tổng tích lũy: ${totG.toLocaleString('vi-VN')} 🌾`;
+
+    // rank
+    const rank = RANKS.findLast(r => totE >= r.min) || RANKS[0];
+    const next = RANKS.find(r => r.min > totE);
+    const pct  = next ? Math.min(100, Math.round(((totE - rank.min) / (next.min - rank.min)) * 100)) : 100;
+    document.getElementById('rankEmoji').textContent  = rank.emoji;
+    document.getElementById('rankName').textContent   = rank.name;
+    document.getElementById('rankFill').style.width   = pct + '%';
+    document.getElementById('rankExpText').textContent = next
+      ? `${totE.toLocaleString('vi-VN')} / ${next.min.toLocaleString('vi-VN')} EXP`
+      : `${totE.toLocaleString('vi-VN')} EXP · Đã đạt đỉnh! 👑`;
+  }
+
+  // ── REWARD SUGGESTIONS ──
+  function renderRewards() {
+    if(!currentProfile) return;
+    const state = getState(currentProfile.id);
+    const total = state.totalGrain + todayGrain;
+    const list  = document.getElementById('rewardList');
+
+    const canAfford  = REWARDS.filter(r => total >= r.cost);
+    const almostThere = REWARDS.filter(r => total < r.cost && total >= r.cost * 0.7);
+
+    if(canAfford.length === 0 && almostThere.length === 0) {
+      list.innerHTML = `<div class="reward-empty"><div class="reward-empty-icon">🌱</div><div>Tích thêm nhiệm vụ để mở khóa phần thưởng đầu tiên!</div></div>`;
+      document.getElementById('rewardCount').textContent = '0 quà';
+      return;
+    }
+
+    document.getElementById('rewardCount').textContent = `${canAfford.length} quà đổi được`;
+
+    const typeLabel = { card:'🎴 Thẻ bài', long:'⭐ Quà dài hạn' };
+    let html = '';
+
+    canAfford.forEach(r => {
+      html += `<div class="reward-item">
+        <span class="ri-emoji">${r.emoji}</span>
+        <div class="ri-info">
+          <div class="ri-name">${r.name}</div>
+          <div class="ri-cost">${r.cost.toLocaleString('vi-VN')} 🌾 · ${typeLabel[r.type]}</div>
+        </div>
+        <span class="ri-status can">✅ Đổi được!</span>
+      </div>`;
+    });
+
+    if(almostThere.length > 0) {
+      html += `<div class="task-category" style="font-size:.7rem;padding:.5rem 1.2rem;">Sắp đủ — cần thêm chút nữa</div>`;
+      almostThere.forEach(r => {
+        const need = r.cost - total;
+        html += `<div class="reward-item">
+          <span class="ri-emoji">${r.emoji}</span>
+          <div class="ri-info">
+            <div class="ri-name">${r.name}</div>
+            <div class="ri-cost">Còn thiếu ${need.toLocaleString('vi-VN')} 🌾</div>
+          </div>
+          <span class="ri-status soon">⏳ Gần rồi!</span>
+        </div>`;
+      });
+    }
+
+    list.innerHTML = html;
+  }
+
+  // ── SAVE DAY ──
+  function saveDay() {
+    if(!currentProfile) return;
+    const date     = getSelectedDate();
+    const checkedIds = [...document.querySelectorAll('.task-check.checked, .task-check.checked-epic')]
+                        .map(r => r.dataset.id);
+
+    if(checkedIds.length === 0) { showToast('⚠️ Chưa tích nhiệm vụ nào!'); return; }
+
+    // subtract old log if exists (avoid double-counting)
+    const oldLog = getLog(currentProfile.id, date);
+    const state  = getState(currentProfile.id);
+    if(oldLog) {
+      state.totalGrain -= oldLog.grain;
+      state.totalExp   -= oldLog.exp;
+    }
+
+    // save new log
+    const log = { tasks: checkedIds, grain: todayGrain, exp: todayExp, bonus: bonusActive, savedAt: new Date().toISOString() };
+    saveLog(currentProfile.id, date, log);
+
+    // update cumulative state
+    state.totalGrain += todayGrain;
+    state.totalExp   += todayExp;
+    saveState(currentProfile.id, state);
+
+    renderHistory();
+    renderRewards();
+    updateSummaryPanel();
+    showToast(`✅ Đã lưu! +${todayGrain} 🌾 +${todayExp} EXP cho ${currentProfile.name}`);
+  }
+
+  // ── HISTORY ──
+  function renderHistory() {
+    if(!currentProfile) return;
+    const pid  = currentProfile.id;
+    const keys = Object.keys(localStorage)
+      .filter(k => k.startsWith(`khotho_log_${pid}_`))
+      .sort().reverse().slice(0, 7);
+
+    document.getElementById('historyCount').textContent = `${keys.length} ngày`;
+
+    if(keys.length === 0) {
+      document.getElementById('historyList').innerHTML = `<div class="reward-empty" style="padding:1.5rem"><div>Chưa có lịch sử nào</div></div>`;
+      return;
+    }
+
+    const html = keys.map(key => {
+      const date = key.replace(`khotho_log_${pid}_`, '');
+      const log  = store.get(key);
+      const d    = new Date(date + 'T00:00:00');
+      const label = d.toLocaleDateString('vi-VN', { weekday:'short', day:'2-digit', month:'2-digit' });
+      return `<div class="history-item">
+        <div>
+          <div class="history-date">${label}</div>
+          <div class="history-name">${log.tasks.length} nhiệm vụ${log.bonus ? ' 🌟' : ''}</div>
+        </div>
+        <div class="history-gains">
+          <span class="val-grain">+${log.grain} 🌾</span>
+          <span class="val-exp">+${log.exp} EXP</span>
+        </div>
+        <button class="btn-delete" title="Xóa ngày này" onclick="deleteLog('${date}')">🗑</button>
+      </div>`;
+    }).join('');
+
+    document.getElementById('historyList').innerHTML = html;
+  }
+
+  function deleteLog(date) {
+    if(!currentProfile) return;
+    const log = getLog(currentProfile.id, date);
+    if(!log) return;
+    if(!confirm(`Xóa log ngày ${date}? Sẽ trừ ${log.grain} 🌾 và ${log.exp} EXP.`)) return;
+
+    const state = getState(currentProfile.id);
+    state.totalGrain = Math.max(0, state.totalGrain - log.grain);
+    state.totalExp   = Math.max(0, state.totalExp   - log.exp);
+    saveState(currentProfile.id, state);
+    delLog(currentProfile.id, date);
+
+    renderHistory();
+    updateSummaryPanel();
+    renderRewards();
+    showToast(`🗑 Đã xóa log ngày ${date}`);
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── KEYBOARD SHORTCUT ──
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Enter' && document.getElementById('modalOverlay').classList.contains('open')) confirmAddProfile();
+    if(e.key === 'Escape') closeModal();
+  });
+
+  // Nav scroll shadow
+  const nav = document.querySelector('.nav');
+  window.addEventListener('scroll', () => nav.style.boxShadow = window.scrollY > 30 ? '0 2px 20px rgba(0,0,0,.08)' : '');
+
+  // ── START ──
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+const REWARDS = [
+      { id:'r1',  name:'Gói "Mở Mang Bờ Cõi"',           cost:800,  emoji:'📚' },
+      { id:'r2',  name:'Mâm Cỗ "Mừng Vụ Mùa"',           cost:1200, emoji:'🍲' },
+      { id:'r3',  name:'Lệnh Bài "Mở Cổng Thành"',       cost:2400, emoji:'🏰' },
+      { id:'r4',  name:'Giấy "Thông Hành Viễn Chinh"',   cost:1600, emoji:'🧭' },
+      { id:'r5',  name:'Gói "Kinh Lý Đô Thành"',         cost:4000, emoji:'🍕' },
+      { id:'r6',  name:'Vé "Đêm Phim Gia Đình"',         cost:1200, emoji:'🎬' },
+      { id:'r7',  name:'Thẻ: ĐÈN DẦU THẮP MUỘN',        cost:350,  emoji:'🏮' },
+      { id:'r8',  name:'Thẻ: BÙ NHÌN THẾ THÂN',          cost:900,  emoji:'🌾' },
+      { id:'r9',  name:'Thẻ: HẠT NẾP THẦN LỰC',          cost:2000, emoji:'⚡' },
+      { id:'r10', name:'Thẻ: KHUÔN BÁNH CHƯNG',          cost:1600, emoji:'🍱' },
+      { id:'r11', name:'Thẻ: PHIÊN CHỢ TỰ DO',           cost:850,  emoji:'🎲' },
+      { id:'r12', name:'Thẻ: LỆNH TRƯNG THU ĐẤT',        cost:600,  emoji:'🚜' },
+      { id:'r13', name:'Thẻ: BẢO KHÍ GIÒN RỤM',         cost:200,  emoji:'🍿' },
+      { id:'r14', name:'Thẻ: HÀN BĂNG NGỌC THẠCH',       cost:250,  emoji:'🍦' },
+      { id:'r15', name:'Thẻ: MẬT ĐẠO TIÊU DAO',         cost:300,  emoji:'🌳' },
+    ];

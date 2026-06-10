@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kho Thóc Gia Đình – Gamification Việc Nhà</title>
+  
+  <link rel="stylesheet" href="css/style.css" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+</head>
+<body>
+
+  <main>
+    <section class="hero">
+      <h1>Chào mừng đến với Kho Thóc Gia Đình</h1>
+      <div id="heroField"></div> 
+    </section>
+
+    <section class="content">
+      <div class="reveal">
+        <h2>Cách thức hoạt động</h2>
+        <p>Tích lũy hạt gạo, đổi lấy đặc quyền!</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/common.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Logic tạo hiệu ứng hạt lúa (stalks)
+      const field = document.getElementById('heroField');
+      const count = Math.floor(window.innerWidth / 22);
+      for(let i = 0; i < count; i++){
+        const s = document.createElement('div');
+        s.className = 'stalk';
+        const h = 80 + Math.random() * 120;
+        s.style.setProperty('--h', h+'px');
+        s.style.animationDelay = (Math.random() * .8) + 's';
+        s.style.opacity = (.5 + Math.random() * .5).toString();
+        setTimeout(()=>{ s.style.setProperty('--after-opacity','1'); }, (Math.random()*800)+1200);
+        field.appendChild(s);
+      }
+
+      // Scroll reveal logic
+      const reveals = document.querySelectorAll('.reveal');
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) e.target.classList.add('active');
+        });
+      });
+      reveals.forEach(r => obs.observe(r));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+const TASKS = [
+      { id:'t1',  name:'Đại chiến Kho Thóc',    sub:'Tổng vệ sinh nhà cửa',  grain:150, exp:100, emoji:'🏰', type:'epic',      category:'⭐ Sử Thi — Lớn' },
+      { id:'t2',  name:'Trợ lý Đầu bếp',        sub:'Nấu 1 bữa hoàn chỉnh', grain:100, exp:80,  emoji:'🍳', type:'epic',      category:'⭐ Sử Thi — Lớn' },
+      { id:'t3',  name:'Phá băng bồn rửa',       sub:'Rửa bát · ~15p',        grain:15,  exp:10,  emoji:'🍽️', type:'highlight', category:'🟡 Hằng ngày (Ưu tiên)' },
+      { id:'t4',  name:'Tấn công bụi bẩn',       sub:'Quét & lau nhà · ~20p', grain:25,  exp:20,  emoji:'🧹', type:'highlight', category:'🟡 Hằng ngày (Ưu tiên)' },
+      { id:'t5',  name:'Thiết lập bàn',           sub:'Dọn bàn học · ~10p',    grain:10,  exp:5,   emoji:'🪑', type:'highlight', category:'🟡 Hằng ngày (Ưu tiên)' },
+      { id:'t6',  name:'Triệu hồi đồ giặt',      sub:'Gấp & cất đồ · ~15p',  grain:20,  exp:15,  emoji:'👕', type:'normal',    category:'📝 Nhiệm vụ thường' },
+      { id:'t7',  name:'Dọn sạch phế liệu',      sub:'Đổ rác · ~10p',         grain:10,  exp:5,   emoji:'🗑️', type:'normal',    category:'📝 Nhiệm vụ thường' },
+      { id:'t8',  name:'Chăm sóc Long bào',      sub:'Giặt/Phơi đồ · ~20p',  grain:25,  exp:20,  emoji:'🧺', type:'normal',    category:'📝 Nhiệm vụ thường' },
+      { id:'t9',  name:'Thanh tẩy bảo vật',      sub:'Giặt giày · ~35p',      grain:35,  exp:30,  emoji:'🧼', type:'normal',    category:'📝 Nhiệm vụ thường' },
+      { id:'t10', name:'Tu luyện kiến thức',      sub:'Tự học · 1 tiếng',      grain:30,  exp:25,  emoji:'📚', type:'normal',    category:'📝 Nhiệm vụ thường' },
+      { id:'t11', name:'Hộ vệ thảo dược',         sub:'Tưới cây · ~20p',       grain:20,  exp:15,  emoji:'🌿', type:'normal',    category:'📝 Nhiệm vụ thường' },
+      { id:'t12', name:'Viễn chinh lương thực',   sub:'Đi chợ · ~30p',         grain:30,  exp:25,  emoji:'🛒', type:'normal',    category:'📝 Nhiệm vụ thường' },
+      { id:'t13', name:'Thu dọn Giang sơn',       sub:'Dọn phòng · ~10p',      grain:10,  exp:5,   emoji:'🐾', type:'normal',    category:'📝 Nhiệm vụ thường' },
+      { id:'t14', name:'Bảo dưỡng pháp bảo',      sub:'Lau bàn ăn · ~10p',     grain:10,  exp:5,   emoji:'🍽️', type:'normal',    category:'📝 Nhiệm vụ thường' },
+      { id:'t15', name:'Giải cứu thủy cung',      sub:'Dọn WC · ~10p',         grain:20,  exp:10,  emoji:'🔱', type:'normal',    category:'📝 Nhiệm vụ thường' },
+    ];

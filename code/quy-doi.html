@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quy Đổi Gạo → Tiền – Kho Thóc Gia Đình</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/shared/variables.css" />
+  <link rel="stylesheet" href="assets/css/shared/base.css" />
+  <link rel="stylesheet" href="assets/css/shared/nav.css" />
+  <link rel="stylesheet" href="assets/css/shared/layout.css" />
+  <link rel="stylesheet" href="assets/css/shared/buttons.css" />
+  <link rel="stylesheet" href="assets/css/shared/footer.css" />
+  <link rel="stylesheet" href="assets/css/shared/components.css" />
+  <link rel="stylesheet" href="assets/css/pages/quy-doi.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/js/data/config.js"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav" data-page="quy-doi"></nav>
+<script src="assets/js/shared/site-nav.js"></script>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="badge">🌾 Trung Tâm Quy Đổi</div>
+  <h1>Tính Gạo → Tiền</h1>
+  <p>Nhập số Hạt Gạo con đã tích lũy và xem ngay giá trị tiền mặt tương đương. Tỷ giá cố định: 10 Gạo = 1.000 VNĐ.</p>
+</div>
+<div style="background:var(--cream);">
+  <svg viewBox="0 0 1200 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:50px;display:block;">
+    <path d="M0,70 L0,30 Q300,5 600,30 Q900,55 1200,20 L1200,70 Z" fill="#1a5c38"/>
+  </svg>
+</div>
+
+<!-- CALCULATOR -->
+<section class="calc-section" id="calculator">
+  <div class="container">
+    <p class="section-label reveal">⚡ Tính toán tức thì</p>
+    <h2 class="section-title reveal">Máy Tính Quy Đổi Sản Vật</h2>
+    <p class="section-sub reveal">Nhập số Gạo và thấy ngay mục tiêu nào đã trong tầm tay!</p>
+
+    <div class="calc-wrap">
+      <!-- LEFT PANEL -->
+      <div class="reveal">
+        <div class="calc-panel">
+          <label>Nhập số hạt gạo đã tích lũy 🌾</label>
+          <div class="input-wrap">
+            <input type="number" id="grainInput" min="0" placeholder="0" oninput="calculate()" />
+            <span class="input-suffix">🌾</span>
+          </div>
+          <div class="quick-amounts">
+            <button class="quick-btn" onclick="setAmount(50)">50</button>
+            <button class="quick-btn" onclick="setAmount(100)">100</button>
+            <button class="quick-btn" onclick="setAmount(200)">200</button>
+            <button class="quick-btn" onclick="setAmount(500)">500</button>
+            <button class="quick-btn" onclick="setAmount(1000)">1.000</button>
+            <button class="quick-btn" onclick="setAmount(2000)">2.000</button>
+          </div>
+
+          <div class="calc-result">
+            <div class="calc-result-label">Giá trị tiền mặt tương đương</div>
+            <div class="calc-result-num" id="cashResult">0 VNĐ</div>
+            <div class="calc-result-note" id="calcNote">Bắt đầu nhập số Gạo để xem kết quả ✨</div>
+          </div>
+
+          <div class="progress-section" style="margin-top:1.5rem">
+            <div class="progress-label">
+              <span>Tiến độ tích lũy</span>
+              <span id="progressPct">0%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted);margin-top:.3rem">
+              <span>0 🌾</span><span>500 🌾</span><span>1.000 🌾</span>
+            </div>
+          </div>
+
+          <!-- Reverse calc -->
+          <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:2px dashed #e5e7eb;">
+            <label style="margin-bottom:.6rem;">Tính ngược: Nhập giá tiền muốn đổi</label>
+            <div class="input-wrap">
+              <input type="number" id="cashInput" min="0" placeholder="0"
+                style="font-size:1.4rem; color:var(--earth);"
+                oninput="reverseCalc()" />
+              <span class="input-suffix" style="font-size:.9rem;font-weight:700;color:var(--earth);">đ</span>
+            </div>
+            <div style="margin-top:.8rem; font-size:.88rem; color:var(--text-muted);">
+              Cần tích lũy: <strong id="reverseResult" style="color:var(--green-deep);font-family:'Baloo 2',sans-serif;font-size:1.1rem;">— 🌾</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: goal unlock panel -->
+      <div class="reveal">
+        <h3 style="font-size:1.1rem;font-weight:800;color:var(--green-deep);margin-bottom:1rem;">🎯 Mục Tiêu Đổi Quà</h3>
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1.2rem;">Nhập số Gạo bên trái để xem mục tiêu nào bạn đã đủ sức đổi!</p>
+
+        <div class="goal-list">
+          <!-- ── THẺ BÀI ── -->
+          <div class="goal-item" data-cost="200">
+            <span class="goal-emoji">🍿</span>
+            <div class="goal-info">
+              <div class="goal-name">Bảo Khí Giòn Rụm</div>
+              <div class="goal-cost">200 🌾 · Thẻ bài</div>
+            </div>
+            <span class="goal-status locked" id="goal-0">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="250">
+            <span class="goal-emoji">🍦</span>
+            <div class="goal-info">
+              <div class="goal-name">Hàn Băng Ngọc Thạch</div>
+              <div class="goal-cost">250 🌾 · Thẻ bài</div>
+            </div>
+            <span class="goal-status locked" id="goal-1">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="300">
+            <span class="goal-emoji">🌳</span>
+            <div class="goal-info">
+              <div class="goal-name">Mật Đạo Tiêu Dao</div>
+              <div class="goal-cost">300 🌾 · Thẻ bài</div>
+            </div>
+            <span class="goal-status locked" id="goal-2">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="350">
+            <span class="goal-emoji">🏮</span>
+            <div class="goal-info">
+              <div class="goal-name">Đèn Dầu Thắp Muộn</div>
+              <div class="goal-cost">350 🌾 · Thẻ bài</div>
+            </div>
+            <span class="goal-status locked" id="goal-3">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="600">
+            <span class="goal-emoji">🚜</span>
+            <div class="goal-info">
+              <div class="goal-name">Lệnh Trưng Thu Đất</div>
+              <div class="goal-cost">600 🌾 · Thẻ bài</div>
+            </div>
+            <span class="goal-status locked" id="goal-4">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="850">
+            <span class="goal-emoji">🎲</span>
+            <div class="goal-info">
+              <div class="goal-name">Phiên Chợ Tự Do</div>
+              <div class="goal-cost">850 🌾 · Thẻ bài</div>
+            </div>
+            <span class="goal-status locked" id="goal-5">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="900">
+            <span class="goal-emoji">🌾</span>
+            <div class="goal-info">
+              <div class="goal-name">Bù Nhìn Thế Thân</div>
+              <div class="goal-cost">900 🌾 · Thẻ bài</div>
+            </div>
+            <span class="goal-status locked" id="goal-6">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="1600">
+            <span class="goal-emoji">🍱</span>
+            <div class="goal-info">
+              <div class="goal-name">Khuôn Bánh Chưng</div>
+              <div class="goal-cost">1.600 🌾 · Thẻ bài</div>
+            </div>
+            <span class="goal-status locked" id="goal-7">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="2000">
+            <span class="goal-emoji">⚡</span>
+            <div class="goal-info">
+              <div class="goal-name">Hạt Nếp Thần Lực</div>
+              <div class="goal-cost">2.000 🌾 · Thẻ bài</div>
+            </div>
+            <span class="goal-status locked" id="goal-8">🔒 Chưa đủ</span>
+          </div>
+          <!-- ── QUÀ DÀI HẠN ── -->
+          <div class="goal-item" data-cost="800">
+            <span class="goal-emoji">📚</span>
+            <div class="goal-info">
+              <div class="goal-name">Gói Mở Mang Bờ Cõi</div>
+              <div class="goal-cost">800 – 2.400 🌾 · Sách do con chọn</div>
+            </div>
+            <span class="goal-status locked" id="goal-9">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="1200">
+            <span class="goal-emoji">🍲</span>
+            <div class="goal-info">
+              <div class="goal-name">Mâm Cỗ Mừng Vụ Mùa</div>
+              <div class="goal-cost">1.200 – 1.600 🌾 · Bữa ăn do con đặt</div>
+            </div>
+            <span class="goal-status locked" id="goal-10">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="1200">
+            <span class="goal-emoji">🎬</span>
+            <div class="goal-info">
+              <div class="goal-name">Vé Đêm Phim Gia Đình</div>
+              <div class="goal-cost">1.200 – 2.400 🌾 · Con chọn phim & đồ ăn</div>
+            </div>
+            <span class="goal-status locked" id="goal-11">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="1600">
+            <span class="goal-emoji">🧭</span>
+            <div class="goal-info">
+              <div class="goal-name">Giấy Thông Hành Viễn Chinh</div>
+              <div class="goal-cost">1.600 – 3.200 🌾 · Tự do ra ngoài</div>
+            </div>
+            <span class="goal-status locked" id="goal-12">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="2400">
+            <span class="goal-emoji">🏰</span>
+            <div class="goal-info">
+              <div class="goal-name">Lệnh Bài Mở Cổng Thành</div>
+              <div class="goal-cost">2.400 – 4.000 🌾 · Mời bạn đến nhà</div>
+            </div>
+            <span class="goal-status locked" id="goal-13">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="4000">
+            <span class="goal-emoji">🍕</span>
+            <div class="goal-info">
+              <div class="goal-name">Gói Kinh Lý Đô Thành</div>
+              <div class="goal-cost">4.000 – 16.000 🌾 · Nhà hàng cả nhà</div>
+            </div>
+            <span class="goal-status locked" id="goal-14">🔒 Chưa đủ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHART: Reward comparison -->
+<section class="chart-section" id="chart">
+  <div class="container">
+    <p class="section-label reveal">📊 So sánh phần thưởng</p>
+    <h2 class="section-title reveal">Biểu Đồ Kho Quà — Chi Phí Gạo</h2>
+    <p class="section-sub reveal">Nhìn tổng quan để con lên kế hoạch mục tiêu tích lũy!</p>
+    <div class="chart-wrap reveal">
+      <div class="chart-container">
+        <canvas id="rewardsChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAILY PLAN -->
+<section class="plan-section" id="plan">
+  <div class="container">
+    <p class="section-label reveal">📅 Lập kế hoạch</p>
+    <h2 class="section-title reveal">Mỗi Ngày Kiếm Được Bao Nhiêu?</h2>
+    <p class="section-sub reveal">Giúp con đặt mục tiêu thực tế dựa trên công việc hằng ngày.</p>
+
+    <div class="plan-grid">
+      <div class="plan-card reveal">
+        <div class="plan-icon">⚡</div>
+        <h4>Ngày Tích Cực (Làm nhiều)</h4>
+        <div class="plan-number">~80–120 🌾</div>
+        <p>Rửa bát + quét nhà + tưới cây + tự học đủ giờ. Chăm chỉ 1 ngày có thể kiếm hơn 100 Gạo!</p>
+      </div>
+      <div class="plan-card reveal">
+        <div class="plan-icon">🌿</div>
+        <h4>Ngày Bình Thường</h4>
+        <div class="plan-number">~40–70 🌾</div>
+        <p>Làm 2–3 việc nhỏ mỗi ngày là đủ để tích lũy đều đặn và đạt mục tiêu trong vài tuần.</p>
+      </div>
+      <div class="plan-card reveal">
+        <div class="plan-icon">📆</div>
+        <h4>Tích Lũy 1 Tuần</h4>
+        <div class="plan-number">~300–600 🌾</div>
+        <p>Kiên trì 7 ngày có thể đủ để đổi thẻ bài hoặc đạt được nhiều mục tiêu dài hạn.</p>
+      </div>
+      <div class="plan-card reveal">
+        <div class="plan-icon">🏆</div>
+        <h4>Ví Dụ: Đôi Giày 500k</h4>
+        <div class="plan-number">~5.000 🌾</div>
+        <p>Cần 5.000 Gạo. Nếu mỗi ngày kiếm 70 Gạo → đủ tiền mua giày trong khoảng <strong>71 ngày</strong>!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARENT CORNER -->
+<section class="parent-section" id="parent">
+  <div class="container">
+    <p class="section-label reveal">🛡️ Góc quản trị viên</p>
+    <h2 class="section-title reveal">Bí Kíp Vận Hành Kho Thóc</h2>
+    <p class="section-sub reveal">Dành riêng cho ba mẹ để hệ thống này hoạt động hiệu quả và bền vững.</p>
+
+    <div class="parent-grid">
+      <div class="parent-card reveal">
+        <div class="pc-num">1</div>
+        <h4>Giữ Tỷ Giá Cố Định</h4>
+        <p>Không điều chỉnh tỷ lệ quy đổi giữa chừng. Tính nhất quán xây dựng niềm tin và dạy con rằng các thỏa thuận phải được giữ.</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">2</div>
+        <h4>Ghi Chép Minh Bạch</h4>
+        <p>Dùng bảng tính, sổ tay hoặc ứng dụng để cả nhà đều thấy số dư Gạo hiện tại. Không có "Bố/Mẹ nhớ nhầm".</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">3</div>
+        <h4>Tổng Kết Hàng Tuần</h4>
+        <p>Dành 10 phút cuối tuần để cùng con xem lại: tuần này kiếm được bao nhiêu, tiêu bao nhiêu, còn bao nhiêu tích lũy.</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">4</div>
+        <h4>"Lễ Đổi Thưởng" Long Trọng</h4>
+        <p>Đừng đổi thưởng qua loa. Hãy tạo một nghi lễ nhỏ: đọc số Gạo, trao thẻ, chúc mừng — để con cảm thấy thành quả thực sự.</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">5</div>
+        <h4>Điều Chỉnh Theo Từng Con</h4>
+        <p>Mỗi gia đình mỗi khác. Đừng ngại tăng/giảm số Gạo cho từng nhiệm vụ để phù hợp với hoàn cảnh và tính cách của con.</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">6</div>
+        <h4>Khen Ngợi Hành Vi, Không Chỉ Kết Quả</h4>
+        <p>Khi con chủ động làm việc không cần nhắc — hãy thưởng bonus Gạo và khen trước mặt cả nhà. Cảm xúc tích cực sẽ nhân đôi động lực.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="reveal">Đã Tính Xong Chưa? 🌾</h2>
+    <p class="reveal">Ghé xem Kho Quà để con chọn mục tiêu tích lũy tiếp theo!</p>
+    <div class="cta-btns">
+      <a href="kho-qua.html" class="btn-amber">🎁 Xem Kho Quà Tặng</a>
+      <a href="index.html" class="btn-green">← Về Trang Chủ</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="siteFooter"></footer>
+  <script src="assets/js/shared/nav.js"></script>
+  <script src="assets/js/shared/reveal.js"></script>
+  <script src="assets/js/pages/quy-doi.js"></script>
+</body>
+</html>

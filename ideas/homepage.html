@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Thóc Gia Đình - Nông Trại Yêu Thương</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .bg-pattern {
+            background-color: #f0fdf4;
+            background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2322c55e' fill-opacity='0.05'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #16a34a 0%, #eab308 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased selection:bg-yellow-300 selection:text-green-900">
+
+    <header class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md transition-all duration-300 border-b border-green-100">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="bg-gradient-to-br from-green-500 to-yellow-500 p-2.5 rounded-xl group-hover:scale-110 transition-transform shadow-sm">
+                    <i class="fas fa-wheat-awn text-white text-xl"></i>
+                </div>
+                <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-green-700 to-yellow-600 tracking-tight">Kho Thóc Gia Đình</span>
+            </a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#how-it-works" class="text-gray-600 hover:text-green-600 font-bold transition-colors">Luật Làng</a>
+                <a href="#ranks" class="text-gray-600 hover:text-yellow-600 font-bold transition-colors">Cấp Bậc</a>
+                <a href="#tasks" class="text-gray-600 hover:text-green-600 font-bold transition-colors">Đồn Điền</a>
+                <a href="#rewards" class="text-gray-600 hover:text-orange-600 font-bold transition-colors">Đổi Gạo</a>
+            </nav>
+            <a href="#start" class="hidden md:inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-bold py-2 px-6 rounded-full shadow-lg shadow-green-500/30 transform hover:scale-105 transition-all">
+                Mở Kho Nhận Việc <i class="fas fa-seedling"></i>
+            </a>
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-gray-600 hover:text-green-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <section class="hero-gradient bg-pattern pt-32 pb-24 md:pt-40 md:pb-32 relative overflow-hidden">
+        <!-- Decorative elements -->
+        <div class="absolute top-24 left-10 text-white/20 animate-pulse"><i class="fas fa-sun text-6xl"></i></div>
+        <div class="absolute bottom-20 right-10 text-white/20 animate-bounce" style="animation-duration: 4s;"><i class="fas fa-bowl-rice text-5xl"></i></div>
+        <div class="absolute top-40 right-20 text-white/20"><i class="fas fa-cloud text-6xl opacity-50"></i></div>
+
+        <div class="container mx-auto px-4 relative z-10 text-center">
+            <span class="inline-block py-1.5 px-4 rounded-full bg-white/20 text-white text-sm font-bold mb-6 backdrop-blur-sm border border-white/40 uppercase tracking-widest shadow-inner">Dành Cho Teen (10-15 Tuổi)</span>
+            <h1 class="text-5xl md:text-7xl font-black text-white mb-6 drop-shadow-lg leading-tight">
+                Biến Việc Nhà Thành<br/>
+                <span class="text-yellow-300">Vụ Mùa Bội Thu!</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-green-50 mb-10 max-w-3xl mx-auto font-semibold">
+                Làm việc nhà không còn là nghĩa vụ! Tích lũy <strong class="text-yellow-300">Điểm Sành Sỏi</strong>, thu hoạch <strong class="text-yellow-300">Hạt Gạo</strong> để thăng cấp Quản Gia và đổi lấy những đặc quyền giải trí cực chất.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#how-it-works" class="bg-white text-green-700 hover:bg-green-50 font-bold text-lg py-4 px-8 rounded-full shadow-xl transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-scroll text-xl"></i> Xem Luật Làng
+                </a>
+                <a href="#tasks" class="bg-yellow-400 text-yellow-900 hover:bg-yellow-300 font-bold text-lg py-4 px-8 rounded-full shadow-lg transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-tractor"></i> Ra Đồng Ngay
+                </a>
+            </div>
+        </div>
+        
+        <!-- Wave Divider -->
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+            <svg class="relative block w-full h-12 md:h-24" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118,130.98,130.12,201.3,120.53,243.6,114.7,284.18,97.6,321.39,56.44Z" fill="#f8fafc"></path>
+            </svg>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="py-20 bg-slate-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-sm font-black text-green-600 uppercase tracking-widest mb-2">Bảng Trạng Thái Nhân Vật</h2>
+                <h3 class="text-3xl md:text-5xl font-black text-gray-900">Cách Hoạt Động Của <span class="text-yellow-500">Kho Thóc</span></h3>
+                <p class="text-gray-500 mt-4 max-w-2xl mx-auto text-lg font-medium">Khái niệm dễ hiểu, "Có làm thì mới có ăn" - Quản lý tài sản như một game nhập vai thực thụ.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
+                <!-- EXP Card -->
+                <div class="bg-white rounded-3xl p-8 shadow-lg border-2 border-green-100 flex items-start gap-6 card-hover">
+                    <div class="w-16 h-16 shrink-0 bg-green-100 rounded-2xl flex items-center justify-center text-green-600">
+                        <i class="fas fa-level-up-alt text-3xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-black text-gray-900 mb-2">Điểm Sành Sỏi (EXP)</h4>
+                        <p class="text-gray-600">Đại diện cho <strong>cấp độ nghề nông</strong> của bạn. Điểm này càng cao chứng tỏ tay nghề quán xuyến việc nhà càng điêu luyện. Dùng để thăng cấp và mở khóa Đặc Quyền.</p>
+                    </div>
+                </div>
+
+                <!-- Currency Card -->
+                <div class="bg-white rounded-3xl p-8 shadow-lg border-2 border-yellow-100 flex items-start gap-6 card-hover">
+                    <div class="w-16 h-16 shrink-0 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600">
+                        <i class="fas fa-sack-dollar text-3xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-black text-gray-900 mb-2">Hạt Gạo (Vàng/Tiền tệ) <span class="text-2xl">🌾</span></h4>
+                        <p class="text-gray-600">Tiền tệ chính của Nông Trại. Tích lũy vào Kho Thóc sau mỗi nhiệm vụ hoàn thành. Dùng để <strong>đổi lấy các Đặc Quyền giải trí hoặc quy ra Tiền Mặt / Quà tặng.</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bonus Rule -->
+            <div class="max-w-4xl mx-auto bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-6 border border-yellow-200 shadow-sm flex flex-col sm:flex-row items-center gap-6 justify-center">
+                <div class="w-16 h-16 shrink-0 bg-white rounded-full flex items-center justify-center text-orange-500 shadow-md">
+                    <i class="fas fa-star text-3xl"></i>
+                </div>
+                <div class="text-center sm:text-left">
+                    <h4 class="text-xl font-bold text-orange-800 mb-1">🌟 Thưởng Tự Giác: GẠO THƠM DẺO</h4>
+                    <p class="text-orange-900">Nếu tự giác làm việc không cần bố mẹ nhắc nhở ➔ <strong>Cộng thêm 20%</strong> số Hạt Gạo của nhiệm vụ đó!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ranks" class="py-24 bg-white relative">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-sm font-black text-yellow-500 uppercase tracking-widest mb-2">Hệ Thống Phân Cấp Chi Tiết (3 Bậc/Level)</h2>
+                <h3 class="text-3xl md:text-5xl font-black text-gray-900">Từ <span class="text-green-600">Tân Binh</span> Thành <span class="text-yellow-600">Chủ Đồn Điền</span></h3>
+                <p class="text-gray-500 mt-4 max-w-2xl mx-auto text-lg font-medium">Khi Điểm Sành Sỏi chạm mốc, con sẽ thăng hạng và nắm giữ quyền lực mới. Lộ trình nâng cấp liên tục giúp duy trì hứng thú!</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto mb-16">
+                
+                <!-- Level 1 -->
+                <div class="bg-gray-50 rounded-3xl p-8 border border-gray-200 relative shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-4 mb-6 border-b border-gray-200 pb-4">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm border-2 border-gray-100 shrink-0">
+                            <i class="fas fa-seedling text-3xl text-green-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-black text-gray-800">LV 1: Người Học Việc</h4>
+                            <div class="inline-block bg-gray-200 text-gray-700 font-bold px-3 py-1 rounded-full text-xs mt-1">Tổng: 0 - 1.200 <i class="fas fa-level-up-alt ml-1"></i></div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6 italic">Giai đoạn này, con mới bắt đầu làm quen với công cụ và nhịp điệu công việc.</p>
+                    
+                    <div class="space-y-4">
+                        <!-- 1.1 -->
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-gray-400 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <strong class="text-gray-800">Cấp 1.1: Người Thử Việc</strong>
+                                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">0 - 300</span>
+                            </div>
+                            <p class="text-sm text-gray-600"><span class="font-bold text-gray-700">Đặc quyền:</span> Nhận số Hạt Gạo tiêu chuẩn theo bảng.</p>
+                        </div>
+                        <!-- 1.2 -->
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-green-400 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <strong class="text-gray-800">Cấp 1.2: Tập Sự Chính Thức</strong>
+                                <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">301 - 700</span>
+                            </div>
+                            <p class="text-sm text-gray-600"><span class="font-bold text-green-600">Đặc quyền:</span> Tặng ngay 1 Hộp Quà May Mắn (Ngẫu nhiên 10 - 30 Gạo).</p>
+                        </div>
+                        <!-- 1.3 -->
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-green-500 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <strong class="text-gray-800">Cấp 1.3: Thợ Phụ Siêng Năng</strong>
+                                <span class="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded">701 - 1.200</span>
+                            </div>
+                            <p class="text-sm text-gray-600"><span class="font-bold text-green-600">Đặc quyền:</span> Mở khóa <strong>"Vay Gạo"</strong>. Ứng trước tối đa 30 Gạo (trả bằng việc nhà trong 3 ngày tới).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 2 -->
+                <div class="bg-blue-50 rounded-3xl p-8 border border-blue-200 relative shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-4 mb-6 border-b border-blue-200 pb-4">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm border-2 border-blue-100 shrink-0">
+                            <i class="fas fa-hammer text-3xl text-blue-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-black text-blue-800">LV 2: Thợ Lành Nghề</h4>
+                            <div class="inline-block bg-blue-200 text-blue-900 font-bold px-3 py-1 rounded-full text-xs mt-1">Tổng: 1.201 - 3.600 <i class="fas fa-level-up-alt ml-1"></i></div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6 italic">Con bắt đầu làm việc nhanh nhẹn, khéo léo và có trách nhiệm hơn.</p>
+                    
+                    <div class="space-y-4">
+                        <!-- 2.1 -->
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-blue-300 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <strong class="text-gray-800">Cấp 2.1: Thợ Đứng Bếp</strong>
+                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">1.201 - 1.900</span>
+                            </div>
+                            <p class="text-sm text-gray-600"><span class="font-bold text-blue-600">Đặc quyền:</span> Hiệu ứng "Chăm Chỉ" (Làm liên tục 3 ngày thưởng thêm +15 Gạo).</p>
+                        </div>
+                        <!-- 2.2 -->
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-blue-400 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <strong class="text-gray-800">Cấp 2.2: Tay Đua Quét Dọn</strong>
+                                <span class="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded">1.901 - 2.700</span>
+                            </div>
+                            <p class="text-sm text-gray-600"><span class="font-bold text-blue-600">Đặc quyền:</span> Mở khóa <strong>"Đổi Nhiệm Vụ"</strong> (đổi việc cho người khác nếu họ đồng ý).</p>
+                        </div>
+                        <!-- 2.3 -->
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-blue-500 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <strong class="text-gray-800">Cấp 2.3: Bậc Thầy Việc Nhà</strong>
+                                <span class="text-xs font-bold text-blue-800 bg-blue-200 px-2 py-1 rounded">2.701 - 3.600</span>
+                            </div>
+                            <p class="text-sm text-gray-600"><span class="font-bold text-blue-600">Đặc quyền:</span> Mở khóa <strong>"Nghỉ Phép"</strong> (1 lần/tuần). Miễn 1 việc nhà bất kỳ không bị phạt.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 3 -->
+                <div class="bg-purple-50 rounded-3xl p-8 border border-purple-200 relative shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-4 mb-6 border-b border-purple-200 pb-4">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm border-2 border-purple-100 shrink-0">
+                            <i class="fas fa-medal text-3xl text-purple-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-black text-purple-900">LV 3: Quản Gia Vinh Dự</h4>
+                            <div class="inline-block bg-purple-200 text-purple-900 font-bold px-3 py-1 rounded-full text-xs mt-1">Tổng: 3.601 - 7.500 <i class="fas fa-level-up-alt ml-1"></i></div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6 italic">Con đã là chỗ dựa, chủ động sắp xếp công việc mà không cần nhắc nhở.</p>
+                    
+                    <div class="space-y-4">
+                        <!-- 3.1 -->
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-purple-300 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <strong class="text-gray-800">Cấp 3.1: Quản Gia Tập Sự</strong>
+                                <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded">3.601 - 4.800</span>
+                            </div>
+                            <p class="text-sm text-gray-600"><span class="font-bold text-purple-600">Đặc quyền:</span> "Nhân Bản Gạo" (+10% Gạo cho mọi Nhiệm vụ Sử thi cuối tuần).</p>
+                        </div>
+                        <!-- 3.2 -->
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-purple-400 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <strong class="text-gray-800">Cấp 3.2: Quản Gia Trưởng</strong>
+                                <span class="text-xs font-bold text-purple-700 bg-purple-100 px-2 py-1 rounded">4.801 - 6.100</span>
+                            </div>
+                            <p class="text-sm text-gray-600"><span class="font-bold text-purple-600">Đặc quyền:</span> Mở khóa <strong>"Thuê Nhân Công"</strong>. Dùng Gạo thuê bố mẹ/anh em làm hộ.</p>
+                        </div>
+                        <!-- 3.3 -->
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <strong class="text-gray-800">Cấp 3.3: Cánh Tay Đắc Lực</strong>
+                                <span class="text-xs font-bold text-purple-800 bg-purple-200 px-2 py-1 rounded">6.101 - 7.500</span>
+                            </div>
+                            <p class="text-sm text-gray-600"><span class="font-bold text-purple-600">Đặc quyền:</span> <strong>Thành Viên VIP</strong>. Giảm giá 10% lượng Gạo khi đổi quà lớn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 4 -->
+                <div class="bg-gradient-to-b from-yellow-50 to-orange-50 rounded-3xl p-8 border-2 border-yellow-400 relative shadow-lg transform hover:-translate-y-1 transition-transform">
+                    <div class="absolute -top-4 left-6 text-yellow-500 animate-pulse"><i class="fas fa-crown text-4xl drop-shadow-md"></i></div>
+                    
+                    <div class="flex items-center gap-4 mb-6 border-b border-yellow-200 pb-4 mt-2">
+                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-md border-2 border-white shrink-0">
+                            <i class="fas fa-tractor text-3xl text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-black text-orange-800">LV 4: Đại Phú Hộ</h4>
+                            <div class="inline-block bg-yellow-200 text-yellow-900 font-black px-3 py-1 rounded-full text-xs mt-1">> 7.500 <i class="fas fa-level-up-alt ml-1"></i></div>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 text-sm mb-6 italic font-medium">Bậc thầy quán xuyến việc nhà như một người lớn thực thụ.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex gap-2">
+                            <div class="flex-1 bg-white p-3 rounded-xl border border-yellow-200 shadow-sm text-center">
+                                <strong class="text-gray-800 text-sm block">4.1 Phú Hộ Vùng</strong>
+                                <span class="text-xs text-yellow-600 font-bold">7.501-9.000</span>
+                            </div>
+                            <div class="flex-1 bg-white p-3 rounded-xl border border-yellow-300 shadow-sm text-center">
+                                <strong class="text-gray-800 text-sm block">4.2 Triệu Phú</strong>
+                                <span class="text-xs text-orange-600 font-bold">9.001-11.000</span>
+                            </div>
+                            <div class="flex-1 bg-gradient-to-r from-yellow-100 to-orange-100 p-3 rounded-xl border border-orange-300 shadow-sm text-center">
+                                <strong class="text-red-700 text-sm block">4.3 Huyền Thoại</strong>
+                                <span class="text-xs text-red-600 font-bold">> 11.000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-orange-500 to-red-500 p-5 rounded-xl shadow-md text-white mt-4 border border-red-400">
+                            <h5 class="font-black text-lg flex items-center gap-2 mb-2"><i class="fas fa-star text-yellow-300"></i> Đặc Quyền Tối Cao: TỰ TRỊ</h5>
+                            <p class="text-sm opacity-90 leading-relaxed">Con được tự quan sát nhà cửa, <strong>tự đề xuất nhiệm vụ mới phát sinh</strong> (VD: cọ rửa xe, sửa đồ điện...) và <strong>tự thỏa thuận mức Gạo xứng đáng</strong> với bố mẹ trước khi làm!</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dark Mode Terminal for Scoreboard Tip -->
+            <div class="max-w-4xl mx-auto bg-slate-900 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden border border-slate-700 transform hover:scale-[1.01] transition-transform">
+                <!-- Mac-like header -->
+                <div class="absolute top-0 left-0 w-full h-8 bg-slate-800 flex items-center px-4 gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="text-slate-400 text-xs ml-2 font-mono">huong-dan-bang-diem.txt</span>
+                </div>
+                
+                <div class="pt-6 font-mono">
+                    <h5 class="text-yellow-400 font-bold mb-4 flex items-center gap-2 text-lg"><i class="fas fa-lightbulb"></i> Mẹo hiển thị trên bảng điểm để con hào hứng:</h5>
+                    <p class="text-slate-300 mb-6 text-sm md:text-base leading-relaxed">Thay vì ghi một con số dài dằng dặc, bố mẹ hãy vẽ các <strong>Ngôi sao</strong> hoặc <strong>Vạch cấp bậc</strong> bên cạnh tên của con. Mỗi lần được bố mẹ cầm bút dạ tô thêm một Ngôi sao mới trên bảng điểm sẽ là một khoảnh khắc "Leo rank" cực kỳ kích thích!</p>
+                    
+                    <div class="bg-black/50 p-5 rounded-lg border border-slate-700 text-green-400 text-sm md:text-base shadow-inner">
+                        <div class="mb-4"><span class="text-slate-500 italic">Ví dụ: Con đang ở cấp 2.2, trên bảng điểm tủ lạnh sẽ ghi:</span></div>
+                        <div class="mb-2">👤 <span class="text-blue-300">Tên con:</span> [Nguyễn Văn A]</div>
+                        <div class="mb-2">🏅 <span class="text-blue-300">Danh hiệu:</span> Thợ Lành Nghề - Cấp 2 <span class="text-yellow-400">⭐⭐<span class="opacity-20">⭐</span></span></div>
+                        <div class="mb-3 pl-8 text-slate-400 text-xs md:text-sm">(Cần thêm 800 Điểm để lên Cấp 2 ⭐⭐⭐)</div>
+                        <div>🌾 <span class="text-blue-300">Kho Thóc:</span> 250 Hạt Gạo</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="tasks" class="py-20 bg-green-50 border-t border-b border-green-100">
+        <div class="container mx-auto px-4">
+            
+            <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
+                <!-- Task Board -->
+                <div class="flex-1">
+                    <div class="bg-white rounded-[2rem] p-6 md:p-10 shadow-xl border-t-8 border-green-500">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="bg-green-100 w-14 h-14 rounded-2xl flex items-center justify-center text-green-600 shadow-inner">
+                                <i class="fas fa-clipboard-check text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-3xl font-black text-gray-900 tracking-tight">Hệ Thống Nhiệm Vụ</h3>
+                                <p class="text-gray-500 font-medium">"Tay làm hàm nhai" - Chăm sóc nông trại</p>
+                            </div>
+                        </div>
+
+                        <!-- Daily Tasks -->
+                        <h4 class="text-lg font-bold text-green-800 mb-4 flex items-center gap-2"><i class="fas fa-calendar-day"></i> Hằng Ngày: Chăm lo đồn điền</h4>
+                        <div class="space-y-3 mb-8">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-green-50 hover:border-green-200 transition-all">
+                                <div class="flex items-center gap-3 mb-2 sm:mb-0">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-500"><i class="fas fa-sink"></i></div>
+                                    <span class="font-bold text-gray-800 text-lg">Phá băng bồn rửa <span class="text-sm font-normal text-gray-500 block">Rửa bát</span></span>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">+50 EXP</span>
+                                    <span class="font-black text-yellow-600 bg-yellow-50 px-3 py-1 rounded-lg flex items-center gap-1">+20 <i class="fas fa-seedling"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-green-50 hover:border-green-200 transition-all">
+                                <div class="flex items-center gap-3 mb-2 sm:mb-0">
+                                    <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-500"><i class="fas fa-broom"></i></div>
+                                    <span class="font-bold text-gray-800 text-lg">Sàng sọc phòng ốc <span class="text-sm font-normal text-gray-500 block">Quét & Lau nhà</span></span>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">+40 EXP</span>
+                                    <span class="font-black text-yellow-600 bg-yellow-50 px-3 py-1 rounded-lg flex items-center gap-1">+15 <i class="fas fa-seedling"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-green-50 hover:border-green-200 transition-all">
+                                <div class="flex items-center gap-3 mb-2 sm:mb-0">
+                                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-500"><i class="fas fa-tshirt"></i></div>
+                                    <span class="font-bold text-gray-800 text-lg">Chăm sóc Long bào <span class="text-sm font-normal text-gray-500 block">Giặt / Phơi / Gấp quần áo</span></span>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">+30 EXP</span>
+                                    <span class="font-black text-yellow-600 bg-yellow-50 px-3 py-1 rounded-lg flex items-center gap-1">+15 <i class="fas fa-seedling"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-green-50 hover:border-green-200 transition-all">
+                                <div class="flex items-center gap-3 mb-2 sm:mb-0">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-500"><i class="fas fa-bed"></i></div>
+                                    <span class="font-bold text-gray-800 text-lg">Thu dọn Giang sơn <span class="text-sm font-normal text-gray-500 block">Dọn phòng riêng & Bàn học</span></span>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">+30 EXP</span>
+                                    <span class="font-black text-yellow-600 bg-yellow-50 px-3 py-1 rounded-lg flex items-center gap-1">+10 <i class="fas fa-seedling"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Epic Tasks -->
+                        <h4 class="text-lg font-bold text-red-700 mb-4 flex items-center gap-2"><i class="fas fa-fire"></i> Sử Thi: Vụ mùa bội thu (Cuối tuần)</h4>
+                        <div class="space-y-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-red-50 rounded-2xl border border-red-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-2 sm:mb-0">
+                                    <div class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white shadow-md"><i class="fas fa-dumpster text-2xl"></i></div>
+                                    <span class="font-black text-gray-900 text-lg">Đại chiến Kho Thóc <span class="text-sm font-medium text-red-600 block">Tổng vệ sinh toàn bộ nhà cửa</span></span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-black text-blue-700 bg-white px-3 py-2 rounded-lg border border-blue-200">+200 EXP</span>
+                                    <span class="font-black text-yellow-700 bg-yellow-300 px-3 py-2 rounded-lg flex items-center gap-1 shadow-sm">+100 <i class="fas fa-seedling"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-orange-50 rounded-2xl border border-orange-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 mb-2 sm:mb-0">
+                                    <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-white shadow-md"><i class="fas fa-fire-burner text-2xl"></i></div>
+                                    <span class="font-black text-gray-900 text-lg">Trợ lý Đầu bếp <span class="text-sm font-medium text-orange-600 block">Nấu 1 bữa cơm hoàn chỉnh</span></span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-black text-blue-700 bg-white px-3 py-2 rounded-lg border border-blue-200">+150 EXP</span>
+                                    <span class="font-black text-yellow-700 bg-yellow-300 px-3 py-2 rounded-lg flex items-center gap-1 shadow-sm">+80 <i class="fas fa-seedling"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rewards Store -->
+                <div id="rewards" class="flex-1">
+                    <div class="bg-gradient-to-b from-gray-900 to-gray-800 rounded-[2rem] p-6 md:p-10 shadow-2xl relative overflow-hidden">
+                        <!-- Decorative background -->
+                        <i class="fas fa-store absolute -top-10 -right-10 text-9xl text-white opacity-5 pointer-events-none transform rotate-12"></i>
+                        
+                        <div class="flex items-center gap-4 mb-8 relative z-10">
+                            <div class="bg-yellow-400 w-14 h-14 rounded-2xl flex items-center justify-center text-yellow-900 shadow-lg">
+                                <i class="fas fa-shop text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-3xl font-black text-white tracking-tight">Cửa Hàng Đổi Gạo</h3>
+                                <p class="text-gray-400 font-medium">Bán Hạt Gạo - Đổi Quyền Lực & Quà Tặng</p>
+                            </div>
+                        </div>
+
+                        <!-- Power Tickets -->
+                        <h4 class="text-sm font-black text-yellow-400 mb-4 uppercase tracking-wider flex items-center gap-2"><i class="fas fa-magic"></i> 🎟️ Thẻ Bài Quyền Năng</h4>
+                        <div class="space-y-4 mb-8 relative z-10">
+                            <!-- 1: Đèn Dầu Thắp Muộn -->
+                            <div class="flex items-center justify-between p-4 bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-yellow-500/20 hover:border-yellow-500/50 transition-all cursor-pointer shadow-lg">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-3xl bg-black/20 p-2 rounded-lg">🏮</div>
+                                    <div>
+                                        <span class="font-bold text-white text-lg block">Đèn Dầu Thắp Muộn</span>
+                                        <span class="text-xs text-gray-300">Thêm 45 phút đêm cuối tuần để cày phim/đọc truyện.</span>
+                                    </div>
+                                </div>
+                                <div class="font-black bg-yellow-500 text-yellow-900 px-4 py-2 rounded-xl flex items-center gap-1 shadow-lg shrink-0">
+                                    50 <i class="fas fa-seedling"></i>
+                                </div>
+                            </div>
+
+                            <!-- 2: Bù Nhìn Thế Thân -->
+                            <div class="flex items-center justify-between p-4 bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-yellow-500/20 hover:border-yellow-500/50 transition-all cursor-pointer shadow-lg">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-3xl bg-black/20 p-2 rounded-lg">🌾</div>
+                                    <div>
+                                        <span class="font-bold text-white text-lg block">Bù Nhìn Thế Thân</span>
+                                        <span class="text-xs text-gray-300">Miễn toàn bộ việc đồng áng trong 1 ngày.</span>
+                                    </div>
+                                </div>
+                                <div class="font-black bg-yellow-500 text-yellow-900 px-4 py-2 rounded-xl flex items-center gap-1 shadow-lg shrink-0">
+                                    100 <i class="fas fa-seedling"></i>
+                                </div>
+                            </div>
+
+                            <!-- 3: Hạt Nếp Thần Lực -->
+                            <div class="flex items-center justify-between p-4 bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-yellow-500/20 hover:border-yellow-500/50 transition-all cursor-pointer shadow-lg">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-3xl bg-black/20 p-2 rounded-lg">⚡</div>
+                                    <div>
+                                        <span class="font-bold text-white text-lg block">Hạt Nếp Thần Lực</span>
+                                        <span class="text-xs text-gray-300">+1 tiếng dùng máy tính / PlayStation.</span>
+                                    </div>
+                                </div>
+                                <div class="font-black bg-yellow-500 text-yellow-900 px-4 py-2 rounded-xl flex items-center gap-1 shadow-lg shrink-0">
+                                    150 <i class="fas fa-seedling"></i>
+                                </div>
+                            </div>
+
+                            <!-- 4: Khuôn Đúc Bánh Chưng -->
+                            <div class="flex items-center justify-between p-4 bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-yellow-500/20 hover:border-yellow-500/50 transition-all cursor-pointer shadow-lg">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-3xl bg-black/20 p-2 rounded-lg">🍱</div>
+                                    <div>
+                                        <span class="font-bold text-white text-lg block">Khuôn Đúc Bánh Chưng</span>
+                                        <span class="text-xs text-gray-300">Được làm Bếp Trưởng ngày Chủ Nhật.</span>
+                                    </div>
+                                </div>
+                                <div class="font-black bg-yellow-500 text-yellow-900 px-4 py-2 rounded-xl flex items-center gap-1 shadow-lg shrink-0">
+                                    200 <i class="fas fa-seedling"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Real Rewards -->
+                        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl p-5 relative z-10 shadow-lg text-yellow-900 border border-yellow-300">
+                            <h4 class="font-black text-lg mb-2 flex items-center gap-2"><i class="fas fa-gift"></i> Quà Tặng Tích Lũy (Quy đổi)</h4>
+                            <p class="font-medium text-sm mb-3">Tích Hạt Gạo dài hạn để mua đồ chơi, sách truyện, skin game hoặc giày dép theo tỷ giá:</p>
+                            <div class="bg-white/90 rounded-xl p-3 flex justify-center items-center gap-4 text-lg font-black shadow-inner">
+                                <span class="flex items-center gap-1">10 <i class="fas fa-seedling text-green-600"></i></span>
+                                <i class="fas fa-equals text-gray-400"></i>
+                                <span class="text-orange-600">5.000 VNĐ</span>
+                            </div>
+                            <p class="text-xs mt-3 text-center opacity-90 italic">VD: Muốn mua đôi giày 500k ➔ Cần bán 1.000 Hạt Gạo.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-red-50 border-b border-red-100">
+        <div class="container mx-auto px-4 max-w-5xl">
+            <div class="bg-white rounded-[2rem] p-8 shadow-lg border border-red-200 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+                <!-- Danger Stripes bg -->
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-400 to-red-500" style="background-size: 50px 100%; animation: stripe 2s linear infinite;"></div>
+                
+                <div class="w-24 h-24 shrink-0 bg-red-100 rounded-full flex items-center justify-center text-red-500 border-4 border-red-50 relative z-10">
+                    <i class="fas fa-cloud-showers-heavy text-4xl"></i>
+                    <i class="fas fa-bolt absolute -bottom-2 -right-2 text-3xl text-yellow-500 drop-shadow-md animate-pulse"></i>
+                </div>
+                
+                <div class="flex-1 relative z-10 text-center md:text-left">
+                    <h3 class="text-3xl font-black text-red-700 mb-2">🚫 Luật Thiên Tai (Cơ chế phạt)</h3>
+                    <p class="text-gray-600 text-lg mb-6">Nông trại có thể gặp thiên tai, sâu bệnh nếu người nông dân lười biếng!</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-red-50 p-4 rounded-xl border border-red-100 flex items-start gap-3">
+                            <i class="fas fa-weed text-red-500 mt-1"></i>
+                            <div class="text-left">
+                                <strong class="text-gray-800 block">Bỏ hoang ruộng vườn</strong>
+                                <span class="text-sm text-gray-600">Quên làm việc đã nhận: <span class="text-red-600 font-bold">Phạt -20 Gạo</span> vào Kho.</span>
+                            </div>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-xl border border-red-100 flex items-start gap-3">
+                            <i class="fas fa-bug text-red-500 mt-1"></i>
+                            <div class="text-left">
+                                <strong class="text-gray-800 block">Làm dối, làm ẩu (Gạo mốc)</strong>
+                                <span class="text-sm text-gray-600">Phạt làm lại từ đầu. Dính hiệu ứng "Sâu Bệnh": Nhiệm vụ tiếp theo <span class="text-red-600 font-bold">chỉ nhận 50% Gạo</span>.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-white text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.03]">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="2" fill="#16a34a" /></pattern></defs>
+                <rect width="100%" height="100%" fill="url(#dots)" />
+            </svg>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-6">Gia Đình Bạn Đã Sẵn Sàng<br/>Mở Kho Thóc Chưa?</h2>
+            <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto font-medium">Một cách tuyệt vời để dạy con tuổi teen về giá trị sức lao động, quản lý tài chính và tinh thần trách nhiệm.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button class="bg-green-600 hover:bg-green-700 text-white font-bold text-lg py-4 px-10 rounded-full shadow-xl shadow-green-200 transform hover:-translate-y-1 transition-all">
+                    <i class="fas fa-file-pdf mr-2"></i> Tải Mẫu Kho Thóc (PDF)
+                </button>
+                <button class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold text-lg py-4 px-10 rounded-full shadow-xl shadow-yellow-200 transform hover:-translate-y-1 transition-all">
+                    <i class="fas fa-print mr-2"></i> In Bảng Nhiệm Vụ
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t-4 border-green-600">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center items-center gap-3 mb-6 opacity-90">
+                <i class="fas fa-wheat-awn text-3xl text-yellow-500"></i>
+                <span class="text-2xl font-black text-white tracking-tight">Kho Thóc Gia Đình</span>
+            </div>
+            <p class="mb-6 max-w-lg mx-auto">Mô hình Gamification giúp việc nhà trở thành trò chơi quản lý nông trại thú vị, rèn luyện tính tự lập cho thanh thiếu niên.</p>
+            <div class="flex justify-center space-x-6">
+                <a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-facebook text-2xl"></i></a>
+                <a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-tiktok text-2xl"></i></a>
+                <a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-youtube text-2xl"></i></a>
+            </div>
+            <p class="mt-8 text-sm opacity-50">&copy; 2024 Kho Thóc Gia Đình. Thiết kế với ❤️ để gắn kết mọi nhà.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple Header Scroll Effect
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('shadow-lg', 'py-2');
+                header.classList.remove('py-3');
+            } else {
+                header.classList.remove('shadow-lg', 'py-2');
+                header.classList.add('py-3');
+            }
+        });
+    </script>
+</body>
+</html>

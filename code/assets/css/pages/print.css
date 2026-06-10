@@ -1,0 +1,199 @@
+/* Print page layout */
+.container { max-width: 1150px; margin: 0 auto; padding: 0 2rem; }
+section { padding: 4rem 0; }
+.section-header { text-align: center; margin-bottom: 3rem; }
+.section-label { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: .85rem; letter-spacing: .15em; text-transform: uppercase; color: var(--green-mid); margin-bottom: .5rem; }
+.section-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; color: var(--green-deep); line-height: 1.2; }
+
+/* 1. HERO INFOGRAPHIC */
+    .hero { background: linear-gradient(150deg, var(--green-deep) 0%, #2d6a4f 50%, #1b4332 100%); padding: 8rem 0 5rem; text-align: center; color: white; position: relative; }
+    .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; margin-bottom: 1rem; line-height: 1.1; }
+    .hero h1 span { color: var(--amber); }
+    .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto 3rem; }
+    
+    .infographic-flow { display: flex; justify-content: center; align-items: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 2rem; }
+    .info-step { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); padding: 1.5rem; border-radius: 1.5rem; width: 220px; text-align: center; position: relative; }
+    .info-icon { font-size: 3rem; margin-bottom: 1rem; display: inline-block; background: #fff; width: 80px; height: 80px; line-height: 80px; border-radius: 50%; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+    .info-title { font-family: 'Baloo 2'; font-weight: 800; font-size: 1.2rem; color: #fff; }
+    .info-arrow { color: var(--amber); font-size: 2rem; }
+    @media (max-width: 992px) { .infographic-flow { flex-direction: column; } .info-arrow { transform: rotate(90deg); } }
+
+    /* 2. BOARD GAME RANKS */
+    .ranks-section { background: #fff; }
+    .ranks-track { display:flex; gap:0; background: var(--cream); border-radius: var(--radius-card); border: 2px solid #e5e7eb; overflow: hidden; box-shadow: var(--shadow-soft); flex-wrap: wrap;}
+    .rank-item { flex:1; min-width: 180px; padding: 2rem 1rem; text-align:center; position:relative; border-right: 2px solid #e5e7eb; }
+    .rank-item:last-child { border-right: none; }
+    .rank-item.active { background: linear-gradient(135deg, #f0faf4, #fffbeb); }
+    .rank-emoji { font-size:2.8rem; margin-bottom:.8rem; }
+    .rank-name { font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.2rem; color:var(--green-deep); }
+    .rank-exp  { font-size:.9rem; color:var(--text-muted); font-weight: 600; margin-bottom: .8rem;}
+    .rank-badge { display:inline-block; font-size:.8rem; font-weight:700; padding:.4rem .8rem; border-radius:1rem; border: 1px solid currentColor;}
+    @media (max-width: 768px) { .rank-item { border-right: none; border-bottom: 2px solid #e5e7eb; } }
+
+    /* 3. CONVERSION TABLE */
+    .conversion-section { background: var(--cream); }
+    .conv-box { background: #fff; border-radius: var(--radius-card); padding: 3rem; box-shadow: var(--shadow-card); max-width: 800px; margin: 0 auto; border: 2px solid var(--amber-light); text-align: center;}
+    .conv-table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+    .conv-table th { background: linear-gradient(135deg, var(--green-deep), var(--green-mid)); color: #fff; font-family: 'Baloo 2'; font-size: 1.2rem; padding: 1rem; }
+    .conv-table th:first-child { border-radius: 1rem 0 0 0; }
+    .conv-table th:last-child { border-radius: 0 1rem 0 0; }
+    .conv-table td { padding: 1.2rem 1rem; font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid #e5e7eb; color: var(--text-main); }
+    .conv-table tr:last-child td { border-bottom: none; }
+    .conv-table tr:hover td { background: #f8fafc; }
+    .val-g { color: #b45309; font-family: 'Baloo 2'; font-size: 1.5rem; }
+    .val-v { color: var(--green-deep); font-family: 'Baloo 2'; font-size: 1.5rem; }
+
+    /* 4. TASKS TABLE (MẪU) */
+    .tasks-section { background: #fff; }
+    .task-group { margin-bottom: 2.5rem; }
+    .task-group-title { display: flex; align-items: center; gap: .8rem; font-family: 'Baloo 2'; font-size: 1.5rem; font-weight: 800; color: var(--green-deep); margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 2px solid #e5e7eb; }
+    .tasks-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:1rem; }
+    .task-row { background:var(--cream); border-radius:1rem; padding:1rem; display:flex; align-items:center; gap:1rem; border:2px solid transparent; transition: transform .2s; }
+    .task-row:hover { border-color:var(--green-light); transform:translateY(-2px); background: #fff; box-shadow: var(--shadow-soft); }
+    .task-row .t-icon { font-size:1.8rem; width:2.5rem; text-align:center; }
+    .task-row .t-info { flex:1; }
+    .task-row .t-name { font-weight:800; font-size:1rem; color:var(--text-main); }
+    .task-row .t-sub  { font-size:.85rem; color:var(--text-muted); }
+    .task-row .t-reward { display:flex; flex-direction:column; align-items:flex-end; gap:3px; font-family:'Baloo 2',sans-serif; flex-shrink:0; }
+    .val-grain { color:#b45309; background:var(--amber-light); border-radius:1rem; padding:.15rem .6rem; white-space:nowrap; font-weight: 800; font-size: .95rem;}
+    .val-exp   { color:#065f46; background:#d1fae5; border-radius:1rem; padding:.15rem .6rem; white-space:nowrap; font-weight: 700; font-size: .75rem;}
+    .task-row.epic { background: linear-gradient(135deg, #fefce8 0%, #fff 100%); border-color: #fde047; }
+    .task-row.epic .t-name { color: #854d0e; font-weight: 900; }
+
+    /* 5. REWARDS (LONG TERM) */
+    .rewards-section { background: var(--cream); }
+    .filter-tabs { display:flex; gap:.7rem; flex-wrap:wrap; justify-content: center; margin-bottom:2.5rem; }
+    .tab-btn { background:#fff; border:2px solid #e5e7eb; color:var(--text-muted); font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.9rem; padding:.5rem 1.2rem; border-radius:2rem; cursor:pointer; transition: all .2s; }
+    .tab-btn:hover, .tab-btn.active { background:var(--green-deep); border-color:var(--green-deep); color:#fff; }
+    
+    .rewards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.5rem; }
+    .reward-card { background:#fff; border-radius:var(--radius-card); border:2px solid #e5e7eb; overflow:hidden; box-shadow:var(--shadow-soft); display:flex; flex-direction:column; }
+    .rw-top { padding:1.5rem; border-bottom:1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: flex-start;}
+    .rw-emoji { font-size:3rem; line-height: 1; }
+    .rw-cost { background:var(--amber-light); color:var(--earth); font-family:'Baloo 2'; font-weight:800; padding:.3rem .8rem; border-radius:1rem; }
+    .rw-body { padding:1.5rem; flex:1; }
+    .rw-name { font-size:1.2rem; font-weight:900; color:var(--green-deep); margin-bottom:1rem; }
+    .tier-list { display:flex; flex-direction:column; gap:.6rem; margin-bottom: 1rem;}
+    .tier-item { display:flex; align-items:flex-start; gap:.8rem; background:var(--cream); border-radius:.8rem; padding:.8rem; border-left:3px solid var(--green-light); }
+    .tier-cost { font-family:'Baloo 2'; font-weight:900; font-size:.85rem; background:#fff; color:var(--green-deep); padding:.2rem .6rem; border-radius:1rem; flex-shrink:0; border: 1px solid #e5e7eb;}
+    .tier-desc { font-size:.85rem; color:var(--text-muted); line-height:1.5; }
+    .rw-why { background:#f0faf4; border-radius:1rem; padding:.8rem 1rem; border-left:3px solid var(--green-mid); font-size:.85rem; color:var(--text-muted); line-height:1.5; margin-bottom: 1rem; }
+    .rw-why strong { color:var(--green-deep); font-weight:800; }
+    .rw-tags { display: flex; gap: .5rem; }
+    .rw-tag { font-size:.75rem; font-weight:700; padding:.2rem .8rem; border-radius:1rem; background:#e0f2fe; color:#0369a1; }
+
+    /* 6. PRIVILEGE CARDS (PRINT & CUT) */
+    .cards-section { background: #fff; }
+    .print-hint { background: linear-gradient(135deg, var(--green-deep), #1b4332); color: #fff; padding: 1.5rem 2rem; border-radius: 1rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; box-shadow: var(--shadow-card); }
+    .print-hint h4 { font-size: 1.3rem; margin-bottom: .2rem; }
+    
+    .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:2rem; }
+    
+    /* STYLE CUT-OUT CARDS */
+    .cut-card { 
+      background: #fff; 
+      border: 3px dashed #9ca3af; /* Dashed line for cutting */
+      border-radius: 1rem; 
+      padding: 2rem 1.5rem; 
+      text-align: center; 
+      position: relative;
+      /* Background patterns to make it look like a ticket */
+      background-image: radial-gradient(circle at top left, transparent 15px, #fff 16px), radial-gradient(circle at top right, transparent 15px, #fff 16px), radial-gradient(circle at bottom left, transparent 15px, #fff 16px), radial-gradient(circle at bottom right, transparent 15px, #fff 16px);
+      background-size: 51% 51%; background-repeat: no-repeat;
+      background-position: top left, top right, bottom left, bottom right;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .cut-icon { position: absolute; top: -12px; left: 20px; font-size: 1.2rem; color: #6b7280; background: #fff; padding: 0 5px;}
+    
+    .cc-emoji { font-size:3.5rem; margin-bottom:1rem; line-height: 1; }
+    .cc-name { font-family: 'Baloo 2'; font-size:1.3rem; font-weight:900; margin-bottom:.5rem; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px;}
+    .cc-cost { display:inline-block; font-family:'Baloo 2'; font-weight:800; font-size:1rem; padding:.3rem 1rem; border-radius:2rem; margin-bottom:1rem; border: 2px solid currentColor;}
+    .cc-desc { font-size:.9rem; line-height:1.6; color: var(--text-muted); font-weight: 600; padding-top: 1rem; border-top: 1px solid #e5e7eb;}
+    .cc-valid { position: absolute; bottom: 10px; width: 100%; left: 0; font-size: 0.7rem; color: #9ca3af; text-transform: uppercase; font-weight: bold;}
+
+    /* Card Themes */
+    .theme-blue .cc-name { color: #1e3a8a; } .theme-blue .cc-cost { color: #2563eb; background: #eff6ff;} .theme-blue { border-color: #93c5fd; }
+    .theme-orange .cc-name { color: #7c2d12; } .theme-orange .cc-cost { color: #ea580c; background: #fff7ed;} .theme-orange { border-color: #fdba74; }
+    .theme-purple .cc-name { color: #581c87; } .theme-purple .cc-cost { color: #9333ea; background: #faf5ff;} .theme-purple { border-color: #d8b4fe; }
+    .theme-red .cc-name { color: #7f1d1d; } .theme-red .cc-cost { color: #dc2626; background: #fef2f2;} .theme-red { border-color: #fca5a5; }
+    .theme-green .cc-name { color: #14532d; } .theme-green .cc-cost { color: #16a34a; background: #f0fdf4;} .theme-green { border-color: #86efac; }
+    .theme-yellow .cc-name { color: #713f12; } .theme-yellow .cc-cost { color: #ca8a04; background: #fefce8;} .theme-yellow { border-color: #fde047; }
+
+    /* FOOTER */
+
+    /* =========================================
+       7. PRINT MODE (A4 Landscape / A3 Optimal)
+       ========================================= */
+    @media print {
+      @page {
+        size: A4 landscape; /* Ưu tiên in ngang cho đẹp */
+        margin: 10mm 15mm;
+      }
+      
+      /* Tắt toàn bộ animation & background overlay để in sạch */
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+      body::before { display: none !important; }
+      
+      /* Bật in màu nền (đối với Chrome/Edge) */
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        background: #fff !important;
+      }
+
+      /* Ẩn các thành phần không cần thiết khi in */
+      .nav, footer, .print-hint, .filter-tabs, .hero p, .hero h1 span { 
+        display: none !important; 
+      }
+      
+      /* Reset Padding & Margin cho Print */
+      section { padding: 1.5rem 0 !important; }
+      .container { max-width: 100% !important; padding: 0 !important; }
+      
+      /* Chống cắt vỡ Layout (Page Breaks) */
+      .ranks-section, .conversion-section, .tasks-section, .rewards-section, .cards-section {
+        page-break-inside: auto;
+      }
+      .rank-item, .task-group, .reward-card, .cut-card, .conv-box, .info-step {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      
+      /* Thu gọn Hero */
+      .hero { 
+        padding: 1rem 0 !important; 
+        background: none !important; 
+        color: var(--green-deep) !important;
+        border-bottom: 2px solid #000;
+        margin-bottom: 1rem;
+      }
+      .hero h1 { font-size: 24pt !important; color: #000 !important;}
+      .info-step { 
+        border-color: var(--green-deep) !important; 
+        color: #000 !important; 
+        padding: 1rem !important;
+      }
+      .info-title { color: var(--green-deep) !important; }
+      
+      /* Bảng quy đổi */
+      .conv-box { border: 1px solid #000 !important; box-shadow: none !important; padding: 1rem !important; }
+      .conv-table th { background: #e5e7eb !important; color: #000 !important; }
+      
+      /* Lưới thẻ in */
+      .cards-grid { 
+        grid-template-columns: repeat(3, 1fr) !important; /* Ép 3 cột cho A4 ngang */
+        gap: 10mm !important;
+      }
+      .cut-card {
+        border: 1.5pt dashed #000 !important; /* Chuyển nét đứt thành đen rõ ràng để dễ cắt */
+        box-shadow: none !important;
+      }
+      .cut-icon { color: #000 !important; }
+
+      .rewards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }

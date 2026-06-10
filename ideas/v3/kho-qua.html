@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kho Quà Tặng – Kho Thóc Gia Đình</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --green-deep:  #1a5c38;
+      --green-mid:   #2d8a55;
+      --green-light: #4abe7a;
+      --amber:       #f5a623;
+      --amber-light: #fde68a;
+      --cream:       #fdf8ee;
+      --earth:       #7c4b1e;
+      --earth-light: #c47d3a;
+      --text-main:   #1e1e1e;
+      --text-muted:  #6b7280;
+      --radius-card: 1.5rem;
+      --shadow-soft: 0 4px 24px rgba(0,0,0,0.07);
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(--text-main); overflow-x:hidden; }
+    h1,h2,h3,h4,h5 { font-family: 'Baloo 2', sans-serif; }
+
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity:.4;
+    }
+
+    /* ─ NAV ─ */
+    .nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      background:rgba(253,248,238,.92); backdrop-filter:blur(12px);
+      border-bottom:2px solid rgba(245,166,35,.2);
+      padding:.9rem 2rem;
+      display:flex; align-items:center; justify-content:space-between;
+      transition:box-shadow .3s;
+    }
+    .nav.scrolled { box-shadow:0 2px 20px rgba(0,0,0,.08); }
+    .nav-logo { display:flex; align-items:center; gap:.7rem; text-decoration:none; font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.3rem; color:var(--green-deep); }
+    .nav-logo .logo-icon { width:2.4rem; height:2.4rem; background:linear-gradient(135deg,var(--green-mid),var(--amber)); border-radius:.7rem; display:grid; place-items:center; font-size:1.1rem; box-shadow:0 2px 8px rgba(45,138,85,.3); }
+    .nav-links { display:flex; gap:2rem; list-style:none; }
+    .nav-links a { text-decoration:none; font-weight:700; font-size:.9rem; color:var(--text-muted); transition:color .2s; }
+    .nav-links a:hover { color:var(--green-mid); }
+    .nav-links a.active { color:var(--green-deep); }
+    .nav-cta { background:var(--green-deep); color:#fff !important; padding:.5rem 1.3rem; border-radius:2rem; font-weight:800 !important; font-size:.88rem !important; transition:background .2s, transform .2s !important; }
+    .nav-cta:hover { background:var(--green-mid) !important; transform:translateY(-1px); }
+    @media(max-width:768px){ .nav-links { display:none; } }
+
+    /* ─ PAGE HERO ─ */
+    .page-hero {
+      background: linear-gradient(135deg, #92400e 0%, #b45309 40%, var(--amber) 100%);
+      padding: 9rem 2rem 5rem;
+      text-align:center; position:relative; overflow:hidden;
+    }
+    .page-hero::before {
+      content:'🎁'; font-size:20rem; opacity:.06;
+      position:absolute; right:-2rem; top:-2rem; pointer-events:none; line-height:1;
+    }
+    .page-hero .badge {
+      display:inline-block;
+      background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.35);
+      color:var(--amber-light); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem;
+      letter-spacing:.1em; text-transform:uppercase;
+      padding:.4rem 1.2rem; border-radius:2rem; margin-bottom:1.2rem;
+    }
+    .page-hero h1 { font-size:clamp(2rem,6vw,3.8rem); font-weight:900; color:#fff; margin-bottom:1rem; }
+    .page-hero p  { color:rgba(255,255,255,.8); font-size:1.05rem; max-width:560px; margin:0 auto; line-height:1.7; }
+
+    /* wave */
+    .wave svg { display:block; }
+
+    /* ─ LAYOUT ─ */
+    .container { max-width:1100px; margin:0 auto; }
+    section { padding:5rem 2rem; }
+    .section-label { font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.78rem; letter-spacing:.15em; text-transform:uppercase; color:var(--green-mid); margin-bottom:.5rem; }
+    .section-title { font-size:clamp(1.8rem,4vw,2.6rem); font-weight:900; color:var(--green-deep); margin-bottom:.8rem; line-height:1.2; }
+    .section-sub   { font-size:1rem; color:var(--text-muted); max-width:560px; line-height:1.7; }
+
+    /* ─ WHY SECTION ─ */
+    .why { background:#fff; }
+    .why-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:2.5rem;
+      align-items:start;
+    }
+    @media(max-width:640px){ .why-grid { grid-template-columns:1fr; } }
+
+    .why-text p { font-size:.98rem; color:var(--text-muted); line-height:1.75; margin-bottom:1rem; }
+    .why-text strong { color:var(--green-deep); }
+
+    .why-principles { display:flex; flex-direction:column; gap:1rem; }
+    .principle {
+      background:var(--cream); border-left:4px solid var(--green-mid);
+      border-radius:0 1rem 1rem 0; padding:1rem 1.2rem;
+      display:flex; gap:.8rem; align-items:flex-start;
+    }
+    .principle .p-icon { font-size:1.4rem; line-height:1; }
+    .principle h5 { font-size:.95rem; font-weight:800; color:var(--green-deep); margin-bottom:.2rem; }
+    .principle p  { font-size:.85rem; color:var(--text-muted); line-height:1.55; }
+
+    /* ─ FILTER TABS ─ */
+    .filter-section { background:var(--cream); }
+    .filter-tabs {
+      display:flex; gap:.7rem; flex-wrap:wrap; margin-bottom:2.5rem;
+    }
+    .tab-btn {
+      background:#fff; border:2px solid #e5e7eb;
+      color:var(--text-muted); font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.88rem;
+      padding:.45rem 1.1rem; border-radius:2rem; cursor:pointer;
+      transition: all .2s;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background:var(--green-deep); border-color:var(--green-deep);
+      color:#fff;
+    }
+
+    /* ─ LONG TERM REWARDS ─ */
+    .rewards-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+      gap:1.5rem;
+    }
+
+    .reward-card {
+      background:#fff; border-radius:var(--radius-card);
+      border:2px solid #e5e7eb; overflow:hidden;
+      box-shadow:var(--shadow-soft);
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      display:flex; flex-direction:column;
+    }
+    .reward-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-card); border-color:var(--amber); }
+
+    .reward-card-top {
+      padding:1.8rem 1.8rem 1rem;
+      border-bottom:1px solid #f3f4f6;
+    }
+    .reward-card-emoji { font-size:2.8rem; margin-bottom:.8rem; }
+    .reward-card-name { font-size:1.1rem; font-weight:900; color:var(--green-deep); margin-bottom:.3rem; }
+    .reward-cost {
+      display:inline-flex; align-items:center; gap:.3rem;
+      background:var(--amber-light); color:var(--earth);
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.9rem;
+      padding:.3rem .8rem; border-radius:1rem;
+    }
+
+    .reward-card-body { padding:1rem 1.8rem 1.8rem; flex:1; display:flex; flex-direction:column; gap:1rem; }
+    .reward-desc { font-size:.9rem; color:var(--text-muted); line-height:1.65; }
+
+    .reward-why {
+      background:#f0faf4; border-radius:1rem; padding:.9rem 1rem;
+      border-left:3px solid var(--green-mid);
+    }
+    .reward-why-label {
+      font-size:.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--green-mid); margin-bottom:.3rem;
+    }
+    .reward-why p { font-size:.83rem; color:var(--text-muted); line-height:1.55; }
+
+    .reward-tag {
+      display:inline-block; font-size:.72rem; font-weight:700; padding:.2rem .6rem;
+      border-radius:1rem; background:#e0f2fe; color:#0369a1;
+    }
+    .reward-tag.family  { background:#f0fdf4; color:#166534; }
+    .reward-tag.freedom { background:#fef3c7; color:#92400e; }
+    .reward-tag.food    { background:#fdf4ff; color:#7e22ce; }
+    .reward-tag.social  { background:#fff1f2; color:#be123c; }
+    .reward-tag.learning{ background:#eff6ff; color:#1d4ed8; }
+
+    /* ─ TIER LIST ─ */
+    .tier-list { display:flex; flex-direction:column; gap:.5rem; margin-top:.2rem; }
+    .tier-item {
+      display:flex; align-items:flex-start; gap:.75rem;
+      background:var(--cream); border-radius:.9rem;
+      padding:.7rem 1rem;
+      border-left:3px solid #e5e7eb;
+      transition: border-color .2s, background .2s;
+    }
+    .tier-item:hover { background:#f0fdf4; border-left-color:var(--green-mid); }
+    .tier-cost {
+      font-family:'Baloo 2',sans-serif; font-weight:900; font-size:.8rem;
+      background:var(--amber-light); color:var(--earth);
+      padding:.2rem .6rem; border-radius:.8rem;
+      white-space:nowrap; flex-shrink:0; line-height:1.7;
+    }
+    .tier-desc { font-size:.85rem; color:var(--text-muted); line-height:1.55; }
+    .tier-desc strong { color:var(--green-deep); font-weight:800; }
+
+    /* ─ POWER CARDS ─ */
+    .power-section { background:#fff; }
+    .power-intro {
+      display:flex; gap:2rem; align-items:center; margin-bottom:3rem; flex-wrap:wrap;
+    }
+    .power-intro-text { flex:1; }
+    .power-intro-text p { font-size:.95rem; color:var(--text-muted); line-height:1.7; margin-top:.5rem; }
+    .power-callout {
+      background:linear-gradient(135deg,var(--green-deep),#1b4332);
+      color:#fff; border-radius:var(--radius-card); padding:1.5rem 2rem;
+      min-width:260px; text-align:center;
+      box-shadow:0 8px 24px rgba(26,92,56,.3);
+    }
+    .power-callout p { font-size:.85rem; opacity:.75; margin-top:.3rem; }
+    .power-callout strong { font-family:'Baloo 2',sans-serif; font-size:1.1rem; }
+
+    .cards-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+      gap:1.3rem;
+    }
+
+    .power-card {
+      border-width:3px; border-style:solid;
+      border-radius:1.3rem; padding:1.8rem 1.4rem;
+      text-align:center;
+      position:relative; overflow:hidden;
+      transition: transform .25s, box-shadow .25s;
+      cursor:pointer;
+    }
+    .power-card:hover { transform:rotate(1deg) translateY(-6px); box-shadow:var(--shadow-card); }
+    .power-card::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:4px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+      animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
+
+    .power-card .pc-emoji { font-size:3rem; margin-bottom:.7rem; }
+    .power-card .pc-name  { font-size:1rem; font-weight:900; margin-bottom:.6rem; }
+    .power-card .pc-cost  {
+      display:inline-block;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.88rem;
+      padding:.25rem .8rem; border-radius:1rem;
+      margin-bottom:.8rem;
+    }
+    .power-card .pc-desc  { font-size:.8rem; line-height:1.55; font-style:italic; }
+
+    /* card color themes */
+    .pc-yellow { background:#fffbeb; border-color:#f59e0b; }
+    .pc-yellow .pc-name { color:#92400e; }
+    .pc-yellow .pc-cost { background:#fde68a; color:#78350f; }
+    .pc-yellow .pc-desc { color:#a16207; }
+
+    .pc-green { background:#f0fdf4; border-color:#22c55e; }
+    .pc-green .pc-name  { color:#14532d; }
+    .pc-green .pc-cost  { background:#bbf7d0; color:#14532d; }
+    .pc-green .pc-desc  { color:#166534; }
+
+    .pc-blue { background:#eff6ff; border-color:#3b82f6; }
+    .pc-blue .pc-name   { color:#1e3a8a; }
+    .pc-blue .pc-cost   { background:#bfdbfe; color:#1e3a8a; }
+    .pc-blue .pc-desc   { color:#1d4ed8; }
+
+    .pc-red { background:#fff1f2; border-color:#f43f5e; }
+    .pc-red .pc-name    { color:#881337; }
+    .pc-red .pc-cost    { background:#fecdd3; color:#881337; }
+    .pc-red .pc-desc    { color:#be123c; }
+
+    .pc-purple { background:#faf5ff; border-color:#a855f7; }
+    .pc-purple .pc-name  { color:#581c87; }
+    .pc-purple .pc-cost  { background:#e9d5ff; color:#581c87; }
+    .pc-purple .pc-desc  { color:#7e22ce; }
+
+    .pc-orange { background:#fff7ed; border-color:#f97316; }
+    .pc-orange .pc-name  { color:#7c2d12; }
+    .pc-orange .pc-cost  { background:#fed7aa; color:#7c2d12; }
+    .pc-orange .pc-desc  { color:#c2410c; }
+
+    /* print hint */
+    .print-hint {
+      text-align:center; margin-top:2rem; font-size:.88rem; color:var(--text-muted); font-style:italic;
+    }
+    .print-hint button {
+      background:var(--green-deep); color:#fff;
+      border:none; cursor:pointer;
+      font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.88rem;
+      padding:.5rem 1.3rem; border-radius:2rem; margin-left:.5rem;
+      transition:background .2s;
+    }
+    .print-hint button:hover { background:var(--green-mid); }
+
+    /* ─ CTA ─ */
+    .cta-section { background:linear-gradient(135deg,var(--green-deep) 0%,#1b4332 100%); text-align:center; padding:5rem 2rem; position:relative; overflow:hidden; }
+    .cta-section::before { content:'🌾'; font-size:18rem; opacity:.04; position:absolute; right:-3rem; top:-3rem; pointer-events:none; line-height:1; }
+    .cta-section h2 { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:900; color:#fff; margin-bottom:1rem; }
+    .cta-section p  { color:rgba(255,255,255,.75); font-size:1rem; max-width:500px; margin:0 auto 2rem; line-height:1.7; }
+    .cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+    .btn-amber  { background:var(--amber); color:var(--earth); padding:.8rem 2rem; border-radius:3rem; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem; text-decoration:none; transition:transform .2s, box-shadow .2s; display:inline-flex; align-items:center; gap:.5rem; }
+    .btn-amber:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(245,166,35,.5); }
+    .btn-white  { background:#fff; color:var(--green-deep); padding:.8rem 2rem; border-radius:3rem; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem; text-decoration:none; transition:transform .2s, box-shadow .2s; display:inline-flex; align-items:center; gap:.5rem; }
+    .btn-white:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.12); }
+
+    /* ─ FOOTER ─ */
+    footer { background:#0d2b1a; color:rgba(255,255,255,.55); padding:3rem 2rem; border-top:3px solid var(--green-mid); }
+    .footer-inner { max-width:1100px; margin:0 auto; display:flex; gap:2rem; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .footer-brand a { text-decoration:none; font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.2rem; color:#fff; display:flex; align-items:center; gap:.5rem; }
+    .footer-nav { display:flex; gap:1.5rem; flex-wrap:wrap; }
+    .footer-nav a { color:rgba(255,255,255,.55); text-decoration:none; font-size:.88rem; font-weight:600; transition:color .2s; }
+    .footer-nav a:hover { color:var(--amber); }
+    .footer-copy { font-size:.8rem; opacity:.5; }
+
+    /* scroll reveal */
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    @media(max-width:768px){ section { padding:3.5rem 1.2rem; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav-logo">
+    <span class="logo-icon">🌾</span>
+    Kho Thóc Gia Đình
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Trang Chủ</a></li>
+    <li><a href="kho-qua.html" class="active">Kho Quà</a></li>
+    <li><a href="quy-doi.html">Quy Đổi</a></li>
+    <li><a href="quy-doi.html" class="nav-cta">🌾 Tính Gạo</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="badge">🎁 Kho Phần Thưởng</div>
+  <h1>Kho Quà Tặng</h1>
+  <p>Hai loại phần thưởng — thẻ bài đặc quyền dùng ngay và quà tặng tích lũy dài hạn. Mỗi món đều có ý nghĩa giáo dục riêng.</p>
+</div>
+<div class="wave" style="background:var(--cream);">
+  <svg viewBox="0 0 1200 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:50px;display:block;">
+    <path d="M0,70 L0,25 Q300,0 600,25 Q900,50 1200,15 L1200,70 Z" fill="#b45309"/>
+  </svg>
+</div>
+
+<!-- WHY THIS REWARD SYSTEM -->
+<section class="why" id="why">
+  <div class="container">
+    <p class="section-label reveal">💡 Triết lý phần thưởng</p>
+    <h2 class="section-title reveal">Tại Sao Hệ Thống Quà Này Hoạt Động?</h2>
+
+    <div class="why-grid">
+      <div class="why-text reveal">
+        <p>Hầu hết ba mẹ thưởng con bằng <strong>tiền mặt hoặc quà vật chất</strong> — nhưng cách này dạy con rằng <em>việc nhà = dịch vụ kiếm tiền</em>, không phải trách nhiệm gia đình.</p>
+        <p>Hệ thống Kho Thóc thiết kế phần thưởng theo <strong>3 tầng tư duy</strong>: đặc quyền tức thì (thỏa mãn ngắn hạn), quà tặng trải nghiệm (giá trị kỷ niệm), và quy đổi tiền thật (kỹ năng tài chính).</p>
+        <p>Mỗi món quà trong kho đều được chọn lọc để <strong>trao quyền tự chủ cho con</strong> — không phải đồ chơi thụ động, mà là trải nghiệm, kỷ niệm và tự do có giới hạn.</p>
+      </div>
+      <div class="why-principles reveal">
+        <div class="principle">
+          <span class="p-icon">🎯</span>
+          <div>
+            <h5>Phần thưởng = Trải nghiệm, không chỉ đồ vật</h5>
+            <p>Kỷ niệm "bữa ăn nhà hàng con tự trả" sẽ đáng nhớ hơn bất kỳ món đồ chơi nào.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <span class="p-icon">⏳</span>
+          <div>
+            <h5>Dạy cân đối ngắn hạn vs dài hạn</h5>
+            <p>Con học cách chọn: đổi thẻ bài ngay hôm nay, hay nhịn để tích đủ cho mục tiêu lớn hơn?</p>
+          </div>
+        </div>
+        <div class="principle">
+          <span class="p-icon">🤝</span>
+          <div>
+            <h5>Trao quyền tự chủ có kiểm soát</h5>
+            <p>Mỗi đặc quyền đều có ranh giới rõ ràng — con được tự do trong khuôn khổ an toàn.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <span class="p-icon">❤️</span>
+          <div>
+            <h5>Gắn kết gia đình qua "lễ đổi thưởng"</h5>
+            <p>Biến mỗi lần đổi Gạo thành một sự kiện nhỏ để tôn vinh nỗ lực của con.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LONG TERM REWARDS -->
+<section class="filter-section" id="long-term">
+  <div class="container">
+    <p class="section-label reveal">⭐ Phần thưởng tích lũy</p>
+    <h2 class="section-title reveal">Quà Tặng Dài Hạn — Mục Tiêu Đáng Mơ Ước</h2>
+    <p class="section-sub reveal">Những món quà này yêu cầu tích lũy kiên nhẫn — nhưng đổi lại là kỷ niệm và giá trị thực sự.</p>
+
+    <div class="filter-tabs reveal" style="margin-top:1.5rem">
+      <button class="tab-btn active" onclick="filterCards('all', this)">Tất Cả</button>
+      <button class="tab-btn" onclick="filterCards('family', this)">🏠 Gia Đình</button>
+      <button class="tab-btn" onclick="filterCards('freedom', this)">🗺️ Tự Do</button>
+      <button class="tab-btn" onclick="filterCards('food', this)">🍜 Ăn Uống</button>
+      <button class="tab-btn" onclick="filterCards('social', this)">👫 Bạn Bè</button>
+      <button class="tab-btn" onclick="filterCards('learning', this)">📚 Học Hỏi</button>
+    </div>
+
+    <div class="rewards-grid" id="rewardsGrid">
+
+      <div class="reward-card" data-tag="learning">
+        <div class="reward-card-top">
+          <div class="reward-card-emoji">📚</div>
+          <div class="reward-card-name">Gói "Mở Mang Bờ Cõi"</div>
+          <span class="reward-cost">800 – 2.400 🌾</span>
+        </div>
+        <div class="reward-card-body">
+          <div class="tier-list">
+            <div class="tier-item">
+              <span class="tier-cost">800 🌾</span>
+              <span class="tier-desc"><strong>1 cuốn truyện tranh</strong> do con tự chọn (manga, comic...)</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">1.600 🌾</span>
+              <span class="tier-desc"><strong>1 cuốn tiểu thuyết hoặc sách thiếu nhi</strong> bìa cứng theo sở thích</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">2.400 🌾</span>
+              <span class="tier-desc"><strong>1 bộ sách (2–3 cuốn)</strong> hoặc sách khoa học / kỹ năng cao cấp hơn</span>
+            </div>
+          </div>
+          <div class="reward-why">
+            <div class="reward-why-label">Ý nghĩa giáo dục</div>
+            <p>Con học cách đặt mục tiêu học tập và nhận ra rằng đầu tư vào tri thức có giá trị hơn những thứ chóng tàn.</p>
+          </div>
+          <span class="reward-tag learning">📚 Học Hỏi</span>
+        </div>
+      </div>
+
+      <div class="reward-card" data-tag="food">
+        <div class="reward-card-top">
+          <div class="reward-card-emoji">🍲</div>
+          <div class="reward-card-name">Mâm Cỗ "Mừng Vụ Mùa"</div>
+          <span class="reward-cost">1.200 – 1.600 🌾</span>
+        </div>
+        <div class="reward-card-body">
+          <div class="tier-list">
+            <div class="tier-item">
+              <span class="tier-cost">1.200 🌾</span>
+              <span class="tier-desc"><strong>1 món ăn yêu thích</strong> do con đặt — gà rán, pizza, bún bò... Bố mẹ nấu hoặc đặt ship</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">1.600 🌾</span>
+              <span class="tier-desc"><strong>Bữa ăn thịnh soạn cả nhà</strong> — con làm thực đơn trưởng, chọn tối đa 3 món, bố mẹ phục vụ</span>
+            </div>
+          </div>
+          <div class="reward-why">
+            <div class="reward-why-label">Ý nghĩa giáo dục</div>
+            <p>Dạy con hiểu giá trị của lao động nội trợ, đồng thời tạo kỷ niệm bữa cơm gia đình đáng nhớ.</p>
+          </div>
+          <span class="reward-tag food">🍜 Ăn Uống</span>
+        </div>
+      </div>
+
+      <div class="reward-card" data-tag="social">
+        <div class="reward-card-top">
+          <div class="reward-card-emoji">🏰</div>
+          <div class="reward-card-name">Lệnh Bài "Mở Cổng Thành"</div>
+          <span class="reward-cost">2.400 – 4.000 🌾</span>
+        </div>
+        <div class="reward-card-body">
+          <div class="tier-list">
+            <div class="tier-item">
+              <span class="tier-cost">2.400 🌾</span>
+              <span class="tier-desc"><strong>Mời 2 bạn</strong> đến nhà chơi buổi chiều cuối tuần (game, xem phim, ăn vặt)</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">3.200 🌾</span>
+              <span class="tier-desc"><strong>Mời 4 bạn</strong> đến nhà chơi cả ngày — bố mẹ chuẩn bị đồ ăn nhẹ cho cả nhóm</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">4.000 🌾</span>
+              <span class="tier-desc"><strong>Tiệc ngủ cuối tuần</strong> cho 2–3 bạn thân — bố mẹ chuẩn bị chăn đệm, phim đêm và bữa sáng</span>
+            </div>
+          </div>
+          <div class="reward-why">
+            <div class="reward-why-label">Ý nghĩa giáo dục</div>
+            <p>Con học cách lập kế hoạch sự kiện, mời khách, và cảm nhận niềm vui của việc chia sẻ thành quả lao động với bạn bè.</p>
+          </div>
+          <span class="reward-tag social">👫 Bạn Bè</span>
+        </div>
+      </div>
+
+      <div class="reward-card" data-tag="freedom">
+        <div class="reward-card-top">
+          <div class="reward-card-emoji">🧭</div>
+          <div class="reward-card-name">Giấy "Thông Hành Viễn Chinh"</div>
+          <span class="reward-cost">1.600 – 3.200 🌾</span>
+        </div>
+        <div class="reward-card-body">
+          <div class="tier-list">
+            <div class="tier-item">
+              <span class="tier-cost">1.600 🌾</span>
+              <span class="tier-desc"><strong>Tự do 1 buổi</strong> — sang nhà bạn hoặc đi uống trà sữa không cần hỏi trước
+              </span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">2.400 🌾</span>
+              <span class="tier-desc"><strong>Tự do cả ngày cuối tuần</strong> — đi chơi với bạn, xem phim, dạo phố (về trước 9h tối)</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">3.200 🌾</span>
+              <span class="tier-desc"><strong>Miễn kiểm tra điện thoại 1 tuần</strong> — bố mẹ không hỏi con nhắn tin với ai trong 7 ngày</span>
+            </div>
+          </div>
+          <div class="reward-why">
+            <div class="reward-why-label">Ý nghĩa giáo dục</div>
+            <p>Trao quyền tự chủ có kiểm soát — con "kiếm được" sự tự do, không phải mặc nhiên đòi hỏi. Xây dựng niềm tin hai chiều.</p>
+          </div>
+          <span class="reward-tag freedom">🗺️ Tự Do</span>
+        </div>
+      </div>
+
+      <div class="reward-card" data-tag="food family">
+        <div class="reward-card-top">
+          <div class="reward-card-emoji">🍕</div>
+          <div class="reward-card-name">Gói "Kinh Lý Đô Thành"</div>
+          <span class="reward-cost">4.000 – 16.000 🌾</span>
+        </div>
+        <div class="reward-card-body">
+          <div class="tier-list">
+            <div class="tier-item">
+              <span class="tier-cost">4.000 🌾</span>
+              <span class="tier-desc"><strong>Bữa ăn nhà hàng bình dân</strong> — cả nhà đi, con chọn quán (ngân sách ~50.000đ)</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">8.000 🌾</span>
+              <span class="tier-desc"><strong>Bữa ăn nhà hàng tầm trung</strong> — con chọn món cho cả bàn (ngân sách ~100.000đ)</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">16.000 🌾</span>
+              <span class="tier-desc"><strong>Bữa tiệc nhà hàng sang</strong> — con làm chủ bữa ăn, gọi món thoải mái (ngân sách ~200.000đ)</span>
+            </div>
+          </div>
+          <div class="reward-why">
+            <div class="reward-why-label">Ý nghĩa giáo dục</div>
+            <p>Khoảnh khắc đáng nhớ nhất — con nhìn hóa đơn và tự hào: "Con tự kiếm được Gạo để trả bữa ăn này." Không gì sánh được.</p>
+          </div>
+          <span class="reward-tag food">🍜 Ăn Uống</span>
+          <span class="reward-tag family" style="margin-left:.3rem">🏠 Gia Đình</span>
+        </div>
+      </div>
+
+      <div class="reward-card" data-tag="family">
+        <div class="reward-card-top">
+          <div class="reward-card-emoji">🎬</div>
+          <div class="reward-card-name">Vé "Đêm Phim Gia Đình"</div>
+          <span class="reward-cost">1.200 – 2.400 🌾</span>
+        </div>
+        <div class="reward-card-body">
+          <div class="tier-list">
+            <div class="tier-item">
+              <span class="tier-cost">1.200 🌾</span>
+              <span class="tier-desc"><strong>Con chọn phim</strong> tối thứ 6 — cả nhà xem cùng, bố mẹ không chọn thay</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">1.600 🌾</span>
+              <span class="tier-desc"><strong>Con chọn phim + đồ ăn vặt</strong> — bố mẹ chuẩn bị bắp rang, nước ngọt theo yêu cầu</span>
+            </div>
+            <div class="tier-item">
+              <span class="tier-cost">2.400 🌾</span>
+              <span class="tier-desc"><strong>Marathon phim cả ngày cuối tuần</strong> — con làm lịch chiếu, chọn 2–3 phim liên tiếp, bố mẹ tham gia đủ buổi</span>
+            </div>
+          </div>
+          <div class="reward-why">
+            <div class="reward-why-label">Ý nghĩa giáo dục</div>
+            <p>Tạo kỷ niệm gia đình gắn với thành quả lao động của con — con sẽ nhớ mãi "bộ phim con chọn bằng Gạo mình kiếm được".</p>
+          </div>
+          <span class="reward-tag family">🏠 Gia Đình</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- POWER CARDS -->
+<section class="power-section" id="power-cards">
+  <div class="container">
+    <p class="section-label reveal">⚡ Thẻ Bài Đặc Quyền</p>
+    <h2 class="section-title reveal">Bộ Thẻ Bài Đổi Quyền Lực</h2>
+
+    <div class="power-intro">
+      <div class="power-intro-text reveal">
+        <p>Thẻ bài là phần thưởng <strong>tức thì</strong> — dùng Gạo mua thẻ và dùng thẻ đổi đặc quyền ngay hôm nay. Không cần tích lũy dài hạn.</p>
+        <p style="margin-top:.7rem">Mỗi thẻ chỉ <strong>dùng được 1 lần</strong> rồi hết hiệu lực. In thẻ ra, cắt rời và để con sưu tầm!</p>
+      </div>
+      <div class="power-callout reveal">
+        <strong>🎴 In & Cắt Thẻ Bài</strong>
+        <p>In trang này, cắt các thẻ để con sưu tầm và sử dụng như game thật!</p>
+        <button onclick="window.print()" style="margin-top:.8rem; background:var(--amber); color:var(--earth); border:none; cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:800; padding:.5rem 1.2rem; border-radius:1.5rem; font-size:.88rem;">🖨️ In Ngay</button>
+      </div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="power-card pc-yellow reveal">
+        <div class="pc-emoji">🏮</div>
+        <div class="pc-name">ĐÈN DẦU THẮP MUỘN</div>
+        <div class="pc-cost">350 🌾</div>
+        <p class="pc-desc">"Cày phim hoặc đọc truyện muộn thêm 45 phút so với giờ ngủ quy định"</p>
+      </div>
+      <div class="power-card pc-green reveal">
+        <div class="pc-emoji">🌾</div>
+        <div class="pc-name">BÙ NHÌN THẾ THÂN</div>
+        <div class="pc-cost">900 🌾</div>
+        <p class="pc-desc">"Miễn toàn bộ việc nhà trong 1 ngày — bù nhìn gác đồng thay con"</p>
+      </div>
+      <div class="power-card pc-blue reveal">
+        <div class="pc-emoji">⚡</div>
+        <div class="pc-name">HẠT NẾP THẦN LỰC</div>
+        <div class="pc-cost">2.000 🌾</div>
+        <p class="pc-desc">"+1 tiếng chơi game hoặc dùng máy tính so với hạn mức ngày hôm đó"</p>
+      </div>
+      <div class="power-card pc-red reveal">
+        <div class="pc-emoji">🍱</div>
+        <div class="pc-name">KHUÔN ĐÚC BÁNH CHƯNG</div>
+        <div class="pc-cost">1.600 🌾</div>
+        <p class="pc-desc">"Quyền làm Bếp Trưởng ngày Chủ Nhật — con chọn menu, bố mẹ phụ bếp"</p>
+      </div>
+      <div class="power-card pc-purple reveal">
+        <div class="pc-emoji">🎲</div>
+        <div class="pc-name">PHIÊN CHỢ TỰ DO</div>
+        <div class="pc-cost">640 🌾</div>
+        <p class="pc-desc">"Không bị hỏi bài hay kiểm tra sách vở trong 1 buổi tối"</p>
+      </div>
+      <div class="power-card pc-orange reveal">
+        <div class="pc-emoji">🚜</div>
+        <div class="pc-name">LỆNH TRƯNG THU ĐẤT</div>
+        <div class="pc-cost">600 🌾</div>
+        <p class="pc-desc">"Yêu cầu bố hoặc mẹ làm giúp 1 việc nhà của con trong ngày hôm đó"</p>
+      </div>
+    </div>
+
+    <p class="print-hint reveal">
+      🖨️ In trang này, cắt rời các thẻ để con sưu tầm và sử dụng!
+      <button onclick="window.print()">In Bộ Thẻ Bài</button>
+    </p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container" style="position:relative;z-index:1">
+    <h2 class="reveal">Tính Xem Con Cần Bao Lâu<br/>Để Đủ Gạo Đổi Quà? 🌾</h2>
+    <p class="reveal">Dùng máy tính quy đổi để con thấy ngay mục tiêu tích lũy của mình — rất trực quan và thú vị!</p>
+    <div class="cta-btns">
+      <a href="quy-doi.html" class="btn-amber">🌾 Mở Máy Tính Quy Đổi</a>
+      <a href="index.html" class="btn-white">← Về Trang Chủ</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html">🌾 Kho Thóc Gia Đình</a>
+      <p class="footer-copy" style="margin-top:.3rem">Gamification dành cho gia đình hiện đại</p>
+    </div>
+    <nav class="footer-nav">
+      <a href="index.html">Trang Chủ</a>
+      <a href="kho-qua.html">Kho Quà</a>
+      <a href="quy-doi.html">Quy Đổi</a>
+    </nav>
+    <p class="footer-copy">© 2024 Kho Thóc Gia Đình · Tạo ra để kết nối & thấu hiểu ❤️</p>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); });
+
+  // Filter
+  function filterCards(tag, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.reward-card').forEach(card => {
+      const tags = card.dataset.tag || '';
+      card.style.display = (tag === 'all' || tags.includes(tag)) ? 'flex' : 'none';
+    });
+  }
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'), i*70); obs.unobserve(e.target); }
+    });
+  }, { threshold:0.1 });
+  reveals.forEach(r => obs.observe(r));
+</script>
+</body>
+</html>

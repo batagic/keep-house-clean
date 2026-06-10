@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Gạo Thị Trấn - Nông Trại Yêu Thương</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" display="swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Nunito', sans-serif; scroll-behavior: smooth; }
+        .bg-pattern { background-color: #f0fdf4; background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2322c55e' fill-opacity='0.05'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .hero-gradient { background: linear-gradient(135deg, #16a34a 0%, #eab308 100%); }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <header class="hero-gradient p-6 text-white text-center shadow-lg">
+        <h1 class="text-4xl font-black mb-2">🌾 KHO GẠO THỊ TRẤN</h1>
+        <p class="text-lg opacity-90">Nông trại tích lũy - Gieo hạt giống, gặt thành công!</p>
+    </header>
+
+    <section id="long-term-rewards" class="py-12 bg-amber-50">
+        <div class="container mx-auto px-4">
+            <h3 class="text-2xl font-black text-center mb-8 text-amber-900"><i class="fas fa-mountain"></i> QUÀ TẶNG TÍCH LŨY (MỤC TIÊU DÀI HẠN)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                
+                <!-- 1. Gói Mở Mang Bờ Cõi -->
+                <div class="bg-white p-6 rounded-3xl border-2 border-amber-200 shadow-md">
+                    <div class="text-4xl mb-3">📚</div>
+                    <h4 class="font-black text-amber-900 text-lg mb-2">Gói "Mở Mang Bờ Cõi"</h4>
+                    <div class="text-amber-600 font-bold mb-3">100 – 300 Hạt Gạo</div>
+                    <p class="text-sm text-gray-600">Đổi một lượng nông sản lớn lấy một 'Cuốn Sách Thần Kỳ' (Truyện tranh, tiểu thuyết, sách khoa học...) do con tự chọn.</p>
+                </div>
+
+                <!-- 2. Mâm Cỗ Mừng Vụ Mùa -->
+                <div class="bg-white p-6 rounded-3xl border-2 border-amber-200 shadow-md">
+                    <div class="text-4xl mb-3">🍲</div>
+                    <h4 class="font-black text-amber-900 text-lg mb-2">Mâm Cỗ "Mừng Vụ Mùa"</h4>
+                    <div class="text-amber-600 font-bold mb-3">150 – 200 Hạt Gạo</div>
+                    <p class="text-sm text-gray-600">Đặt hàng một mâm cỗ thịnh soạn tại nhà. Con yêu cầu món ăn (Lẩu, gà rán, pizza...) và 'Nhà Bếp Bố Mẹ' sẽ phục vụ.</p>
+                </div>
+
+                <!-- 3. Lệnh Bài Mở Cổng Thành -->
+                <div class="bg-white p-6 rounded-3xl border-2 border-amber-200 shadow-md">
+                    <div class="text-4xl mb-3">🏰</div>
+                    <h4 class="font-black text-amber-900 text-lg mb-2">Lệnh Bài "Mở Cổng Thành"</h4>
+                    <div class="text-amber-600 font-bold mb-3">300 – 400 Hạt Gạo</div>
+                    <p class="text-sm text-gray-600">Quyền được mời 2–4 người bạn thân đến 'Tổng hành dinh' chơi game, xem phim hoặc làm tiệc ngủ vào cuối tuần.</p>
+                </div>
+
+                <!-- 4. Giấy Thông Hành Viễn Chinh -->
+                <div class="bg-white p-6 rounded-3xl border-2 border-amber-200 shadow-md">
+                    <div class="text-4xl mb-3">🧭</div>
+                    <h4 class="font-black text-amber-900 text-lg mb-2">Giấy "Thông Hành Viễn Chinh"</h4>
+                    <div class="text-amber-600 font-bold mb-3">200 – 400 Hạt Gạo</div>
+                    <p class="text-sm text-gray-600">Con được phép tự do sang nhà bạn, đi trà sữa, xem phim dạo phố mà không cần làm kèm điều kiện nào (Bố mẹ tôn trọng không gian riêng).</p>
+                </div>
+
+                <!-- 5. Gói Kinh Lý Đô Thành -->
+                <div class="bg-white p-6 rounded-3xl border-2 border-amber-200 shadow-md">
+                    <div class="text-4xl mb-3">🍕</div>
+                    <h4 class="font-black text-amber-900 text-lg mb-2">Gói "Kinh Lý Đô Thành"</h4>
+                    <div class="text-amber-600 font-bold mb-3">500 – 1.000 Hạt Gạo</div>
+                    <p class="text-sm text-gray-600">Bao trọn gói một bữa ăn sang xịn tại nhà hàng con yêu thích. Cả nhà cùng đi và dùng số 'Gạo' con tích lũy để thanh toán hóa đơn.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="printable-cards" class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h3 class="text-2xl font-black text-center mb-8 text-green-800"><i class="fas fa-print"></i> BỘ THẺ BÀI ĐỔI QUYỀN LỰC</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                
+                <!-- Card 1 -->
+                <div class="border-4 border-yellow-500 rounded-3xl p-6 bg-yellow-50 text-center shadow-lg transform hover:rotate-1 transition-transform">
+                    <div class="text-5xl mb-4">🏮</div>
+                    <h4 class="font-black text-yellow-900 text-lg mb-2">ĐÈN DẦU THẮP MUỘN</h4>
+                    <div class="bg-yellow-500 text-white font-bold py-1 px-4 rounded-full inline-block mb-4">50 Hạt Gạo</div>
+                    <p class="text-xs text-yellow-800 italic">"Cày phim/đọc truyện muộn 45 phút"</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="border-4 border-green-500 rounded-3xl p-6 bg-green-50 text-center shadow-lg transform hover:rotate-1 transition-transform">
+                    <div class="text-5xl mb-4">🌾</div>
+                    <h4 class="font-black text-green-900 text-lg mb-2">BÙ NHÌN THẾ THÂN</h4>
+                    <div class="bg-green-500 text-white font-bold py-1 px-4 rounded-full inline-block mb-4">100 Hạt Gạo</div>
+                    <p class="text-xs text-green-800 italic">"Miễn toàn bộ việc nhà 1 ngày"</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="border-4 border-blue-500 rounded-3xl p-6 bg-blue-50 text-center shadow-lg transform hover:rotate-1 transition-transform">
+                    <div class="text-5xl mb-4">⚡</div>
+                    <h4 class="font-black text-blue-900 text-lg mb-2">HẠT NẾP THẦN LỰC</h4>
+                    <div class="bg-blue-500 text-white font-bold py-1 px-4 rounded-full inline-block mb-4">150 Hạt Gạo</div>
+                    <p class="text-xs text-blue-800 italic">"+1 tiếng dùng máy tính/game"</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="border-4 border-red-500 rounded-3xl p-6 bg-red-50 text-center shadow-lg transform hover:rotate-1 transition-transform">
+                    <div class="text-5xl mb-4">🍱</div>
+                    <h4 class="font-black text-red-900 text-lg mb-2">KHUÔN ĐÚC BÁNH CHƯNG</h4>
+                    <div class="bg-red-500 text-white font-bold py-1 px-4 rounded-full inline-block mb-4">200 Hạt Gạo</div>
+                    <p class="text-xs text-red-800 italic">"Quyền làm Bếp Trưởng ngày Chủ Nhật"</p>
+                </div>
+
+            </div>
+            <p class="text-center text-gray-400 mt-8 text-sm font-medium italic">In trang này, cắt rời các thẻ để con sưu tầm và sử dụng!</p>
+        </div>
+    </section>
+
+</body>
+</html>

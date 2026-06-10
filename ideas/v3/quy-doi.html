@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quy Đổi Gạo → Tiền – Kho Thóc Gia Đình</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --green-deep:  #1a5c38;
+      --green-mid:   #2d8a55;
+      --green-light: #4abe7a;
+      --amber:       #f5a623;
+      --amber-light: #fde68a;
+      --cream:       #fdf8ee;
+      --earth:       #7c4b1e;
+      --earth-light: #c47d3a;
+      --text-main:   #1e1e1e;
+      --text-muted:  #6b7280;
+      --radius-card: 1.5rem;
+      --shadow-soft: 0 4px 24px rgba(0,0,0,0.07);
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Mulish',sans-serif; background:var(--cream); color:var(--text-main); overflow-x:hidden; }
+    h1,h2,h3,h4,h5 { font-family:'Baloo 2',sans-serif; }
+
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity:.4;
+    }
+
+    /* ─ NAV ─ */
+    .nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(253,248,238,.92); backdrop-filter:blur(12px); border-bottom:2px solid rgba(245,166,35,.2); padding:.9rem 2rem; display:flex; align-items:center; justify-content:space-between; transition:box-shadow .3s; }
+    .nav.scrolled { box-shadow:0 2px 20px rgba(0,0,0,.08); }
+    .nav-logo { display:flex; align-items:center; gap:.7rem; text-decoration:none; font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.3rem; color:var(--green-deep); }
+    .nav-logo .logo-icon { width:2.4rem; height:2.4rem; background:linear-gradient(135deg,var(--green-mid),var(--amber)); border-radius:.7rem; display:grid; place-items:center; font-size:1.1rem; box-shadow:0 2px 8px rgba(45,138,85,.3); }
+    .nav-links { display:flex; gap:2rem; list-style:none; }
+    .nav-links a { text-decoration:none; font-weight:700; font-size:.9rem; color:var(--text-muted); transition:color .2s; }
+    .nav-links a:hover { color:var(--green-mid); }
+    .nav-links a.active { color:var(--green-deep); }
+    .nav-cta { background:var(--green-deep); color:#fff !important; padding:.5rem 1.3rem; border-radius:2rem; font-weight:800 !important; font-size:.88rem !important; transition:background .2s, transform .2s !important; }
+    .nav-cta:hover { background:var(--green-mid) !important; transform:translateY(-1px); }
+    @media(max-width:768px){ .nav-links { display:none; } }
+
+    /* ─ PAGE HERO ─ */
+    .page-hero {
+      background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 50%, #3d9e6a 100%);
+      padding:9rem 2rem 5rem; text-align:center; position:relative; overflow:hidden;
+    }
+    .page-hero::before { content:'🌾'; font-size:20rem; opacity:.06; position:absolute; left:-3rem; top:-3rem; pointer-events:none; line-height:1; }
+    .page-hero .badge { display:inline-block; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.3); color:var(--amber-light); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; padding:.4rem 1.2rem; border-radius:2rem; margin-bottom:1.2rem; }
+    .page-hero h1 { font-size:clamp(2rem,6vw,3.8rem); font-weight:900; color:#fff; margin-bottom:1rem; }
+    .page-hero p  { color:rgba(255,255,255,.8); font-size:1.05rem; max-width:540px; margin:0 auto; line-height:1.7; }
+
+    /* ─ LAYOUT ─ */
+    .container { max-width:1100px; margin:0 auto; }
+    section { padding:5rem 2rem; }
+    .section-label { font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.78rem; letter-spacing:.15em; text-transform:uppercase; color:var(--green-mid); margin-bottom:.5rem; }
+    .section-title { font-size:clamp(1.8rem,4vw,2.6rem); font-weight:900; color:var(--green-deep); margin-bottom:.8rem; line-height:1.2; }
+    .section-sub   { font-size:1rem; color:var(--text-muted); max-width:560px; line-height:1.7; }
+
+    /* ─ CALCULATOR SECTION ─ */
+    .calc-section { background:#fff; }
+    .calc-wrap {
+      display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; margin-top:3rem;
+    }
+    @media(max-width:768px){ .calc-wrap { grid-template-columns:1fr; } }
+
+    /* LEFT: input panel */
+    .calc-panel {
+      background:var(--cream); border-radius:var(--radius-card);
+      border:2px solid #e5e7eb; padding:2.5rem;
+    }
+    .calc-panel label {
+      display:block; font-weight:800; font-size:.82rem; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--text-muted); margin-bottom:.8rem;
+    }
+
+    .input-wrap {
+      position:relative; display:flex; align-items:center;
+    }
+    .input-wrap input {
+      width:100%; border:2px solid #d1fae5;
+      border-radius:1rem; padding:1rem 3rem 1rem 1.2rem;
+      font-family:'Baloo 2',sans-serif; font-size:2rem; font-weight:800;
+      color:var(--green-deep); background:#fff;
+      outline:none; transition:border-color .2s;
+    }
+    .input-wrap input:focus { border-color:var(--green-mid); }
+    .input-wrap .input-suffix {
+      position:absolute; right:1rem; font-size:1.4rem; pointer-events:none;
+    }
+
+    /* quick btns */
+    .quick-amounts { display:flex; gap:.6rem; flex-wrap:wrap; margin-top:.8rem; margin-bottom:1.5rem; }
+    .quick-btn {
+      background:#fff; border:2px solid #d1fae5; color:var(--green-deep);
+      font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.82rem;
+      padding:.3rem .9rem; border-radius:1.5rem; cursor:pointer;
+      transition:all .2s;
+    }
+    .quick-btn:hover { background:var(--green-deep); color:#fff; border-color:var(--green-deep); }
+
+    /* result */
+    .calc-result {
+      background:linear-gradient(135deg,var(--green-deep),#1b4332);
+      border-radius:1.2rem; padding:1.5rem; color:#fff; margin-top:1rem;
+    }
+    .calc-result-label { font-size:.8rem; opacity:.7; letter-spacing:.06em; text-transform:uppercase; margin-bottom:.3rem; }
+    .calc-result-num {
+      font-family:'Baloo 2',sans-serif; font-weight:900;
+      font-size:2.5rem; color:var(--amber);
+      line-height:1;
+    }
+    .calc-result-note { font-size:.82rem; opacity:.65; margin-top:.5rem; }
+
+    /* progress */
+    .progress-section { margin-top:1.5rem; }
+    .progress-label { display:flex; justify-content:space-between; font-size:.82rem; color:var(--text-muted); margin-bottom:.4rem; }
+    .progress-bar { height:.7rem; background:#e5e7eb; border-radius:1rem; overflow:hidden; }
+    .progress-fill { height:100%; background:linear-gradient(90deg,var(--green-light),var(--amber)); border-radius:1rem; transition:width .5s cubic-bezier(.4,0,.2,1); }
+
+    /* RIGHT: goal targets */
+    .goal-list { display:flex; flex-direction:column; gap:.8rem; }
+    .goal-item {
+      background:var(--cream); border-radius:1.1rem; padding:1rem 1.2rem;
+      display:flex; align-items:center; gap:1rem;
+      border:2px solid transparent;
+      transition:border-color .25s, transform .25s;
+      cursor:pointer;
+    }
+    .goal-item:hover { border-color:var(--amber); transform:translateX(4px); }
+    .goal-item.can-afford { border-color:var(--green-light); background:#f0fdf4; }
+
+    .goal-emoji { font-size:1.6rem; width:2.2rem; text-align:center; flex-shrink:0; }
+    .goal-info { flex:1; }
+    .goal-name { font-weight:800; font-size:.92rem; color:var(--green-deep); }
+    .goal-cost { font-size:.8rem; color:var(--text-muted); margin-top:.1rem; }
+    .goal-status {
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.78rem;
+      padding:.2rem .65rem; border-radius:1rem; white-space:nowrap; flex-shrink:0;
+    }
+    .goal-status.locked   { background:#fee2e2; color:#991b1b; }
+    .goal-status.unlocked { background:#d1fae5; color:#065f46; }
+
+    /* ─ SAVINGS CHART ─ */
+    .chart-section { background:var(--cream); }
+    .chart-wrap { background:#fff; border-radius:var(--radius-card); padding:2rem; box-shadow:var(--shadow-soft); margin-top:2rem; }
+    .chart-container { position:relative; height:320px; }
+
+    /* ─ DAILY PLAN ─ */
+    .plan-section { background:#fff; }
+    .plan-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.2rem; margin-top:2rem; }
+    .plan-card {
+      background:var(--cream); border-radius:var(--radius-card);
+      padding:1.8rem; border:2px solid #e5e7eb;
+      transition:border-color .25s, transform .25s;
+    }
+    .plan-card:hover { border-color:var(--green-light); transform:translateY(-4px); }
+    .plan-card .plan-icon { font-size:2.2rem; margin-bottom:.8rem; }
+    .plan-card h4 { font-size:1rem; font-weight:800; color:var(--green-deep); margin-bottom:.4rem; }
+    .plan-card p { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+    .plan-card .plan-number {
+      font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.8rem;
+      color:var(--amber); margin:.5rem 0 .2rem;
+    }
+
+    /* ─ PARENT CORNER ─ */
+    .parent-section {
+      background:linear-gradient(135deg,#0d2b1a 0%,#1a5c38 100%);
+      color:#fff;
+    }
+    .parent-section .section-label { color:var(--amber-light); }
+    .parent-section .section-title { color:#fff; }
+    .parent-section .section-sub   { color:rgba(255,255,255,.7); }
+
+    .parent-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.2rem; margin-top:2.5rem; }
+    .parent-card {
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+      border-radius:var(--radius-card); padding:1.8rem;
+      transition:background .25s, transform .25s;
+    }
+    .parent-card:hover { background:rgba(255,255,255,.1); transform:translateY(-4px); }
+    .parent-card .pc-num {
+      width:2.4rem; height:2.4rem; border-radius:50%;
+      background:var(--amber); color:var(--earth);
+      font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.1rem;
+      display:grid; place-items:center; margin-bottom:1rem;
+    }
+    .parent-card h4 { font-size:1rem; font-weight:800; color:var(--amber-light); margin-bottom:.5rem; }
+    .parent-card p  { font-size:.88rem; color:rgba(255,255,255,.65); line-height:1.65; }
+
+    /* ─ CTA ─ */
+    .cta-section { background:var(--cream); text-align:center; padding:5rem 2rem; }
+    .cta-section h2 { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:900; color:var(--green-deep); margin-bottom:1rem; }
+    .cta-section p  { color:var(--text-muted); font-size:1rem; max-width:480px; margin:0 auto 2.5rem; line-height:1.7; }
+    .cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+    .btn-green { background:var(--green-deep); color:#fff; padding:.8rem 2rem; border-radius:3rem; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem; text-decoration:none; transition:transform .2s, box-shadow .2s; display:inline-flex; align-items:center; gap:.5rem; }
+    .btn-green:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(26,92,56,.3); }
+    .btn-amber { background:var(--amber); color:var(--earth); padding:.8rem 2rem; border-radius:3rem; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem; text-decoration:none; transition:transform .2s, box-shadow .2s; display:inline-flex; align-items:center; gap:.5rem; }
+    .btn-amber:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(245,166,35,.4); }
+
+    /* ─ FOOTER ─ */
+    footer { background:#0d2b1a; color:rgba(255,255,255,.55); padding:3rem 2rem; border-top:3px solid var(--green-mid); }
+    .footer-inner { max-width:1100px; margin:0 auto; display:flex; gap:2rem; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .footer-brand a { text-decoration:none; font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.2rem; color:#fff; display:flex; align-items:center; gap:.5rem; }
+    .footer-nav { display:flex; gap:1.5rem; flex-wrap:wrap; }
+    .footer-nav a { color:rgba(255,255,255,.55); text-decoration:none; font-size:.88rem; font-weight:600; transition:color .2s; }
+    .footer-nav a:hover { color:var(--amber); }
+    .footer-copy { font-size:.8rem; opacity:.5; }
+
+    /* scroll reveal */
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    @media(max-width:768px){ section { padding:3.5rem 1.2rem; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav-logo">
+    <span class="logo-icon">🌾</span>
+    Kho Thóc Gia Đình
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Trang Chủ</a></li>
+    <li><a href="kho-qua.html">Kho Quà</a></li>
+    <li><a href="quy-doi.html" class="active">Quy Đổi</a></li>
+    <li><a href="quy-doi.html" class="nav-cta">🌾 Tính Gạo</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="badge">🌾 Trung Tâm Quy Đổi</div>
+  <h1>Tính Gạo → Tiền</h1>
+  <p>Nhập số Hạt Gạo con đã tích lũy và xem ngay giá trị tiền mặt tương đương. Tỷ giá cố định: 10 Gạo = 1.000 VNĐ (1 Gạo = 100 VNĐ).</p>
+</div>
+<div style="background:var(--cream);">
+  <svg viewBox="0 0 1200 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:50px;display:block;">
+    <path d="M0,70 L0,30 Q300,5 600,30 Q900,55 1200,20 L1200,70 Z" fill="#1a5c38"/>
+  </svg>
+</div>
+
+<!-- CALCULATOR -->
+<section class="calc-section" id="calculator">
+  <div class="container">
+    <p class="section-label reveal">⚡ Tính toán tức thì</p>
+    <h2 class="section-title reveal">Máy Tính Quy Đổi Sản Vật</h2>
+    <p class="section-sub reveal">Nhập số Gạo và thấy ngay mục tiêu nào đã trong tầm tay!</p>
+
+    <div class="calc-wrap">
+      <!-- LEFT PANEL -->
+      <div class="reveal">
+        <div class="calc-panel">
+          <label>Nhập số hạt gạo đã tích lũy 🌾</label>
+          <div class="input-wrap">
+            <input type="number" id="grainInput" min="0" placeholder="0" oninput="calculate()" />
+            <span class="input-suffix">🌾</span>
+          </div>
+          <div class="quick-amounts">
+            <button class="quick-btn" onclick="setAmount(50)">50</button>
+            <button class="quick-btn" onclick="setAmount(100)">100</button>
+            <button class="quick-btn" onclick="setAmount(400)">400</button>
+            <button class="quick-btn" onclick="setAmount(800)">800</button>
+            <button class="quick-btn" onclick="setAmount(1200)">1.200</button>
+            <button class="quick-btn" onclick="setAmount(2400)">2.400</button>
+          </div>
+
+          <div class="calc-result">
+            <div class="calc-result-label">Giá trị tiền mặt tương đương</div>
+            <div class="calc-result-num" id="cashResult">0 VNĐ</div>
+            <div class="calc-result-note" id="calcNote">Bắt đầu nhập số Gạo để xem kết quả ✨</div>
+          </div>
+
+          <div class="progress-section" style="margin-top:1.5rem">
+            <div class="progress-label">
+              <span>Tiến độ tích lũy mục tiêu tối đa</span>
+              <span id="progressPct">0%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted);margin-top:.3rem">
+              <span>0 🌾</span><span>4.000 🌾</span><span>8.000 🌾</span>
+            </div>
+          </div>
+
+          <!-- Reverse calc -->
+          <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:2px dashed #e5e7eb;">
+            <label style="margin-bottom:.6rem;">Tính ngược: Nhập giá tiền muốn đổi</label>
+            <div class="input-wrap">
+              <input type="number" id="cashInput" min="0" placeholder="0"
+                style="font-size:1.4rem; color:var(--earth);"
+                oninput="reverseCalc()" />
+              <span class="input-suffix" style="font-size:.9rem;font-weight:700;color:var(--earth);">đ</span>
+            </div>
+            <div style="margin-top:.8rem; font-size:.88rem; color:var(--text-muted);">
+              Cần tích lũy: <strong id="reverseResult" style="color:var(--green-deep);font-family:'Baloo 2',sans-serif;font-size:1.1rem;">— 🌾</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: goal targets -->
+      <div class="reveal">
+        <h3 style="font-size:1.1rem;font-weight:800;color:var(--green-deep);margin-bottom:1rem;">🎯 Mục Tiêu Đổi Quà</h3>
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1.2rem;">Nhập số Gạo bên trái để xem mục tiêu nào bạn đã đủ sức đổi!</p>
+
+        <div class="goal-list">
+          <div class="goal-item" data-cost="400">
+            <span class="goal-emoji">🏮</span>
+            <div class="goal-info">
+              <div class="goal-name">Đèn Dầu Thắp Muộn</div>
+              <div class="goal-cost">400 🌾 · Thẻ bài đặc quyền</div>
+            </div>
+            <span class="goal-status locked" id="goal-0">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="800">
+            <span class="goal-emoji">📚</span>
+            <div class="goal-info">
+              <div class="goal-name">Gói Mở Mang Bờ Cõi (Sách)</div>
+              <div class="goal-cost">800 🌾 = 80.000 VNĐ</div>
+            </div>
+            <span class="goal-status locked" id="goal-1">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="1200">
+            <span class="goal-emoji">🍲</span>
+            <div class="goal-info">
+              <div class="goal-name">Mâm Cỗ Mừng Vụ Mùa</div>
+              <div class="goal-cost">1.200 🌾 = 120.000 VNĐ</div>
+            </div>
+            <span class="goal-status locked" id="goal-2">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="1600">
+            <span class="goal-emoji">🧭</span>
+            <div class="goal-info">
+              <div class="goal-name">Giấy Thông Hành Viễn Chinh</div>
+              <div class="goal-cost">1.600 🌾 = 160.000 VNĐ</div>
+            </div>
+            <span class="goal-status locked" id="goal-3">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="2400">
+            <span class="goal-emoji">🏰</span>
+            <div class="goal-info">
+              <div class="goal-name">Lệnh Bài Mở Cổng Thành</div>
+              <div class="goal-cost">2.400 🌾 = 240.000 VNĐ</div>
+            </div>
+            <span class="goal-status locked" id="goal-4">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="4000">
+            <span class="goal-emoji">🍕</span>
+            <div class="goal-info">
+              <div class="goal-name">Gói Kinh Lý Đô Thành (Nhà hàng)</div>
+              <div class="goal-cost">4.000 🌾 = 400.000 VNĐ</div>
+            </div>
+            <span class="goal-status locked" id="goal-5">🔒 Chưa đủ</span>
+          </div>
+          <div class="goal-item" data-cost="8000">
+            <span class="goal-emoji">👑</span>
+            <div class="goal-info">
+              <div class="goal-name">Tiệc Hoàng Cung</div>
+              <div class="goal-cost">8.000 🌾 = 800.000 VNĐ</div>
+            </div>
+            <span class="goal-status locked" id="goal-6">🔒 Chưa đủ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHART: Reward comparison -->
+<section class="chart-section" id="chart">
+  <div class="container">
+    <p class="section-label reveal">📊 So sánh phần thưởng</p>
+    <h2 class="section-title reveal">Biểu Đồ Kho Quà — Chi Phí Gạo</h2>
+    <p class="section-sub reveal">Nhìn tổng quan để con lên kế hoạch mục tiêu tích lũy!</p>
+    <div class="chart-wrap reveal">
+      <div class="chart-container">
+        <canvas id="rewardsChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAILY PLAN -->
+<section class="plan-section" id="plan">
+  <div class="container">
+    <p class="section-label reveal">📅 Lập kế hoạch</p>
+    <h2 class="section-title reveal">Mỗi Ngày Kiếm Được Bao Nhiêu?</h2>
+    <p class="section-sub reveal">Giúp con đặt mục tiêu thực tế dựa trên công việc hằng ngày.</p>
+
+    <div class="plan-grid">
+      <div class="plan-card reveal">
+        <div class="plan-icon">⚡</div>
+        <h4>Ngày Tích Cực (Làm nhiều)</h4>
+        <div class="plan-number">~80–120 🌾</div>
+        <p>Rửa bát + quét nhà + tưới cây + tự học đủ giờ. Chăm chỉ 1 ngày có thể kiếm hơn 100 Gạo!</p>
+      </div>
+      <div class="plan-card reveal">
+        <div class="plan-icon">🌿</div>
+        <h4>Ngày Bình Thường</h4>
+        <div class="plan-number">~40–70 🌾</div>
+        <p>Làm 2–3 việc nhỏ mỗi ngày là đủ để tích lũy đều đặn và đạt mục tiêu trong vài tuần.</p>
+      </div>
+      <div class="plan-card reveal">
+        <div class="plan-icon">📆</div>
+        <h4>Tích Lũy 1 Tuần</h4>
+        <div class="plan-number">~300–600 🌾</div>
+        <p>Kiên trì 7 ngày có thể đủ để đổi thẻ bài hoặc đạt được nhiều mục tiêu dài hạn.</p>
+      </div>
+      <div class="plan-card reveal">
+        <div class="plan-icon">🏆</div>
+        <h4>Ví Dụ: Đôi Giày 500k</h4>
+        <div class="plan-number">~5.000 🌾</div>
+        <p>Cần 5.000 Gạo. Nếu mỗi ngày kiếm 70 Gạo → đủ tiền mua giày trong khoảng <strong>71 ngày</strong>!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARENT CORNER -->
+<section class="parent-section" id="parent">
+  <div class="container">
+    <p class="section-label reveal">🛡️ Góc quản trị viên</p>
+    <h2 class="section-title reveal">Bí Kíp Vận Hành Kho Thóc</h2>
+    <p class="section-sub reveal">Dành riêng cho ba mẹ để hệ thống này hoạt động hiệu quả và bền vững.</p>
+
+    <div class="parent-grid">
+      <div class="parent-card reveal">
+        <div class="pc-num">1</div>
+        <h4>Giữ Tỷ Giá Cố Định</h4>
+        <p>Không điều chỉnh tỷ lệ quy đổi giữa chừng. Tính nhất quán xây dựng niềm tin và dạy con rằng các thỏa thuận phải được giữ.</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">2</div>
+        <h4>Ghi Chép Minh Bạch</h4>
+        <p>Dùng bảng tính, sổ tay hoặc ứng dụng để cả nhà đều thấy số dư Gạo hiện tại. Không có "Bố/Mẹ nhớ nhầm".</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">3</div>
+        <h4>Tổng Kết Hàng Tuần</h4>
+        <p>Dành 10 phút cuối tuần để cùng con xem lại: tuần này kiếm được bao nhiêu, tiêu bao nhiêu, còn bao nhiêu tích lũy.</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">4</div>
+        <h4>"Lễ Đổi Thưởng" Long Trọng</h4>
+        <p>Đừng đổi thưởng qua loa. Hãy tạo một nghi lễ nhỏ: đọc số Gạo, trao thẻ, chúc mừng — để con cảm thấy thành quả thực sự.</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">5</div>
+        <h4>Điều Chỉnh Theo Từng Con</h4>
+        <p>Mỗi gia đình mỗi khác. Đừng ngại tăng/giảm số Gạo cho từng nhiệm vụ để phù hợp với hoàn cảnh và tính cách của con.</p>
+      </div>
+      <div class="parent-card reveal">
+        <div class="pc-num">6</div>
+        <h4>Khen Ngợi Hành Vi, Không Chỉ Kết Quả</h4>
+        <p>Khi con chủ động làm việc không cần nhắc — hãy thưởng bonus Gạo và khen trước mặt cả nhà. Cảm xúc tích cực sẽ nhân đôi động lực.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="reveal">Đã Tính Xong Chưa? 🌾</h2>
+    <p class="reveal">Ghé xem Kho Quà để con chọn mục tiêu tích lũy tiếp theo!</p>
+    <div class="cta-btns">
+      <a href="kho-qua.html" class="btn-amber">🎁 Xem Kho Quà Tặng</a>
+      <a href="index.html" class="btn-green">← Về Trang Chủ</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html">🌾 Kho Thóc Gia Đình</a>
+      <p class="footer-copy" style="margin-top:.3rem">Gamification dành cho gia đình hiện đại</p>
+    </div>
+    <nav class="footer-nav">
+      <a href="index.html">Trang Chủ</a>
+      <a href="kho-qua.html">Kho Quà</a>
+      <a href="quy-doi.html">Quy Đổi</a>
+    </nav>
+    <p class="footer-copy">© 2024 Kho Thóc Gia Đình · Tạo ra để kết nối & thấu hiểu ❤️</p>
+  </div>
+</footer>
+
+<script>
+  /* ── Nav scroll ── */
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); });
+
+  /* ── Scroll reveal ── */
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e,i) => {
+      if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'), i*80); obs.unobserve(e.target); }
+    });
+  }, { threshold:0.1 });
+  document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+  /* ── Calculator ── */
+  const RATE = 100; // 1 Gạo = 100 VNĐ (10 Gạo = 1.000 VNĐ)
+  // Đã cập nhật mảng mốc chi phí khớp chính xác 100% với thuộc tính data-cost trong HTML
+  const GOALS = [400, 800, 1200, 1600, 2400, 4000, 8000];
+
+  function formatVND(n) {
+    return n.toLocaleString('vi-VN') + ' VNĐ';
+  }
+
+  function calculate() {
+    const input = document.getElementById('grainInput');
+    const grains = Math.max(0, parseInt(input.value) || 0);
+    const cash = grains * RATE;
+
+    // result
+    document.getElementById('cashResult').textContent = formatVND(cash);
+
+    // note
+    let note = 'Bắt đầu nhập số Gạo để xem kết quả ✨';
+    if(grains > 0 && grains < 400)   note = `Chưa đủ để đổi Đèn Dầu Thắp Muộn — cố lên! 💪`;
+    if(grains >= 400 && grains < 800) note = `Đủ đổi Đèn Dầu Thắp Muộn rồi! 🏮`;
+    if(grains >= 800 && grains < 1200) note = `Tốt lắm! Đủ đổi Gói Mở Mang Bờ Cõi (Sách) 📚`;
+    if(grains >= 1200 && grains < 1600) note = `Tuyệt vời! Bạn có thể chọn Mâm Cỗ Mừng Vụ Mùa 🍲`;
+    if(grains >= 1600 && grains < 2400) note = `Xuất sắc! Có thể xin Giấy Thông Hành Viễn Chinh 🧭`;
+    if(grains >= 2400 && grains < 4000) note = `Quá đỉnh! Đủ sức sở hữu Lệnh Bài Mở Cổng Thành 🏰`;
+    if(grains >= 4000 && grains < 8000) note = `Wow — một chuyến du ngoạn Kinh Lý Đô Thành trọn vẹn thực sự! 🍕`;
+    if(grains >= 8000) note = `ĐẠI ĐIỀN CHỦ HUYỀN THOẠI! Bạn đã đạt cột mốc tối thượng: Tiệc Hoàng Cung 👑`;
+    document.getElementById('calcNote').textContent = note;
+
+    // progress (Mốc tối đa tính theo phần thưởng cao nhất là 8000 Gạo)
+    const pct = Math.min(100, Math.round((grains / 8000) * 100));
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+
+    // update goals
+    GOALS.forEach((cost, i) => {
+      const el = document.getElementById('goal-' + i);
+      const row = el.closest('.goal-item');
+      if(grains >= cost){
+        el.textContent = '✅ Đủ rồi!';
+        el.className = 'goal-status unlocked';
+        row.classList.add('can-afford');
+      } else {
+        const need = cost - grains;
+        el.textContent = `🔒 Còn thiếu ${need.toLocaleString('vi-VN')} 🌾`;
+        el.className = 'goal-status locked';
+        row.classList.remove('can-afford');
+      }
+    });
+  }
+
+  function reverseCalc() {
+    const cash = parseInt(document.getElementById('cashInput').value) || 0;
+    const grains = Math.ceil(cash / RATE);
+    document.getElementById('reverseResult').textContent = grains > 0 ? grains.toLocaleString('vi-VN') + ' 🌾' : '— 🌾';
+  }
+
+  function setAmount(n) {
+    document.getElementById('grainInput').value = n;
+    calculate();
+    document.getElementById('grainInput').focus();
+  }
+
+  /* ── Chart ── */
+  window.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('rewardsChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Đèn Dầu\nThắp Muộn', 'Mở Mang\nBờ Cõi', 'Mâm Cỗ\nVụ Mùa', 'Thông Hành\nViễn Chinh', 'Mở Cổng\nThành', 'Kinh Lý\nĐô Thành', 'Tiệc\nHoàng Cung'],
+        datasets: [
+          {
+            label: 'Số Hạt Gạo',
+            // Đồng bộ dữ liệu biểu đồ cột trùng khớp 100% với mục tiêu đổi quà
+            data: [400, 800, 1200, 1600, 2400, 4000, 8000],
+            backgroundColor: [
+              'rgba(245,166,35,.75)',
+              'rgba(74,190,122,.75)',
+              'rgba(74,190,122,.75)',
+              'rgba(45,138,85,.75)',
+              'rgba(45,138,85,.75)',
+              'rgba(26,92,56,.75)',
+              'rgba(26,92,56,.75)',
+            ],
+            borderColor: [
+              '#f5a623','#4abe7a','#4abe7a','#2d8a55','#2d8a55','#1a5c38','#1a5c38'
+            ],
+            borderWidth: 2,
+            borderRadius: 10,
+          },
+          {
+            label: 'Giá trị VNĐ (÷100)',
+            data: [40, 80, 120, 160, 240, 400, 800],
+            backgroundColor: 'rgba(196,125,58,.2)',
+            borderColor: '#c47d3a',
+            borderWidth: 2,
+            borderRadius: 10,
+            borderDash: [4,4],
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { font: { family: "'Baloo 2', sans-serif", weight: '700' } }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(13,43,26,.95)',
+            padding: 12,
+            titleFont: { size:13, weight:'bold' },
+            bodyFont: { size:12 },
+            callbacks: {
+              label: function(ctx) {
+                if(ctx.datasetIndex === 0) return `  ${ctx.raw.toLocaleString('vi-VN')} Hạt Gạo`;
+                return `  ${(ctx.raw * 100).toLocaleString('vi-VN')} VNĐ`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: '#f0faf4' },
+            title: { display:true, text:'Số lượng Hạt Gạo', font:{weight:'bold'} }
+          },
+          x: {
+            grid: { display:false },
+          }
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

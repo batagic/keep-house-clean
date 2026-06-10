@@ -1,0 +1,363 @@
+/* ─────────── HERO ─────────── */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(150deg, var(--green-deep) 0%, #2d6a4f 50%, #1b4332 100%);
+      display: flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding: 8rem 2rem 6rem;
+      position:relative; overflow:hidden;
+    }
+
+    /* animated grain field */
+    .hero-field {
+      position:absolute; bottom:0; left:0; right:0; height:220px;
+      background: linear-gradient(to top, rgba(26,92,56,.9) 0%, transparent 100%);
+      display:flex; align-items:flex-end; justify-content:center; gap:0;
+      overflow:hidden;
+    }
+    .stalk {
+      width:18px; height:0;
+      background: linear-gradient(to top, var(--green-mid), var(--green-light));
+      border-radius:2px 2px 0 0;
+      position:relative;
+      animation: grow 1.5s ease-out forwards;
+    }
+    .stalk::after {
+      content:'🌾'; position:absolute; top:-1.4rem; left:50%;
+      transform:translateX(-50%); font-size:1.1rem;
+      opacity:0; animation: fadeIn .4s ease forwards;
+    }
+    @keyframes grow { from{height:0} to{height:var(--h,140px)} }
+    @keyframes fadeIn { from{opacity:0; transform:translateX(-50%) translateY(6px)} to{opacity:1; transform:translateX(-50%) translateY(0)} }
+
+    .hero-badge {
+      display:inline-block;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.3);
+      color: var(--amber-light);
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem;
+      letter-spacing:.12em; text-transform:uppercase;
+      padding:.4rem 1.2rem; border-radius:2rem;
+      margin-bottom:1.5rem;
+      backdrop-filter:blur(4px);
+      animation: slideDown .6s ease both;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 900; color: #fff;
+      line-height:1.1; margin-bottom:1.2rem;
+      animation: slideDown .7s .1s ease both;
+    }
+    .hero-title .highlight { color: var(--amber); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: rgba(255,255,255,.8); max-width:600px;
+      line-height:1.7; margin-bottom:2.5rem;
+      font-weight:500;
+      animation: slideDown .7s .2s ease both;
+    }
+
+    .hero-btns {
+      display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+      animation: slideDown .7s .3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--amber); color: var(--earth);
+      padding:.85rem 2rem; border-radius:3rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem;
+      text-decoration:none; border:none; cursor:pointer;
+      box-shadow: 0 4px 20px rgba(245,166,35,.5);
+      transition: transform .2s, box-shadow .2s;
+      display:inline-flex; align-items:center; gap:.5rem;
+    }
+    .btn-primary:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(245,166,35,.5); }
+
+    .btn-outline {
+      background: rgba(255,255,255,.1); color:#fff;
+      border: 2px solid rgba(255,255,255,.4);
+      padding:.85rem 2rem; border-radius:3rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem;
+      text-decoration:none;
+      transition: background .2s, transform .2s;
+      display:inline-flex; align-items:center; gap:.5rem;
+    }
+    .btn-outline:hover { background:rgba(255,255,255,.2); transform:translateY(-3px); }
+
+    @keyframes slideDown {
+      from { opacity:0; transform:translateY(-20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* hero stats row */
+    .hero-stats {
+      display:flex; gap:2rem; justify-content:center; flex-wrap:wrap;
+      margin-top:3rem; position:relative; z-index:2;
+      animation: slideDown .7s .45s ease both;
+    }
+    .hero-stat {
+      text-align:center; color:#fff;
+    }
+    .hero-stat-num {
+      font-family:'Baloo 2',sans-serif; font-weight:900; font-size:2rem;
+      color: var(--amber);
+    }
+    .hero-stat-label { font-size:.8rem; opacity:.7; letter-spacing:.05em; }
+
+    /* wave divider */
+    .wave { display:block; width:100%; overflow:hidden; line-height:0; }
+    .wave svg { display:block; }
+
+    /* ─────────── SECTION BASE ─────────── */
+    section { padding: 5rem 2rem; }
+    .container { max-width:1100px; margin:0 auto; }
+
+    .section-label {
+      font-family:'Baloo 2',sans-serif; font-weight:800;
+      font-size:.78rem; letter-spacing:.15em; text-transform:uppercase;
+      color: var(--green-mid); margin-bottom:.5rem;
+    }
+    .section-title {
+      font-size:clamp(1.8rem, 4vw, 2.8rem); font-weight:900;
+      color: var(--green-deep); margin-bottom:1rem; line-height:1.2;
+    }
+    .section-sub {
+      font-size:1.05rem; color:var(--text-muted);
+      max-width:560px; line-height:1.7;
+    }
+
+    /* ─────────── WHY / BENEFITS ─────────── */
+    .benefits { background: #fff; }
+
+    .benefits-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1.5rem; margin-top:3rem;
+    }
+
+    .benefit-card {
+      background: var(--cream);
+      border: 2px solid transparent;
+      border-radius: var(--radius-card);
+      padding:2rem;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+      position:relative; overflow:hidden;
+    }
+    .benefit-card::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(135deg, var(--green-light) 0%, var(--amber) 100%);
+      opacity:0; transition:opacity .3s; border-radius:inherit;
+      z-index:0;
+    }
+    .benefit-card:hover { border-color: var(--green-light); transform:translateY(-5px); box-shadow:var(--shadow-card); }
+    .benefit-card:hover::before { opacity:.05; }
+
+    .benefit-card > * { position:relative; z-index:1; }
+
+    .benefit-icon {
+      width:3.2rem; height:3.2rem;
+      background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+      border-radius:1rem; display:grid; place-items:center;
+      font-size:1.4rem; margin-bottom:1.2rem;
+      box-shadow: 0 4px 12px rgba(45,138,85,.25);
+    }
+    .benefit-card h4 {
+      font-size:1.15rem; font-weight:800; margin-bottom:.5rem;
+      color:var(--green-deep);
+    }
+    .benefit-card p { font-size:.93rem; color:var(--text-muted); line-height:1.65; }
+
+    /* ─────────── HOW IT WORKS ─────────── */
+    .how { background: var(--cream); }
+
+    .steps {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:1rem; margin-top:3rem; counter-reset:step;
+    }
+
+    .step {
+      background:#fff; border-radius:var(--radius-card);
+      padding:2rem 1.5rem; text-align:center;
+      box-shadow:var(--shadow-soft);
+      position:relative;
+      counter-increment:step;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .step:hover { transform:translateY(-4px); box-shadow:var(--shadow-card); }
+
+    .step-num {
+      width:2.8rem; height:2.8rem; border-radius:50%;
+      background: linear-gradient(135deg,var(--green-deep),var(--green-mid));
+      color:#fff; font-family:'Baloo 2',sans-serif; font-weight:900; font-size:1.1rem;
+      display:grid; place-items:center; margin:0 auto 1rem;
+      box-shadow: 0 4px 12px rgba(45,138,85,.3);
+    }
+    .step-emoji { font-size:2.5rem; margin-bottom:.8rem; }
+    .step h4 { font-size:1rem; font-weight:800; color:var(--green-deep); margin-bottom:.4rem; }
+    .step p { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+
+    /* currency explainer */
+    .currency-cards {
+      display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:3rem;
+    }
+    @media(max-width:640px){ .currency-cards { grid-template-columns:1fr; } }
+
+    .currency-card {
+      border-radius:var(--radius-card); padding:2rem;
+      display:flex; gap:1.2rem; align-items:flex-start;
+      box-shadow:var(--shadow-soft);
+    }
+    .currency-card.green { background:#f0faf4; border:2px solid #c6f0d8; }
+    .currency-card.amber { background:#fffbeb; border:2px solid #fde68a; }
+
+    .currency-card .icon-box {
+      width:3.5rem; height:3.5rem; border-radius:1rem;
+      display:grid; place-items:center; font-size:1.5rem;
+      flex-shrink:0;
+    }
+    .currency-card.green .icon-box { background:#d1fae5; }
+    .currency-card.amber .icon-box { background:#fef3c7; }
+
+    .currency-card h4 { font-size:1.1rem; font-weight:800; margin-bottom:.4rem; }
+    .currency-card.green h4 { color:var(--green-deep); }
+    .currency-card.amber h4 { color:#92400e; }
+    .currency-card p { font-size:.9rem; color:var(--text-muted); line-height:1.6; }
+
+    /* exchange rate callout */
+    .rate-callout {
+      margin-top:2rem;
+      background: linear-gradient(135deg, var(--green-deep) 0%, #1b4332 100%);
+      border-radius:var(--radius-card); padding:2rem 2.5rem;
+      display:flex; align-items:center; gap:2rem; flex-wrap:wrap;
+      justify-content:center; text-align:center;
+      box-shadow: 0 8px 32px rgba(26,92,56,.3);
+    }
+    .rate-callout .rate-item {
+      display:flex; flex-direction:column; align-items:center; gap:.3rem;
+    }
+    .rate-callout .rate-num {
+      font-family:'Baloo 2',sans-serif; font-weight:900; font-size:2.2rem;
+      color: var(--amber);
+    }
+    .rate-callout .rate-label { font-size:.8rem; color:rgba(255,255,255,.7); letter-spacing:.06em; }
+    .rate-callout .rate-eq {
+      font-size:2rem; color:rgba(255,255,255,.3);
+    }
+    .rate-callout a {
+      margin-left:auto;
+      background:var(--amber); color:var(--earth);
+      padding:.6rem 1.5rem; border-radius:2rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.9rem;
+      text-decoration:none;
+      transition: transform .2s, box-shadow .2s;
+      white-space:nowrap;
+    }
+    .rate-callout a:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(245,166,35,.4); }
+    @media(max-width:640px){ .rate-callout a { margin-left:0; } }
+
+    /* ─────────── RANKS ─────────── */
+    .ranks { background:#fff; }
+
+    .ranks-track {
+      display:flex; gap:0; margin-top:3rem;
+      overflow-x:auto; padding-bottom:1rem;
+    }
+    .rank-item {
+      min-width:180px; flex:1;
+      background:var(--cream); border:2px solid #e5e7eb;
+      border-radius:0; padding:1.5rem 1rem; text-align:center;
+      position:relative;
+      transition: all .25s;
+    }
+    .rank-item:first-child { border-radius:var(--radius-card) 0 0 var(--radius-card); }
+    .rank-item:last-child  { border-radius:0 var(--radius-card) var(--radius-card) 0; }
+
+    .rank-item:not(:first-child)::before {
+      content:''; position:absolute; left:0; top:50%;
+      transform:translateY(-50%);
+      width:0; height:0;
+      border-top:12px solid transparent;
+      border-bottom:12px solid transparent;
+      border-left:14px solid #e5e7eb;
+    }
+
+    .rank-item:hover {
+      background: linear-gradient(135deg, #f0faf4, #fffbeb);
+      border-color:var(--green-light);
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-card);
+      z-index:1;
+    }
+
+    .rank-emoji { font-size:2.2rem; margin-bottom:.6rem; }
+    .rank-name { font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.95rem; color:var(--green-deep); margin-bottom:.3rem; }
+    .rank-exp  { font-size:.8rem; color:var(--text-muted); }
+    .rank-badge {
+      display:inline-block; font-size:.72rem; font-weight:700;
+      padding:.2rem .6rem; border-radius:1rem; margin-top:.4rem;
+    }
+
+    /* ─────────── PENALTY ─────────── */
+    .penalty {
+      background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+      border-top:4px solid var(--red-penalty);
+    }
+    .penalty-box {
+      background:#fff; border-radius:var(--radius-card);
+      border:2px solid #fecaca;
+      padding:2.5rem; box-shadow:var(--shadow-soft);
+      display:flex; gap:2rem; align-items:flex-start; flex-wrap:wrap;
+    }
+    .penalty-icon-wrap {
+      width:5rem; height:5rem; flex-shrink:0;
+      background:#fee2e2; border-radius:50%;
+      display:grid; place-items:center;
+      font-size:2.2rem;
+      box-shadow:0 4px 16px rgba(192,57,43,.2);
+    }
+    .penalty-content { flex:1; }
+    .penalty-content h3 {
+      font-size:1.5rem; font-weight:900; color:var(--red-penalty);
+      margin-bottom:.5rem;
+    }
+    .penalty-content > p { color:var(--text-muted); margin-bottom:1.2rem; }
+    .penalty-rules { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media(max-width:600px){ .penalty-rules { grid-template-columns:1fr; } }
+
+    .penalty-rule {
+      background:#fff5f5; border:1px solid #fecaca;
+      border-radius:1rem; padding:1rem 1.2rem;
+      display:flex; gap:.8rem; align-items:flex-start;
+    }
+    .penalty-rule i { color:var(--red-penalty); margin-top:.15rem; }
+    .penalty-rule strong { display:block; font-weight:700; font-size:.92rem; margin-bottom:.2rem; }
+    .penalty-rule span { font-size:.85rem; color:var(--text-muted); line-height:1.5; }
+    .penalty-rule .highlight { color:var(--red-penalty); font-weight:700; }
+
+    /* ─────────── CTA ─────────── */
+    .cta-section {
+      background: linear-gradient(135deg, var(--green-deep) 0%, #1b4332 100%);
+      text-align:center; padding:6rem 2rem;
+      position:relative; overflow:hidden;
+    }
+    .cta-section::before {
+      content:'🌾'; font-size:18rem; opacity:.04;
+      position:absolute; right:-3rem; top:-3rem; pointer-events:none; line-height:1;
+    }
+    .cta-section h2 { font-size:clamp(1.8rem,4vw,3rem); font-weight:900; color:#fff; margin-bottom:1rem; }
+    .cta-section p  { color:rgba(255,255,255,.75); font-size:1.05rem; max-width:520px; margin:0 auto 2.5rem; line-height:1.7; }
+    .cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+    .btn-white {
+      background:#fff; color:var(--green-deep);
+      padding:.85rem 2rem; border-radius:3rem;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1rem;
+      text-decoration:none;
+      transition:transform .2s, box-shadow .2s;
+      display:inline-flex; align-items:center; gap:.5rem;
+    }
+    .btn-white:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.15); }
+
+@media (max-width: 768px) {
+  .rate-callout { flex-direction: column; }
+  .penalty-box { flex-direction: column; }
+}

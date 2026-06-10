@@ -1,0 +1,143 @@
+/* ─────────── SCROLL REVEAL ─────────── */
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+/* tasks preview */
+    .tasks-preview {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+      gap:1rem; margin-top:2rem;
+    }
+
+    /* Style cho Nhiệm vụ Sử thi (Epic) */
+    .task-row.epic { border: 1px solid #47ea08; background: linear-gradient(135deg, #fefce8 0%, #fff 100%); position: relative; }
+    .task-row.epic::before { content: "♛"; position: absolute; right: 10px; top: 5px; font-size: 1.2rem; color: #eab308; }
+    .task-name.epic { color: #854d0e; font-weight: 900; }
+
+    /* Style cho Highlight */
+    .task-row.highlight { border: 1px solid var(--amber); background-color: #fffbeb; }
+
+    .task-row {
+      background:#fff; border-radius:1rem; padding:.85rem 1rem;
+      display:flex; align-items:center; gap:.75rem;
+      box-shadow:var(--shadow-soft);
+      border:2px solid transparent;
+      transition: border-color .2s, transform .2s;
+      min-width: 0; /* prevent flex blowout */
+    }
+    .task-row:hover { border-color:var(--green-light); transform:translateX(4px); }
+    .task-row .task-icon { font-size:1.4rem; width:2rem; text-align:center; flex-shrink:0; }
+    .task-row .task-info { flex:1; min-width:0; overflow:hidden; }
+    .task-row .task-name { font-weight:700; font-size:.88rem; color:var(--green-deep); }
+    .task-row .task-sub  { font-size:.75rem; color:var(--text-muted); }
+    .task-row .task-reward {
+      display:flex; flex-direction:column; align-items:flex-end; gap:2px;
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem;
+      flex-shrink:0;
+    }
+    .val-grain { color:#b45309; background:var(--amber-light); border-radius:1rem; padding:.15rem .55rem; white-space:nowrap; }
+    .val-exp   { color:#059669; padding:.15rem .55rem; white-space:nowrap; }
+
+    @media(max-width:480px){
+      .tasks-preview { grid-template-columns: 1fr; }
+      .task-row .task-name { white-space:normal; }
+    }
+
+/* ─ FILTER TABS ─ */
+    .filter-section { background:var(--cream); }
+    .filter-tabs {
+      display:flex; gap:.7rem; flex-wrap:wrap; margin-bottom:2.5rem;
+    }
+    .tab-btn {
+      background:#fff; border:2px solid #e5e7eb;
+      color:var(--text-muted); font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.88rem;
+      padding:.45rem 1.1rem; border-radius:2rem; cursor:pointer;
+      transition: all .2s;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background:var(--green-deep); border-color:var(--green-deep);
+      color:#fff;
+    }
+
+    /* ─ LONG TERM REWARDS ─ */
+    .rewards-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+      gap:1.5rem;
+    }
+
+    .reward-card {
+      background:#fff; border-radius:var(--radius-card);
+      border:2px solid #e5e7eb; overflow:hidden;
+      box-shadow:var(--shadow-soft);
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      display:flex; flex-direction:column;
+    }
+    .reward-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-card); border-color:var(--amber); }
+
+    .reward-card-top {
+      padding:1.8rem 1.8rem 1rem;
+      border-bottom:1px solid #f3f4f6;
+    }
+    .reward-card-emoji { font-size:2.8rem; margin-bottom:.8rem; }
+    .reward-card-name { font-size:1.1rem; font-weight:900; color:var(--green-deep); margin-bottom:.3rem; }
+    .reward-cost {
+      display:inline-flex; align-items:center; gap:.3rem;
+      background:var(--amber-light); color:var(--earth);
+      font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.9rem;
+      padding:.3rem .8rem; border-radius:1rem;
+    }
+
+    .reward-card-body { padding:1rem 1.8rem 1.8rem; flex:1; display:flex; flex-direction:column; gap:1rem; }
+    .reward-desc { font-size:.9rem; color:var(--text-muted); line-height:1.65; }
+
+    .reward-why {
+      background:#f0faf4; border-radius:1rem; padding:.9rem 1rem;
+      border-left:3px solid var(--green-mid);
+    }
+    .reward-why-label {
+      font-size:.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--green-mid); margin-bottom:.3rem;
+    }
+    .reward-why p { font-size:.83rem; color:var(--text-muted); line-height:1.55; }
+
+    .reward-tag {
+      display:inline-block; font-size:.72rem; font-weight:700; padding:.2rem .6rem;
+      border-radius:1rem; background:#e0f2fe; color:#0369a1;
+    }
+    .reward-tag.family  { background:#f0fdf4; color:#166534; }
+    .reward-tag.freedom { background:#fef3c7; color:#92400e; }
+    .reward-tag.food    { background:#fdf4ff; color:#7e22ce; }
+    .reward-tag.social  { background:#fff1f2; color:#be123c; }
+    .reward-tag.learning{ background:#eff6ff; color:#1d4ed8; }
+
+    /* ─ TIER LIST ─ */
+    .tier-list { display:flex; flex-direction:column; gap:.5rem; margin-top:.2rem; }
+    .tier-item {
+      display:flex; align-items:flex-start; gap:.75rem;
+      background:var(--cream); border-radius:.9rem;
+      padding:.7rem 1rem;
+      border-left:3px solid #e5e7eb;
+      transition: border-color .2s, background .2s;
+    }
+    .tier-item:hover { background:#f0fdf4; border-left-color:var(--green-mid); }
+    .tier-cost {
+      font-family:'Baloo 2',sans-serif; font-weight:900; font-size:.8rem;
+      background:var(--amber-light); color:var(--earth);
+      padding:.2rem .6rem; border-radius:.8rem;
+      white-space:nowrap; flex-shrink:0; line-height:1.7;
+    }
+    .tier-desc { font-size:.85rem; color:var(--text-muted); line-height:1.55; }
+    .tier-desc strong { color:var(--green-deep); font-weight:800; }
+
+/* ─ PAGE HERO ─ */
+    .page-hero {
+      background: linear-gradient(135deg, #1a5c38 0%, #2d8a55 50%, #3d9e6a 100%);
+      padding:9rem 2rem 5rem; text-align:center; position:relative; overflow:hidden;
+    }
+    .page-hero::before { content:'🌾'; font-size:20rem; opacity:.06; position:absolute; left:-3rem; top:-3rem; pointer-events:none; line-height:1; }
+    .page-hero .badge { display:inline-block; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.3); color:var(--amber-light); font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; padding:.4rem 1.2rem; border-radius:2rem; margin-bottom:1.2rem; }
+    .page-hero h1 { font-size:clamp(2rem,6vw,3.8rem); font-weight:900; color:#fff; margin-bottom:1rem; }
+    .page-hero p  { color:rgba(255,255,255,.8); font-size:1.05rem; max-width:540px; margin:0 auto; line-height:1.7; }
+
+/* wave */
+    .wave svg { display:block; }

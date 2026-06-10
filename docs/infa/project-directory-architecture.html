@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kho Thóc Gia Đình — Kiến trúc Thư mục Dự án</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1a12;
+    --surface: #14261a;
+    --surface-alt: #0f1f15;
+    --border: #2a4a35;
+    --accent: #2d8a55;
+    --accent-soft: #4abe7a;
+    --green: #3dd68c;
+    --orange: #f5a623;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --cyan: #22d3ee;
+    --text: #e8f5ec;
+    --text-muted: #94b8a3;
+    --text-dim: #5f7d6a;
+    --sidebar-w: 220px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--surface-alt);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .sidebar-brand {
+    padding: 0 16px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-brand .label {
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent-soft); margin-bottom: 4px;
+  }
+
+  .sidebar-brand .title {
+    font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.4;
+  }
+
+  .nav-group {
+    font-size: 8px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-dim); padding: 12px 16px 4px;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 6px 16px;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .sidebar a:hover,
+  .sidebar a.active {
+    color: var(--accent-soft);
+    background: #2d8a5518;
+    border-left-color: var(--accent);
+  }
+
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 40px 48px 80px;
+    max-width: 1100px;
+  }
+
+  .page-header { margin-bottom: 48px; }
+  .page-header .label {
+    font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--accent-soft); margin-bottom: 8px;
+  }
+  .page-header h1 {
+    font-size: 26px; font-weight: 700; color: var(--text);
+    letter-spacing: -0.02em; margin-bottom: 12px;
+  }
+  .page-header .meta {
+    font-size: 11px; color: var(--text-muted); line-height: 1.6;
+  }
+  .badge {
+    display: inline-block; font-size: 10px;
+    background: #2d8a5533; color: var(--accent-soft);
+    padding: 2px 10px; border-radius: 99px;
+    border: 1px solid #2d8a5555; margin-right: 6px;
+  }
+
+  section { margin-bottom: 56px; scroll-margin-top: 24px; }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; color: var(--accent-soft);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .section-desc {
+    font-size: 11px; color: var(--text-muted);
+    line-height: 1.7; margin-bottom: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 11px; font-weight: 700; color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .placeholder {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-style: italic;
+    padding: 24px;
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    background: var(--surface-alt);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+    margin-bottom: 16px;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--surface-alt);
+    color: var(--accent-soft);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    line-height: 1.5;
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #ffffff05; }
+
+  td code, th code {
+    font-size: 9px;
+    background: #2d8a5518;
+    color: var(--accent-soft);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .tree {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-size: 10px;
+    line-height: 1.8;
+    color: var(--text-muted);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .tree .dir  { color: var(--cyan); }
+  .tree .file { color: var(--text-muted); }
+  .tree .cmt  { color: var(--text-dim); font-style: italic; }
+
+  pre {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 10px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    overflow-x: auto;
+    margin-bottom: 16px;
+  }
+
+  pre .key { color: var(--cyan); }
+  pre .val { color: var(--green); }
+  pre .cmt { color: var(--text-dim); }
+
+  .diagram-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+  }
+
+  .mermaid { display: flex; justify-content: center; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tag {
+    font-size: 9px; border-radius: 4px; padding: 2px 8px;
+    border: 1px solid; letter-spacing: 0.04em;
+  }
+  .tag-green  { background: #2d8a5518; color: var(--accent-soft); border-color: #2d8a5544; }
+  .tag-orange { background: #f5a62318; color: var(--orange);      border-color: #f5a62344; }
+  .tag-blue   { background: #60a5fa18; color: var(--blue);         border-color: #60a5fa44; }
+  .tag-cyan   { background: #22d3ee18; color: var(--cyan);        border-color: #22d3ee44; }
+
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .module-box {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 10px;
+  }
+
+  .module-box .name { color: var(--cyan); font-weight: 700; margin-bottom: 4px; }
+  .module-box .desc { color: var(--text-dim); font-size: 9px; line-height: 1.5; }
+
+  .summary-box {
+    background: linear-gradient(135deg, #2d8a5518, #f5a6230a);
+    border: 1px solid #2d8a5544;
+    border-radius: 10px;
+    padding: 20px 24px;
+  }
+
+  .summary-box ul {
+    list-style: none;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 2;
+  }
+
+  .summary-box ul li::before {
+    content: '→ ';
+    color: var(--accent-soft);
+  }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 9px;
+    color: var(--text-dim);
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 24px 20px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="label">🌾 Kho Thóc</div>
+    <div class="title">Kiến trúc<br>Thư mục Dự án</div>
+  </div>
+
+  <div class="nav-group">Tổng quan</div>
+  <a href="#overview">Tổng quan</a>
+  <a href="#decisions">Quyết định lock-in</a>
+  <a href="#architecture-diagram">Sơ đồ kiến trúc</a>
+
+  <div class="nav-group">Cấu trúc</div>
+  <a href="#directory-tree">Cây thư mục</a>
+  <a href="#frontend-modules">Frontend Modules</a>
+  <a href="#data-mapping">Mapping Dữ liệu</a>
+  <a href="#deploy-routing">Deploy &amp; Routing</a>
+
+  <div class="nav-group">Quy ước</div>
+  <a href="#conventions">Quy ước quan trọng</a>
+  <a href="#roadmap">Lộ trình triển khai</a>
+  <a href="#open-choices">Việc còn mở</a>
+  <a href="#summary">Tóm tắt</a>
+</nav>
+
+<main class="main">
+
+  <header class="page-header" id="overview">
+    <div class="label">Project Directory Architecture</div>
+    <h1>Kiến trúc Thư mục Dự án</h1>
+    <div class="meta">
+      <span class="badge">v1.0.0</span>
+      <span class="badge">2026-06-10</span>
+      <span class="badge">Static HTML</span>
+      <span class="badge">GitHub Pages</span>
+      <span class="badge">No build step</span>
+      <br><br>
+      Phản ánh cấu trúc thực tế sau refactor <code>code/</code> + <code>docs/</code>.
+      Gamification việc nhà cho gia đình — frontend tĩnh, backend hiện tại Google Apps Script
+      (kế hoạch nâng cấp: VPS + PostgreSQL, xem <code>docs/architech.md</code>).
+    </div>
+  </header>
+
+  <!-- DECISIONS -->
+  <section id="decisions">
+    <div class="section-title">Quyết định đã lock-in</div>
+    <p class="section-desc">Các quyết định thiết kế ảnh hưởng trực tiếp đến cấu trúc thư mục.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Quyết định</th>
+          <th>ID</th>
+          <th>Ảnh hưởng lên cấu trúc</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tách <code>code/</code> (frontend) và <code>docs/</code> (tài liệu)</td>
+          <td><code>D1</code></td>
+          <td>HTML/CSS/JS trong <code>code/</code>; markdown nghiệp vụ trong <code>docs/</code></td>
+        </tr>
+        <tr>
+          <td>Assets tách file — không inline CSS/JS</td>
+          <td><code>D2</code></td>
+          <td><code>code/assets/css/shared|pages/</code> + <code>code/assets/js/shared|data|pages/</code></td>
+        </tr>
+        <tr>
+          <td>Nav/footer đồng bộ qua một file JS</td>
+          <td><code>D3</code></td>
+          <td><code>assets/js/shared/site-nav.js</code> — sửa menu tại một chỗ</td>
+        </tr>
+        <tr>
+          <td>Không bắt buộc framework / build tool</td>
+          <td><code>D4</code></td>
+          <td>Deploy thẳng lên GitHub Pages, mở file HTML trực tiếp</td>
+        </tr>
+        <tr>
+          <td>Dữ liệu nhiệm vụ &amp; quà tập trung</td>
+          <td><code>D5</code></td>
+          <td><code>assets/js/data/tasks.js</code>, <code>rewards.js</code>, <code>config.js</code></td>
+        </tr>
+        <tr>
+          <td colspan="3" style="color:var(--text-dim); font-style:italic; text-align:center;">
+            — Các quyết định backend / multi-tenant chưa lock-in, sẽ bổ sung dần —
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ARCHITECTURE DIAGRAM -->
+  <section id="architecture-diagram">
+    <div class="section-title">Sơ đồ kiến trúc</div>
+    <p class="section-desc">Hiện tại (MVP) và hướng nâng cấp. Chi tiết: <code>docs/architech.md</code>.</p>
+
+    <div class="diagram-wrap">
+      <pre class="mermaid">
+flowchart TB
+  subgraph client ["Trình duyệt"]
+    PAGES["code/*.html"]
+    ASSETS["code/assets/"]
+  end
+
+  subgraph host ["GitHub Pages"]
+    GH["batagic.github.io/keep-house-clean/code/"]
+  end
+
+  subgraph backend_now ["Backend hiện tại"]
+  GAS["Google Apps Script"]
+  SHEETS[("Google Sheets")]
+  end
+
+  subgraph backend_future ["Backend kế hoạch"]
+  API["kho-thoc-api Node.js"]
+  PG[("PostgreSQL")]
+  end
+
+  PAGES --> GH
+  ASSETS --> GH
+  PAGES -->|fetch API_URL| GAS
+  GAS --> SHEETS
+  PAGES -.->|tương lai| API
+  API -.-> PG
+      </pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Thành phần runtime</div>
+      <div class="tags">
+        <span class="tag tag-green">Frontend — HTML/CSS/JS thuần</span>
+        <span class="tag tag-orange">API — Google Apps Script v11+</span>
+        <span class="tag tag-blue">Storage — Google Sheets</span>
+        <span class="tag tag-cyan">Deploy — GitHub Pages (miễn phí)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIRECTORY TREE -->
+  <section id="directory-tree">
+    <div class="section-title">Cây thư mục hiện tại</div>
+    <p class="section-desc">Cấu trúc repo <code>keep-house-clean</code> — cập nhật 10/06/2026.</p>
+
+    <div class="tree"><span class="dir">keep-house-clean/</span>
+│
+├── <span class="file">README.md</span>                        <span class="cmt"># Tổng quan repo + link code/ &amp; docs/</span>
+│
+├── <span class="dir">code/</span>                              <span class="cmt"># Frontend — ứng dụng web tĩnh</span>
+│   ├── <span class="file">README.md</span>                    <span class="cmt"># Hướng dẫn cấu trúc assets &amp; quy ước mở rộng</span>
+│   │
+│   ├── <span class="file">index.html</span>                   <span class="cmt"># Trang chủ — marketing, giới thiệu quy tắc</span>
+│   ├── <span class="file">kho-qua.html</span>                 <span class="cmt"># Catalog quà &amp; thẻ bài (cho bé xem)</span>
+│   ├── <span class="file">quy-doi.html</span>                 <span class="cmt"># Máy tính Gạo ↔ VNĐ + biểu đồ</span>
+│   ├── <span class="file">nhat-ky.html</span>                 <span class="cmt"># App vận hành — bố/mẹ ghi nhật ký, đổi quà</span>
+│   ├── <span class="file">print.html</span>                   <span class="cmt"># Trang in ấn — infographic + thẻ cắt A4</span>
+│   │
+│   └── <span class="dir">assets/</span>
+│       ├── <span class="dir">css/</span>
+│       │   ├── <span class="dir">shared/</span>              <span class="cmt"># Design system — marketing pages</span>
+│       │   │   ├── <span class="file">variables.css</span>    <span class="cmt"># :root tokens (màu, shadow, radius)</span>
+│       │   │   ├── <span class="file">base.css</span>         <span class="cmt"># Reset, body, noise overlay</span>
+│       │   │   ├── <span class="file">nav.css</span>          <span class="cmt"># .nav, .nav-cta, .nav-btn</span>
+│       │   │   ├── <span class="file">layout.css</span>       <span class="cmt"># section, container, section-title</span>
+│       │   │   ├── <span class="file">buttons.css</span>      <span class="cmt"># btn-primary, btn-outline, CTA</span>
+│       │   │   ├── <span class="file">footer.css</span>       <span class="cmt"># Footer marketing</span>
+│       │   │   └── <span class="file">components.css</span>   <span class="cmt"># reveal, tasks, filter tabs, page-hero</span>
+│       │   └── <span class="dir">pages/</span>               <span class="cmt"># CSS riêng từng trang</span>
+│       │       ├── <span class="file">index.css</span>
+│       │       ├── <span class="file">kho-qua.css</span>
+│       │       ├── <span class="file">quy-doi.css</span>
+│       │       ├── <span class="file">nhat-ky.css</span>      <span class="cmt"># App UI — design riêng</span>
+│       │       └── <span class="file">print.css</span>        <span class="cmt"># @media print, cut-cards</span>
+│       │
+│       └── <span class="dir">js/</span>
+│           ├── <span class="dir">shared/</span>              <span class="cmt"># Tiện ích dùng chung</span>
+│           │   ├── <span class="file">site-nav.js</span>      <span class="cmt"># Nav + footer đồng bộ toàn site</span>
+│           │   ├── <span class="file">nav.js</span>           <span class="cmt"># Scroll shadow nav</span>
+│           │   ├── <span class="file">reveal.js</span>        <span class="cmt"># Intersection Observer animation</span>
+│           │   └── <span class="file">filter-cards.js</span>  <span class="cmt"># Lọc thẻ quà theo tag</span>
+│           ├── <span class="dir">data/</span>                <span class="cmt"># Dữ liệu &amp; cấu hình tĩnh</span>
+│           │   ├── <span class="file">config.js</span>        <span class="cmt"># API_URL, GRAIN_RATE</span>
+│           │   ├── <span class="file">tasks.js</span>         <span class="cmt"># 15 nhiệm vụ (TASKS array)</span>
+│           │   └── <span class="file">rewards.js</span>       <span class="cmt"># 15 phần thưởng (REWARDS array)</span>
+│           └── <span class="dir">pages/</span>               <span class="cmt"># Logic riêng từng trang</span>
+│               ├── <span class="file">index.js</span>         <span class="cmt"># Hero grain field animation</span>
+│               ├── <span class="file">kho-qua.js</span>       <span class="cmt"># (placeholder)</span>
+│               ├── <span class="file">quy-doi.js</span>       <span class="cmt"># Calculator + Chart.js</span>
+│               └── <span class="file">nhat-ky.js</span>       <span class="cmt"># App CRUD — profiles, logs, redeem</span>
+│
+└── <span class="dir">docs/</span>                              <span class="cmt"># Tài liệu nghiệp vụ &amp; kiến trúc</span>
+    ├── <span class="file">README.md</span>
+    ├── <span class="file">TAI-LIEU-NGHIEP-VU.md</span>        <span class="cmt"># Quy tắc Gạo/EXP, luồng nghiệp vụ</span>
+    ├── <span class="file">architech.md</span>                 <span class="cmt"># Kiến trúc hạ tầng (GitHub Pages + API)</span>
+    ├── <span class="file">style.md</span>                     <span class="cmt"># Design system &amp; UI guidelines</span>
+    ├── <span class="dir">infa/</span>
+    │   └── <span class="file">project-directory-architecture.html</span>  <span class="cmt"># Tài liệu này</span>
+    └── <span class="dir">datasource/</span>
+        ├── <span class="file">appscripv11.md</span>             <span class="cmt"># API Google Apps Script hiện tại</span>
+        └── <span class="file">session_snapshot.md</span>        <span class="cmt"># Snapshot phiên làm việc</span></div>
+  </section>
+
+  <!-- FRONTEND MODULES -->
+  <section id="frontend-modules">
+    <div class="section-title">Frontend — Trang &amp; vai trò</div>
+    <p class="section-desc">Mapping trang HTML → đối tượng sử dụng → assets liên quan.</p>
+
+    <div class="module-grid">
+      <div class="module-box">
+        <div class="name">index.html</div>
+        <div class="desc">Marketing · Cả gia đình · shared/* + pages/index.css</div>
+      </div>
+      <div class="module-box">
+        <div class="name">kho-qua.html</div>
+        <div class="desc">Catalog quà · Bé xem · filter-cards.js</div>
+      </div>
+      <div class="module-box">
+        <div class="name">quy-doi.html</div>
+        <div class="desc">Máy tính Gạo↔VNĐ · Chart.js CDN · quy-doi.js</div>
+      </div>
+      <div class="module-box">
+        <div class="name">nhat-ky.html</div>
+        <div class="desc">App vận hành · Bố/mẹ · data/* + nhat-ky.js</div>
+      </div>
+      <div class="module-box">
+        <div class="name">print.html</div>
+        <div class="desc">In ấn A4 · Gia đình · print.css @media print</div>
+      </div>
+      <div class="module-box">
+        <div class="name">site-nav.js</div>
+        <div class="desc">Nav + footer đồng bộ — NAV_ITEMS single source</div>
+      </div>
+    </div>
+
+    <div class="placeholder">Backend modules (kho-thoc-api) — chưa có, sẽ bổ sung khi triển khai VPS</div>
+  </section>
+
+  <!-- DATA MAPPING -->
+  <section id="data-mapping">
+    <div class="section-title">Mapping Dữ liệu → Code</div>
+    <p class="section-desc">Google Sheets hiện tại và file JS tương ứng. Chi tiết: <code>docs/datasource/appscripv11.md</code>.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Sheet / Nguồn</th>
+          <th>Cột chính</th>
+          <th>File code</th>
+          <th>Ghi chú</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Profiles</code></td>
+          <td>id, name, avatar, balance, history</td>
+          <td><code>nhat-ky.js</code></td>
+          <td>balance tính động từ Logs − Redemptions</td>
+        </tr>
+        <tr>
+          <td><code>Logs</code></td>
+          <td>id, name, date, grain, exp, note, tasks, bonus</td>
+          <td><code>nhat-ky.js</code></td>
+          <td>Giao dịch dương — ghi nhiệm vụ hàng ngày</td>
+        </tr>
+        <tr>
+          <td><code>Redemptions</code></td>
+          <td>id, grain_spent, reward_id, …</td>
+          <td><code>nhat-ky.js</code></td>
+          <td>Chưa hoàn thiện đầy đủ — đang xây dựng</td>
+        </tr>
+        <tr>
+          <td><code>TASKS</code> (static)</td>
+          <td>15 nhiệm vụ — grain, exp, category</td>
+          <td><code>data/tasks.js</code></td>
+          <td>Hardcoded — đồng bộ với print.html</td>
+        </tr>
+        <tr>
+          <td><code>REWARDS</code> (static)</td>
+          <td>15 quà — cost, emoji</td>
+          <td><code>data/rewards.js</code></td>
+          <td>9 thẻ bài + 6 quà dài hạn</td>
+        </tr>
+        <tr>
+          <td><code>API_URL</code></td>
+          <td>Apps Script deployment URL</td>
+          <td><code>data/config.js</code></td>
+          <td>Đổi một chỗ khi migrate VPS</td>
+        </tr>
+        <tr>
+          <td colspan="4" style="color:var(--text-dim); font-style:italic; text-align:center;">
+            — Mapping PostgreSQL (kho_thoc DB) — chưa có, sẽ bổ sung dần —
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- DEPLOY ROUTING -->
+  <section id="deploy-routing">
+    <div class="section-title">Deploy &amp; Routing</div>
+    <p class="section-desc">GitHub Pages serve static files. URL sau refactor có prefix <code>/code/</code>.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Path (GitHub Pages)</th>
+          <th>File</th>
+          <th>Mô tả</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>/keep-house-clean/code/index.html</code></td>
+          <td>index.html</td>
+          <td>Trang chủ</td>
+        </tr>
+        <tr>
+          <td><code>/keep-house-clean/code/nhat-ky.html</code></td>
+          <td>nhat-ky.html</td>
+          <td>App vận hành (bố/mẹ)</td>
+        </tr>
+        <tr>
+          <td><code>/keep-house-clean/code/assets/*</code></td>
+          <td>assets/</td>
+          <td>CSS, JS tĩnh</td>
+        </tr>
+        <tr>
+          <td><code>API_URL</code> (external)</td>
+          <td>Google Apps Script</td>
+          <td>POST/GET JSON — CORS via text/plain</td>
+        </tr>
+        <tr>
+          <td colspan="3" style="color:var(--text-dim); font-style:italic; text-align:center;">
+            — Nginx routing VPS (kho-thoc-api) — chưa triển khai, xem docs/architech.md —
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- CONVENTIONS -->
+  <section id="conventions">
+    <div class="section-title">Quy ước quan trọng</div>
+
+    <div class="card">
+      <div class="card-title">1. Thêm trang marketing mới</div>
+      <pre><span class="cmt"># Head — load shared CSS theo thứ tự:</span>
+assets/css/shared/variables.css → base → nav → layout → buttons → footer → components
+assets/css/pages/&lt;ten-trang&gt;.css
+
+<span class="cmt"># Body — nav đồng bộ:</span>
+&lt;nav class="nav" id="mainNav" data-page="ten-trang"&gt;&lt;/nav&gt;
+&lt;script src="assets/js/shared/site-nav.js"&gt;&lt;/script&gt;</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">2. Sửa menu toàn site</div>
+      <pre><span class="cmt"># Chỉ sửa một file:</span>
+assets/js/shared/site-nav.js  →  NAV_ITEMS[]</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">3. Phân tách docs/ vs code/</div>
+      <table>
+        <thead>
+          <tr><th>Thư mục</th><th>Vai trò</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>code/</code></td>
+            <td>Runtime frontend — HTML, CSS, JS deploy lên GitHub Pages</td>
+          </tr>
+          <tr>
+            <td><code>docs/</code></td>
+            <td>Tài liệu nghiệp vụ, kiến trúc, design reference — không deploy</td>
+          </tr>
+          <tr>
+            <td><code>docs/datasource/</code></td>
+            <td>Tham chiếu API Apps Script &amp; snapshot phiên làm việc</td>
+          </tr>
+          <tr>
+            <td><code>docs/infa/</code></td>
+            <td>Sơ đồ &amp; kiến trúc thư mục (tài liệu này)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="placeholder">Quy ước API / comment convention backend — chưa có, sẽ bổ sung khi có kho-thoc-api</div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="roadmap">
+    <div class="section-title">Lộ trình triển khai</div>
+    <p class="section-desc">Đã hoàn thành refactor frontend. Backend multi-tenant đang thảo luận.</p>
+
+    <div class="diagram-wrap">
+      <pre class="mermaid">
+flowchart LR
+  A["✅ Refactor code/ + docs/"] --> B["✅ Tách CSS/JS assets"]
+  B --> C["✅ Nav đồng bộ site-nav.js"]
+  C --> D["🔄 Redemptions API"]
+  D --> E["⏳ kho-thoc-api skeleton"]
+  E --> F["⏳ PostgreSQL schema"]
+  F --> G["⏳ Passcode auth UI"]
+  G --> H["⏳ Deploy VPS"]
+      </pre>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Bước</th><th>Deliverable</th><th>Trạng thái</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Tách <code>code/</code> + <code>docs/</code></td>
+          <td>✅ Hoàn thành</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Assets CSS/JS có cấu trúc shared/pages/data</td>
+          <td>✅ Hoàn thành</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Nav &amp; footer đồng bộ 5 trang</td>
+          <td>✅ Hoàn thành</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Redemptions sheet + API case <code>redeem</code></td>
+          <td>🔄 Đang làm</td>
+        </tr>
+        <tr>
+          <td>5–8</td>
+          <td>kho-thoc-api, PostgreSQL, passcode, VPS deploy</td>
+          <td>⏳ Chưa bắt đầu — xem docs/architech.md</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- OPEN CHOICES -->
+  <section id="open-choices">
+    <div class="section-title">Việc còn mở</div>
+    <p class="section-desc">Các hạng mục chưa chốt — cập nhật dần theo tiến độ dự án.</p>
+
+    <table>
+      <thead>
+        <tr><th>Chủ đề</th><th>Trạng thái</th><th>Ghi chú</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Luật phạt &amp; bonus cấp bậc trong app</td>
+          <td>Chưa làm</td>
+          <td>Có trên index.html, chưa có trong nhat-ky.html</td>
+        </tr>
+        <tr>
+          <td>Multi-tenant passcode</td>
+          <td>Thảo luận</td>
+          <td>docs/architech.md — ~100 gia đình</td>
+        </tr>
+        <tr>
+          <td>Build tool (Vite/bundler)</td>
+          <td>Chưa quyết</td>
+          <td>Hiện không cần — có thể thêm sau</td>
+        </tr>
+        <tr>
+          <td>Mobile nav menu</td>
+          <td>Stub</td>
+          <td>toggleMobileMenu() — alert placeholder</td>
+        </tr>
+        <tr>
+          <td colspan="3" style="color:var(--text-dim); font-style:italic; text-align:center;">
+            — Bổ sung thêm khi có quyết định mới —
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SUMMARY -->
+  <section id="summary">
+    <div class="section-title">Tóm tắt</div>
+
+    <div class="summary-box">
+      <ul>
+        <li>Frontend tĩnh trong <code>code/</code> — 5 trang HTML + <code>assets/</code> có tổ chức</li>
+        <li>Tài liệu trong <code>docs/</code> — nghiệp vụ, kiến trúc, style, datasource</li>
+        <li>Nav/footer: một nguồn <code>site-nav.js</code> — đồng bộ toàn site</li>
+        <li>Dữ liệu tĩnh: <code>tasks.js</code>, <code>rewards.js</code>, <code>config.js</code></li>
+        <li>Backend hiện tại: Google Apps Script + Sheets — migrate VPS sau</li>
+        <li>Deploy: GitHub Pages — không cần build step</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Kho Thóc Gia Đình — Project Directory Architecture v1.0.0 &nbsp;·&nbsp; Updated 2026-06-10 &nbsp;·&nbsp;
+    Source: code/ · docs/TAI-LIEU-NGHIEP-VU.md · docs/architech.md · docs/datasource/
+  </footer>
+
+</main>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#14261a',
+      primaryTextColor: '#e8f5ec',
+      primaryBorderColor: '#2d8a55',
+      lineColor: '#2d8a5588',
+      secondaryColor: '#0f1f15',
+      tertiaryColor: '#0d1a12',
+      fontFamily: 'JetBrains Mono, Fira Code, monospace',
+      fontSize: '11px',
+    },
+    flowchart: { curve: 'basis', padding: 16 },
+  });
+
+  const sections = document.querySelectorAll('section[id], header[id]');
+  const navLinks = document.querySelectorAll('.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`.sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
