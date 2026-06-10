@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
 
 CREATE TABLE IF NOT EXISTS redeem_passcodes (
   id              SERIAL PRIMARY KEY,
+  profile_id      TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   passcode_hash   TEXT NOT NULL,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   revoked_at      TIMESTAMPTZ,
@@ -16,6 +17,6 @@ CREATE TABLE IF NOT EXISTS redeem_passcodes (
   last_used_at    TIMESTAMPTZ
 );
 
-CREATE INDEX IF NOT EXISTS idx_redeem_passcodes_active
-  ON redeem_passcodes (created_at DESC)
+CREATE INDEX IF NOT EXISTS idx_redeem_passcodes_profile_active
+  ON redeem_passcodes (profile_id, created_at DESC)
   WHERE revoked_at IS NULL;

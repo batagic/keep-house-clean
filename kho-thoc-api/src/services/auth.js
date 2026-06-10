@@ -61,19 +61,20 @@ async function createAdminUser(username, password) {
   return rows[0];
 }
 
-async function getActivePasscodeRow() {
+async function getActivePasscodeRow(profileId) {
   const { rows } = await query(
-    `SELECT id, passcode_hash, created_at, last_used_at
+    `SELECT id, profile_id, passcode_hash, created_at, last_used_at
      FROM redeem_passcodes
-     WHERE revoked_at IS NULL
+     WHERE profile_id = $1 AND revoked_at IS NULL
      ORDER BY created_at DESC
-     LIMIT 1`
+     LIMIT 1`,
+    [String(profileId)]
   );
   return rows[0] || null;
 }
 
-async function getPasscodeStatus() {
-  const row = await getActivePasscodeRow();
+async function getPasscodeStatusForProfile(profileId) {
+  const row = await getActivePasscodeRow(profileId);
   if (!row) {
     return { active: false, createdAt: null, lastUsedAt: null };
   }
@@ -82,6 +83,33 @@ async function getPasscodeStatus() {
     createdAt: row.created_at,
     lastUsedAt: row.last_used_at,
   };
+}
+
+async function listPasscodesWithProfiles() {
+  const { rows } = await query(
+    `SELECT p.id, p.name, p.avatar,
+            rp.created_at AS passcode_created_at,
+            rp.last_used_at AS passcode_last_used_at
+     FROM profiles p
+     LEFT JOIN LATERAL (
+       SELECT created_at, last_used_at
+       FROM redeem_passcodes
+       WHERE profile_id = p.id AND revoked_at IS NULL
+       ORDER BY created_at DESC
+       LIMIT 1
+     ) rp ON true
+     WHERE p.id <> ''
+     ORDER BY p.name`
+  );
+
+  return rows.map((row) => ({
+    profileId: String(row.id),
+    profileName: String(row.name || ''),
+    avatar: String(row.avatar || '👶'),
+    hasActivePasscode: !!row.passcode_created_at,
+    createdAt: row.passcode_created_at || null,
+    lastUsedAt: row.passcode_last_used_at || null,
+  }));
 }
 
 function generateNumericPasscode(length = 4) {
@@ -93,39 +121,71 @@ function generateNumericPasscode(length = 4) {
   return code;
 }
 
-async function generateRedeemPasscode(adminId, length = 4) {
+async function insertPasscode(profileId, passcode, adminId = null) {
+  const passcodeHash = await bcrypt.hash(passcode, BCRYPT_ROUNDS);
+  const { rows } = await query(
+    `INSERT INTO redeem_passcodes (profile_id, passcode_hash, created_by)
+     VALUES ($1, $2, $3)
+     RETURNING created_at`,
+    [String(profileId), passcodeHash, adminId || null]
+  );
+  return rows[0].created_at;
+}
+
+async function createInitialPasscodeForProfile(profileId) {
+  const existing = await getActivePasscodeRow(profileId);
+  if (existing) return null;
+
+  const passcode = generateNumericPasscode(4);
+  await insertPasscode(profileId, passcode, null);
+  return passcode;
+}
+
+async function generateRedeemPasscode(adminId, profileId, length = 4) {
+  const pid = String(profileId || '').trim();
+  if (!pid) throw Object.assign(new Error('Thiếu profileId'), { status: 400 });
+
+  const profileCheck = await query('SELECT id, name FROM profiles WHERE id = $1', [pid]);
+  if (!profileCheck.rows.length) {
+    throw Object.assign(new Error('Không tìm thấy hồ sơ bé'), { status: 400 });
+  }
+
   await query(
     `UPDATE redeem_passcodes SET revoked_at = now()
-     WHERE revoked_at IS NULL`
+     WHERE profile_id = $1 AND revoked_at IS NULL`,
+    [pid]
   );
 
   const passcode = generateNumericPasscode(length);
-  const passcodeHash = await bcrypt.hash(passcode, BCRYPT_ROUNDS);
-
-  const { rows } = await query(
-    `INSERT INTO redeem_passcodes (passcode_hash, created_by)
-     VALUES ($1, $2)
-     RETURNING created_at`,
-    [passcodeHash, adminId || null]
-  );
+  const createdAt = await insertPasscode(pid, passcode, adminId || null);
+  const profileName = profileCheck.rows[0].name;
 
   return {
+    profileId: pid,
+    profileName,
     passcode,
-    createdAt: rows[0].created_at,
-    message: 'Copy mã và gửi bố/mẹ qua Zalo. Mã cũ đã bị thu hồi.',
+    createdAt,
+    message: `Copy mã và gửi bố/mẹ qua Zalo cho bé ${profileName}. Mã cũ của bé này đã bị thu hồi.`,
   };
 }
 
-async function revokeActivePasscode() {
+async function revokeActivePasscode(profileId) {
+  const pid = String(profileId || '').trim();
+  if (!pid) throw Object.assign(new Error('Thiếu profileId'), { status: 400 });
+
   const { rowCount } = await query(
     `UPDATE redeem_passcodes SET revoked_at = now()
-     WHERE revoked_at IS NULL`
+     WHERE profile_id = $1 AND revoked_at IS NULL`,
+    [pid]
   );
   return rowCount > 0;
 }
 
-async function verifyRedeemPasscode(passcode) {
-  const row = await getActivePasscodeRow();
+async function verifyRedeemPasscode(passcode, profileId) {
+  const pid = String(profileId || '').trim();
+  if (!pid) return { ok: false, reason: 'no_profile' };
+
+  const row = await getActivePasscodeRow(pid);
   if (!row) return { ok: false, reason: 'no_active' };
 
   const ok = await bcrypt.compare(String(passcode), row.passcode_hash);
@@ -146,8 +206,10 @@ module.exports = {
   hashPassword,
   createAdminUser,
   findAdminByUsername,
-  getPasscodeStatus,
+  getPasscodeStatusForProfile,
+  listPasscodesWithProfiles,
   generateRedeemPasscode,
   revokeActivePasscode,
   verifyRedeemPasscode,
+  createInitialPasscodeForProfile,
 };

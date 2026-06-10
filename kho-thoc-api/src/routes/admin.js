@@ -2,7 +2,7 @@ const express = require('express');
 const {
   verifyAdminPassword,
   signAdminToken,
-  getPasscodeStatus,
+  listPasscodesWithProfiles,
   generateRedeemPasscode,
   revokeActivePasscode,
 } = require('../services/auth');
@@ -36,36 +36,54 @@ router.post('/login', async (req, res) => {
 
 router.get('/passcode', requireAdmin, async (_req, res) => {
   try {
-    const status = await getPasscodeStatus();
-    res.json({ result: 'success', ...status });
+    const profiles = await listPasscodesWithProfiles();
+    res.json({ result: 'success', profiles });
   } catch (err) {
-    console.error('passcode status error:', err);
+    console.error('passcode list error:', err);
     res.status(500).json({ result: 'error', message: err.message });
   }
 });
 
 router.post('/passcode/generate', requireAdmin, async (req, res) => {
   try {
+    const profileId = String(req.body?.profileId || '').trim();
     const length = Number(req.body?.length) || 4;
-    const data = await generateRedeemPasscode(req.admin.id, length);
+
+    if (!profileId) {
+      res.status(400).json({ result: 'error', message: 'Thiếu profileId' });
+      return;
+    }
+
+    const data = await generateRedeemPasscode(req.admin.id, profileId, length);
     res.json({ result: 'success', ...data });
   } catch (err) {
     console.error('passcode generate error:', err);
-    res.status(500).json({ result: 'error', message: err.message });
+    const status = err.status || 500;
+    res.status(status).json({ result: 'error', message: err.message });
   }
 });
 
-router.post('/passcode/revoke', requireAdmin, async (_req, res) => {
+router.post('/passcode/revoke', requireAdmin, async (req, res) => {
   try {
-    const revoked = await revokeActivePasscode();
+    const profileId = String(req.body?.profileId || '').trim();
+
+    if (!profileId) {
+      res.status(400).json({ result: 'error', message: 'Thiếu profileId' });
+      return;
+    }
+
+    const revoked = await revokeActivePasscode(profileId);
     res.json({
       result: 'success',
       revoked,
-      message: revoked ? 'Đã thu hồi mã đổi quà' : 'Không có mã active để thu hồi',
+      message: revoked
+        ? 'Đã thu hồi mã đổi quà của bé'
+        : 'Bé này không có mã active để thu hồi',
     });
   } catch (err) {
     console.error('passcode revoke error:', err);
-    res.status(500).json({ result: 'error', message: err.message });
+    const status = err.status || 500;
+    res.status(status).json({ result: 'error', message: err.message });
   }
 });
 

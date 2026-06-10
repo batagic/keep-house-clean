@@ -1,4 +1,5 @@
 const { query } = require('../db');
+const { createInitialPasscodeForProfile } = require('./auth');
 
 function normalizeProfile(row) {
   return {
@@ -47,7 +48,8 @@ async function writeProfile(params) {
      VALUES ($1, $2, $3, $4, $5)`,
     [id, name, avatar, totalGrain, totalExp]
   );
-  return { result: 'success', action: 'inserted' };
+  const passcode = await createInitialPasscodeForProfile(id);
+  return { result: 'success', action: 'inserted', passcode };
 }
 
 async function adjustBalance(profileId, grainDelta, expDelta) {

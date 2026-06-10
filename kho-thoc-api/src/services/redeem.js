@@ -51,12 +51,12 @@ async function redeemWithPasscode(params) {
     );
   }
 
-  const verification = await verifyRedeemPasscode(passcode);
+  const verification = await verifyRedeemPasscode(passcode, profileId);
   if (!verification.ok) {
     recordFail(profileId);
     if (verification.reason === 'no_active') {
       throw Object.assign(
-        new Error('Chưa có mã đổi quà. Bố/mẹ liên hệ admin.'),
+        new Error('Chưa có mã đổi quà cho bé này. Bố/mẹ liên hệ admin.'),
         { status: 403 }
       );
     }
