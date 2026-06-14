@@ -8,7 +8,8 @@
     "dev": "node --watch src/index.js",
     "migrate": "node scripts/migrate.js",
     "import:csv": "node scripts/import-csv.js",
-    "seed:admin": "node scripts/seed-admin.js"
+    "seed:admin": "node scripts/seed-admin.js",
+    "seed:lan-phuong": "node scripts/seed-lan-phuong.js"
   },
   "engines": {
     "node": ">=18"

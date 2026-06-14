@@ -4,3 +4,7 @@
 --   cd /opt/nhatkyvumua/kho-thoc-api
 --   docker compose exec kho-thoc-api npm run seed:admin -- \
 --     --username admin --password 'MAT_KHAU_MANH'
+--
+-- Bé Lan Phương (legacy từ CSV):
+--   docker compose exec kho-thoc-api npm run seed:lan-phuong
+--   (hoặc SQL: docs/db/seed-lan-phuong.sql — cần admin Sinh mã passcode sau)
