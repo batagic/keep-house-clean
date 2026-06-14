@@ -1,7 +1,7 @@
 # API kho-thoc — dùng Postgres sẵn có (eedt-postgres), KHÔNG tạo container Postgres mới.
 #
 # Trước khi chạy:
-#   1. bash scripts/sync-migrations.sh   # copy từ docs/db/migrate
+#   1. Thêm migration vào migrations/ (nếu có) + bash scripts/sync-migrations.sh → docs/db/migrate
 #   2. Tạo DB kho_thoc (docs/db/seed-dev.sql)
 #   3. cp .env.example .env
 #   4. docker compose up -d --build

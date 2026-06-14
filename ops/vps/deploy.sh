@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Deploy một lệnh: Mac → VPS (+ tuỳ chọn push GitHub Pages)
 #
-#   ./code/deploy/vps/deploy.sh           # Chỉ API lên VPS
-#   ./code/deploy/vps/deploy.sh --all     # git push + API lên VPS
-#   ./code/deploy/vps/deploy.sh --help
+#   ./ops/vps/deploy.sh           # Chỉ API lên VPS
+#   ./ops/vps/deploy.sh --all     # git push + API lên VPS
+#   ./ops/vps/deploy.sh --help
 #
-# Lần đầu (một lần): ./code/deploy/vps/setup-ssh.sh
+# Lần đầu (một lần): ./ops/vps/setup-ssh.sh
 #
 # Biến môi trường (tuỳ chọn):
 #   VPS_HOST=kho-thoc-vps          # alias trong ~/.ssh/config (mặc định)
@@ -20,7 +20,7 @@ API_PUBLIC_URL="${API_PUBLIC_URL:-https://apinhatkyvumua.taho.cat/kho-thoc/}"
 GIT_BRANCH="${GIT_BRANCH:-main}"
 DO_GIT_PUSH=0
 
-REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 SSH_CTL="/tmp/kho-thoc-deploy-%r@%h:%p"
 SSH_BASE_OPTS=(
   -o ControlMaster=auto
@@ -34,15 +34,15 @@ usage() {
   cat <<'EOF'
 Deploy Kho Thóc — một lệnh từ Mac
 
-  ./code/deploy/vps/deploy.sh           Deploy API lên VPS (rsync + docker rebuild)
-  ./code/deploy/vps/deploy.sh --all     Thêm git push origin main (GitHub Pages)
+  ./ops/vps/deploy.sh           Deploy API lên VPS (rsync + docker rebuild)
+  ./ops/vps/deploy.sh --all     Thêm git push origin main (GitHub Pages)
 
 Lần đầu — cấu hình SSH key (một lần, không cần mật khẩu khi deploy):
-  ./code/deploy/vps/setup-ssh.sh
+  ./ops/vps/setup-ssh.sh
 
 Tuỳ chọn:
-  VPS_HOST=kho-thoc-vps ./code/deploy/vps/deploy.sh
-  VERIFY_PATTERN=delete_profile ./code/deploy/vps/deploy.sh
+  VPS_HOST=kho-thoc-vps ./ops/vps/deploy.sh
+  VERIFY_PATTERN=delete_profile ./ops/vps/deploy.sh
 EOF
 }
 
@@ -75,7 +75,7 @@ require_ssh_key() {
 ❌ Chưa SSH được ${VPS_HOST} bằng key (không dùng mật khẩu).
 
 Chạy một lần trên Mac:
-  ./code/deploy/vps/setup-ssh.sh
+  ./ops/vps/setup-ssh.sh
 
 Hoặc kiểm tra tay:
   ssh ${VPS_HOST}
@@ -129,7 +129,7 @@ rsync_cmd \
 # ── 4. Deploy API trên VPS ────────────────────────────────────
 log "Build & restart API trên VPS"
 ssh_cmd "env SKIP_GIT_PULL=1 INSTALL_ROOT='${REMOTE_ROOT}' VERIFY_PATTERN='${VERIFY_PATTERN:-}' bash -s" \
-  < "${REPO_ROOT}/code/deploy/vps/deploy-api.sh"
+  < "${REPO_ROOT}/ops/vps/deploy-api.sh"
 
 # ── 5. Kiểm tra HTTPS từ Mac ───────────────────────────────────
 log "Kiểm tra API public"

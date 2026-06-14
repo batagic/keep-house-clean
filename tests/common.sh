@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Thư viện dùng chung cho script test API / frontend (docs/tests/)
+# Thư viện dùng chung cho script test API / frontend (tests/)
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CODE_ROOT="${CODE_ROOT:-${REPO_ROOT}/code}"
 DOCS_DB="${DOCS_DB:-${REPO_ROOT}/docs/db}"
 API_URL="${API_URL:-https://apinhatkyvumua.taho.cat/kho-thoc/}"

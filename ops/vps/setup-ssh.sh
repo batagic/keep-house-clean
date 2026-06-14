@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Cấu hình SSH key — một lần trên Mac, sau đó deploy không cần mật khẩu.
 #
-#   ./code/deploy/vps/setup-ssh.sh
+#   ./ops/vps/setup-ssh.sh
 #
 # Biến môi trường (tuỳ chọn):
 #   VPS_IP=64.176.85.165
@@ -94,5 +94,5 @@ fi
 
 printf '\n'
 ok "Cấu hình xong! Từ giờ chạy deploy không cần mật khẩu:"
-printf '  ./code/deploy/vps/deploy.sh\n'
+printf '  ./ops/vps/deploy.sh\n'
 printf '  ssh %s\n\n' "${SSH_HOST_ALIAS}"

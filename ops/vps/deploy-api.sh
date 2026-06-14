@@ -29,9 +29,7 @@ echo "→ rsync kho-thoc-api"
 rsync -a "${REPO_DIR}/code/kho-thoc-api/" "${API_DIR}/" \
   --exclude .env --exclude data --exclude node_modules
 
-echo "→ sync migrations từ docs/db/migrate"
-mkdir -p "${API_DIR}/migrations"
-rsync -a "${REPO_DIR}/docs/db/migrate/" "${API_DIR}/migrations/"
+# migrations/ đã nằm trong kho-thoc-api/ (nguồn chạy) — không ghi đè từ docs/
 
 if [[ -n "${VERIFY_PATTERN}" ]]; then
   echo "→ xác nhận code: ${VERIFY_PATTERN}"

@@ -1,6 +1,6 @@
 /**
  * NK-ISO-F* — Test function (frontend family-api + backend middleware)
- * Chạy: node --test docs/tests/nhatky/cachlygia/function.test.mjs
+ * Chạy: node --test tests/domain/nhatky/cachlygia/cachlygia-function.test.mjs
  */
 import { describe, test, mock } from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,7 +9,7 @@ import path from 'path';
 import vm from 'vm';
 import { createRequire } from 'module';
 
-const REPO_ROOT = path.resolve(import.meta.dirname, '../../../../..');
+const REPO_ROOT = path.resolve(import.meta.dirname, '../../../..');
 const CODE_ROOT = path.join(REPO_ROOT, 'code');
 const require = createRequire(import.meta.url);
 

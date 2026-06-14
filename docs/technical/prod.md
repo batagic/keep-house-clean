@@ -18,7 +18,7 @@ Sau khi VPS đã chạy → deploy tính năng mới: [operator.md](./operator.m
 mkdir -p /opt/nhatkyvumua && cd /opt/nhatkyvumua
 git clone https://github.com/batagic/keep-house-clean.git repo
 rsync -a repo/code/kho-thoc-api/ ./kho-thoc-api/ --exclude node_modules --exclude .env --exclude data
-rsync -a repo/docs/db/migrate/ ./kho-thoc-api/migrations/
+# migrations/ đã nằm trong kho-thoc-api/
 mkdir -p kho-thoc-api/data && chmod +x kho-thoc-api/scripts/*.sh
 ```
 
@@ -59,24 +59,24 @@ curl -s 'http://127.0.0.1:3001/kho-thoc/?type=ping'
 
 ### Nginx
 
-Config mẫu: `code/deploy/vps/nginx/apinhatkyvumua.taho.cat.conf`
+Config mẫu: `ops/vps/nginx/apinhatkyvumua.taho.cat.conf`
 
 ```bash
-cp /opt/nhatkyvumua/repo/code/deploy/vps/nginx/apinhatkyvumua.taho.cat.conf \
+cp /opt/nhatkyvumua/repo/ops/vps/nginx/apinhatkyvumua.taho.cat.conf \
   /etc/nginx/sites-available/apinhatkyvumua.taho.cat.conf
 ```
 
 ## Deploy từ Mac (hàng ngày)
 
 ```bash
-./code/deploy/vps/setup-ssh.sh          # một lần
-./code/deploy/vps/deploy.sh --all       # push GitHub Pages + API VPS
+./ops/vps/setup-ssh.sh          # một lần
+./ops/vps/deploy.sh --all       # push GitHub Pages + API VPS
 ```
 
 ## Migrate SQL mới trên prod
 
 ```bash
-# Sau khi deploy code có file mới trong docs/db/migrate/
+# Sau khi deploy code có file mới trong code/kho-thoc-api/migrations/
 ssh kho-thoc-vps
 cd /opt/nhatkyvumua/kho-thoc-api
 docker compose exec kho-thoc-api node scripts/migrate.js

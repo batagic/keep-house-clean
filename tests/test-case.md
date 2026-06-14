@@ -2,16 +2,16 @@
 
 **Cập nhật:** 14/06/2026
 
-## Cách ly gia đình (`docs/tests/domain/nhatky/cachlygia/`)
+## Cách ly gia đình (`tests/domain/nhatky/cachlygia/`)
 
 Chạy:
 
 ```bash
-bash docs/tests/domain/nhatky/cachlygia.sh
+bash tests/domain/nhatky/cachlygia.sh
 # hoặc từng lớp:
-bash docs/tests/domain/nhatky/cachlygia/cachlygia-function.sh
-bash docs/tests/domain/nhatky/cachlygia/cachlygia-api.sh
-bash docs/tests/domain/nhatky/cachlygia/cachlygia-integration.sh
+bash tests/domain/nhatky/cachlygia/cachlygia-function.sh
+bash tests/domain/nhatky/cachlygia/cachlygia-api.sh
+bash tests/domain/nhatky/cachlygia/cachlygia-integration.sh
 ```
 
 ### Lớp FUNCTION (`cachlygia-function.sh` + `cachlygia-function.test.mjs`)
@@ -29,7 +29,7 @@ bash docs/tests/domain/nhatky/cachlygia/cachlygia-integration.sh
 | NK-ISO-F09 | `nhat-ky.js` | Dùng `apiFetch`, không `fetch` trực tiếp |
 | NK-ISO-F10 | `nhat-ky.js` cache | `familyStorageKey` cho profiles/last_pid |
 | NK-ISO-F11 | `nhat-ky.html` | Load `family-api.js` |
-| NK-ISO-F12 | migration SQL | `docs/db/migrate/004_family_id.sql` có `family_id` |
+| NK-ISO-F12 | migration SQL | `code/kho-thoc-api/migrations/004_family_id.sql` có `family_id` |
 
 ## Phiên gia đình — Phase 3.1 (`familysession/` — khi triển khai)
 
@@ -49,6 +49,6 @@ Spec: [family-session.md](../brd/family-session.md)
 ### Domain runner
 
 ```bash
-bash docs/tests/domain/nhatky/nhatky.sh
-bash docs/tests/coverage.sh
+bash tests/domain/nhatky/nhatky.sh
+bash tests/coverage.sh
 ```

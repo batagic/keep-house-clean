@@ -485,10 +485,10 @@ flowchart TB
 │   │   ├── <span class="dir">routes/</span>                  <span class="cmt"># api.js, admin.js</span>
 │   │   ├── <span class="dir">services/</span>                <span class="cmt"># profiles, logs, redeem, auth</span>
 │   │   └── <span class="dir">middleware/</span>              <span class="cmt"># requireAdmin.js</span>
-│   ├── <span class="dir">migrations/</span>                  <span class="cmt"># 001_init, 002_redeem_auth, …</span>
+│   ├── <span class="dir">migrations/</span>                  <span class="cmt"># ★ Nguồn chạy migrate.js</span>
 │   └── <span class="dir">scripts/</span>                     <span class="cmt"># setup-db, migrate, import-csv, seed-admin</span>
 │
-├── <span class="dir">code/deploy/vps/</span>
+├── <span class="dir">ops/vps/</span>
 │   ├── <span class="dir">nginx/</span>                       <span class="cmt"># apinhatkyvumua.taho.cat.conf</span>
 │   └── <span class="file">setup-vps.sh</span>
 │
@@ -497,10 +497,8 @@ flowchart TB
 │   ├── <span class="file">operations.md</span>              <span class="cmt"># Deploy tính năng mới + sự cố</span>
 │   ├── <span class="dir">specs/</span>                       <span class="cmt"># brd.md, passcode.md, admin.md</span>
 │   ├── <span class="dir">tech/</span>                        <span class="cmt"># architecture/, migration-vps, legacy/</span>
-│   └── <span class="dir">design/</span>
-│       └── <span class="file">style.md</span>
-│
-└── <span class="dir">ideas/</span>                         <span class="cmt"># Prototype cũ — không deploy</span></div>
+│   ├── <span class="dir">db/migrate/</span>                  <span class="cmt"># Bản sao SQL cho operator</span>
+│   └── <span class="dir">prototypes/</span>                <span class="cmt"># HTML thử — không deploy</span></div>
   </section>
 
   <!-- FRONTEND MODULES -->
@@ -765,7 +763,7 @@ assets/js/shared/site-nav.js  →  NAV_ITEMS[]</pre>
             <td>Backend — Docker trên VPS</td>
           </tr>
           <tr>
-            <td><code>code/deploy/vps/nginx/</code></td>
+            <td><code>ops/vps/nginx/</code></td>
             <td>Config Nginx — không commit secrets</td>
           </tr>
           <tr>
@@ -773,8 +771,8 @@ assets/js/shared/site-nav.js  →  NAV_ITEMS[]</pre>
             <td>Tài liệu — không deploy</td>
           </tr>
           <tr>
-            <td><code>ideas/</code></td>
-            <td>Prototype — không dùng production</td>
+            <td><code>docs/prototypes/</code></td>
+            <td>Prototype UI — không dùng production</td>
           </tr>
         </tbody>
       </table>

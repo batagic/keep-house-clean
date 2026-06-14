@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Thư viện dùng chung cho docs/tests/*.sh
+# Thư viện dùng chung cho tests/*.sh
 
 set -euo pipefail
 
 TESTS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${TESTS_ROOT}/../.." && pwd)"
+REPO_ROOT="$(cd "${TESTS_ROOT}/.." && pwd)"
 
 API_URL="${API_URL:-https://apinhatkyvumua.taho.cat/kho-thoc/}"
 API_URL="${API_URL%/}/"

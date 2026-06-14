@@ -2,9 +2,9 @@
 Sau khi hoàn thành code cho bất kỳ task nào:
 1. Cập nhật tài liệu nghiệp vụ tại docs/brd/ (và domain tương ứng nếu có)
 2. Cập nhật kiểm thử — **cả hai**:
-   - docs/tests/test-case.md (ID AUTO/ thủ công, mô tả, kỳ vọng)
-   - docs/tests/domain/ (thêm function/api/integration.sh; domain mới → script mới + cập nhật domain.sh)
-3. Chạy test (`bash docs/tests/domain/nhatky/nhatky.sh` hoặc `bash docs/tests/coverage.sh`) và đảm bảo pass
+   - tests/test-case.md (ID AUTO/ thủ công, mô tả, kỳ vọng)
+   - tests/domain/ (thêm function/api/integration.sh; domain mới → script mới + cập nhật domain.sh)
+3. Chạy test (`bash tests/domain/nhatky/nhatky.sh` hoặc `bash tests/coverage.sh`) và đảm bảo pass
 4. git commit với message rõ ràng
 5. git push
 6. Merge vào main
@@ -17,16 +17,16 @@ Sau khi code xong một tính năng AI phải hỏi người dùng:
 Bạn có muốn deploy lên VPS và push lên Git không?
 
 Người dùng chọn	AI thực hiện
-Có	(1) Commit nếu còn thay đổi chưa commit → git push origin main → (2) ./code/deploy/vps/deploy.sh --all
+Có	(1) Commit nếu còn thay đổi chưa commit → git push origin main → (2) ./ops/vps/deploy.sh --all
 Không	Dừng — không push, không deploy
 Chi tiết deploy khi người dùng chọn Có
 Git push — đẩy main lên GitHub → GitHub Pages tự cập nhật frontend (~1–2 phút).
-VPS deploy — chạy ./code/deploy/vps/deploy.sh --all:
-Yêu cầu SSH key đã cấu hình (./code/deploy/vps/setup-ssh.sh — một lần).
+VPS deploy — chạy ./ops/vps/deploy.sh --all:
+Yêu cầu SSH key đã cấu hình (./ops/vps/setup-ssh.sh — một lần).
 Rsync code → Docker rebuild → kiểm tra HTTPS.
 Lưu ý cho AI
 Không tự ý commit/push/deploy khi người dùng chưa xác nhận.
 Không sửa git config global trên máy người dùng.
 Commit message ngắn gọn, tập trung why.
 Nếu SSH chưa cấu hình → hướng dẫn chạy setup-ssh.sh trước.
-Cấu trúc repo: code/ (mã nguồn), docs/ (tài liệu). Migrate SQL tại docs/db/migrate/.
+Cấu trúc repo: code/ (mã nguồn), docs/ (tài liệu), tests/ (kiểm thử), ops/ (deploy). Migration chạy: code/kho-thoc-api/migrations/; mirror operator: docs/db/migrate/ (xem docs/db/README.md).

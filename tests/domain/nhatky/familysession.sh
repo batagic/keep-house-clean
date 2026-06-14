@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Test: phiên gia đình — unlock_family + bootstrap (Phase 3.1)
 #
-# ID test: NK-SES-02 … NK-SES-07 (xem docs/tests/test-case.md)
+# ID test: NK-SES-02 … NK-SES-07 (xem tests/test-case.md)
 
 set -euo pipefail
 

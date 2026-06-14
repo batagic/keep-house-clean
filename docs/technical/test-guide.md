@@ -5,22 +5,20 @@ Script test tự động cho **Nhật Ký Vụ Mùa** (`nhat-ky.html`) và API `
 ## Cấu trúc thư mục
 
 ```
-docs/tests/                 # Root test
-docs/tests/lib/
+tests/                      # Root test
   common.sh                 # Hàm dùng chung (curl, assert, tổng kết)
-docs/tests/nhatky/          # Test màn Nhật Ký
-  cachlygia.sh              # Cách ly gia đình — chạy function + API + tích hợp
-  cachlygia/
-    function.sh             # NK-ISO-F* — test function (node --test)
-    function.test.mjs
-    api.sh                  # NK-ISO-A* — test API
-    integration.sh          # NK-ISO-I* — test tích hợp
-    run.sh
-  dangkybe.sh               # Đăng ký bé — giới hạn 3 bé / gia đình
-  doiqua.sh                 # Đổi quà — bắt buộc passcode
-  familysession.sh          # Phiên gia đình — unlock_family (khi triển khai)
-  nhatky.sh                 # Chạy tất cả test nhật ký
-docs/tests/test-case.md     # Bảng ID test chi tiết
+  domain/nhatky/            # Test màn Nhật Ký
+    cachlygia.sh              # Cách ly gia đình — chạy function + API + tích hợp
+    cachlygia/
+      cachlygia-function.sh   # NK-ISO-F* — test function (node --test)
+      cachlygia-function.test.mjs
+      cachlygia-api.sh        # NK-ISO-A* — test API
+      cachlygia-integration.sh
+    dangkybe.sh               # Đăng ký bé — giới hạn 3 bé / gia đình
+    doiqua.sh                 # Đổi quà — bắt buộc passcode
+    familysession.sh          # Phiên gia đình — unlock_family
+    nhatky.sh                 # Chạy tất cả test nhật ký
+  test-case.md                # Bảng ID test chi tiết
 ```
 
 ## Yêu cầu
@@ -34,28 +32,28 @@ Từ thư mục gốc repo:
 
 ```bash
 # Toàn bộ test Nhật Ký (đổi quà trước, đăng ký bé sau — tránh xóa hết profile giữa chừng)
-bash docs/tests/nhatky/nhatky.sh
+bash tests/domain/nhatky/nhatky.sh
 
 # Chỉ test đăng ký bé (giới hạn 3)
-bash docs/tests/nhatky/dangkybe.sh
+bash tests/domain/nhatky/dangkybe.sh
 
 # Chỉ test đổi quà
-bash docs/tests/nhatky/doiqua.sh
+bash tests/domain/nhatky/doiqua.sh
 # Chỉ test cách ly gia đình
-bash docs/tests/nhatky/cachlygia.sh
+bash tests/domain/nhatky/cachlygia.sh
 ```
 
 ## Chạy với API local
 
 ```bash
-API_URL='http://localhost:3001/kho-thoc/' bash docs/tests/nhatky/nhatky.sh
+API_URL='http://localhost:3001/kho-thoc/' bash tests/domain/nhatky/nhatky.sh
 ```
 
 Hoặc export trước:
 
 ```bash
 export API_URL='http://localhost:3001/kho-thoc/'
-bash docs/tests/nhatky/dangkybe.sh
+bash tests/domain/nhatky/dangkybe.sh
 ```
 
 ## Chạy với API production (mặc định)
@@ -67,7 +65,7 @@ https://apinhatkyvumua.taho.cat/kho-thoc/
 ```
 
 ```bash
-bash docs/tests/nhatky/nhatky.sh
+bash tests/domain/nhatky/nhatky.sh
 ```
 
 ## ID test — đăng ký bé (`dangkybe.sh`)

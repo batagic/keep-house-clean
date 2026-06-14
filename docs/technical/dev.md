@@ -135,7 +135,7 @@ Nếu cache Mac: `sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponde
 mkdir -p /opt/nhatkyvumua && cd /opt/nhatkyvumua
 git clone https://github.com/batagic/keep-house-clean.git repo
 rsync -a repo/code/kho-thoc-api/ ./kho-thoc-api/ --exclude node_modules --exclude .env --exclude data
-rsync -a repo/docs/db/migrate/ ./kho-thoc-api/migrations/
+# migrations/ đã nằm trong kho-thoc-api/ (nguồn chạy) — xem docs/db/README.md
 mkdir -p kho-thoc-api/data && chmod +x kho-thoc-api/scripts/*.sh
 ```
 
@@ -149,7 +149,7 @@ rsync -avz --exclude node_modules --exclude .env \
 # Trên VPS:
 cd /opt/nhatkyvumua
 rsync -a repo/code/kho-thoc-api/ ./kho-thoc-api/ --exclude node_modules --exclude .env --exclude data
-rsync -a repo/docs/db/migrate/ ./kho-thoc-api/migrations/
+# migrations/ đã nằm trong kho-thoc-api/ (nguồn chạy) — xem docs/db/README.md
 mkdir -p kho-thoc-api/data && chmod +x kho-thoc-api/scripts/*.sh
 ```
 
@@ -245,7 +245,7 @@ nginx -t && systemctl reload nginx
 
 ```bash
 certbot --nginx -d apinhatkyvumua.taho.cat
-cp /opt/nhatkyvumua/repo/code/deploy/vps/nginx/apinhatkyvumua.taho.cat.conf \
+cp /opt/nhatkyvumua/repo/ops/vps/nginx/apinhatkyvumua.taho.cat.conf \
    /etc/nginx/sites-available/apinhatkyvumua.taho.cat
 nginx -t && systemctl reload nginx
 ```
@@ -318,4 +318,4 @@ docker exec -it eedt-postgres psql -U eedt -c "DROP ROLE IF EXISTS kho_thoc;"
 | [operations.md](./operations.md) | Deploy tính năng mới, sự cố, backup |
 | [code/kho-thoc-api/README.md](../../code/kho-thoc-api/README.md) | API contract |
 | `code/kho-thoc-api/scripts/setup-db.sh` | Tạo user + DB |
-| `code/deploy/vps/nginx/apinhatkyvumua.taho.cat.conf` | Config Nginx HTTPS |
+| `ops/vps/nginx/apinhatkyvumua.taho.cat.conf` | Config Nginx HTTPS |

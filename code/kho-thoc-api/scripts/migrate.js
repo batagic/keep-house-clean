@@ -7,13 +7,15 @@ function resolveMigrationsDir() {
   const candidates = [
     process.env.MIGRATIONS_DIR,
     path.join(__dirname, '..', 'migrations'),
-    path.join(__dirname, '..', '..', '..', 'docs', 'db', 'migrate'),
   ].filter(Boolean);
 
   for (const dir of candidates) {
     if (fs.existsSync(dir)) return dir;
   }
-  throw new Error(`Không tìm thấy thư mục migrations. Đã thử: ${candidates.join(', ')}`);
+  throw new Error(
+    `Không tìm thấy thư mục migrations. Đã thử: ${candidates.join(', ')}. ` +
+      'Nguồn chạy: code/kho-thoc-api/migrations/ — xem docs/db/README.md'
+  );
 }
 
 async function main() {

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Chạy toàn bộ test domain Nhật Ký (docs/tests/domain/nhatky/)
+# Chạy toàn bộ test domain Nhật Ký (tests/domain/nhatky/)
 
 set -euo pipefail
 

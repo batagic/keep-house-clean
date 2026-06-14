@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import vm from 'vm';
 
-const REPO_ROOT = path.resolve(import.meta.dirname, '../../../..');
+const REPO_ROOT = path.resolve(import.meta.dirname, '../../..');
 const CODE_ROOT = path.join(REPO_ROOT, 'code');
 
 function loadFamilyApi(storage = {}) {

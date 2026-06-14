@@ -24,7 +24,7 @@ assert_file_contains \
 
 assert_file_contains \
   "NK-ISO-F12 — migration 004_family_id.sql" \
-  "${DOCS_DB}/migrate/004_family_id.sql" \
+  "${CODE_ROOT}/kho-thoc-api/migrations/004_family_id.sql" \
   'family_id'
 
 print_summary

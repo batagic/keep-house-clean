@@ -3,7 +3,7 @@
 ## Cấu trúc repo
 
 - `code/` — mã nguồn chạy được (frontend, API, deploy)
-- `docs/` — tài liệu, migrate SQL (`docs/db/migrate/`), test script
+- `docs/` — tài liệu; SQL mirror tại `docs/db/migrate/` (sync từ API)
 
 ## JavaScript
 
@@ -13,14 +13,16 @@
 
 ## SQL
 
-- Migration đặt tại `docs/db/migrate/NNN_mo_ta.sql` (số thứ tự tăng)
-- Sau khi thêm migrate: `bash code/kho-thoc-api/scripts/sync-migrations.sh` trước Docker build
+- Migration **tạo mới** tại `code/kho-thoc-api/migrations/NNN_mo_ta.sql` (số thứ tự tăng)
+- Chạy: `npm run migrate` (hoặc `node scripts/migrate.js` trong container)
+- Sau khi thêm migrate: `bash code/kho-thoc-api/scripts/sync-migrations.sh` → cập nhật `docs/db/migrate/`
+- Xem [`docs/db/README.md`](../db/README.md)
 
 ## Test
 
-- Domain test: `docs/tests/domain/<domain>/`
-- Dùng `docs/tests/common.sh` — biến `CODE_ROOT`, `DOCS_DB`
-- Cập nhật `docs/tests/test-case.md` khi thêm case
+- Domain test: `tests/domain/<domain>/`
+- Dùng `tests/common.sh` — biến `CODE_ROOT`, `DOCS_DB`
+- Cập nhật `tests/test-case.md` khi thêm case
 
 ## Commit
 
@@ -30,4 +32,4 @@
 ## Deploy
 
 - Không push/deploy khi chưa được người dùng xác nhận
-- Lệnh deploy: `./code/deploy/vps/deploy.sh --all`
+- Lệnh deploy: `./ops/vps/deploy.sh --all`

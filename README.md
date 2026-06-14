@@ -2,21 +2,12 @@
 
 Gamification to learn finance and keep house clean (for child).
 
-## Cấu trúc dự án
+**Bắt đầu:** [docs/project-guide.html](docs/project-guide.html) — bản đồ chỉ dẫn toàn dự án.
 
-```
-keep-house-clean/
-├── code/          # Toàn bộ mã nguồn (frontend, API, deploy)
-└── docs/          # Tài liệu: BRD, kỹ thuật, test, DB, UI/UX
-```
+**Deploy:** `./ops/vps/deploy.sh --all` · **Test:** `bash tests/domain/nhatky/nhatky.sh`
 
-| Thư mục | Nội dung |
-|---------|----------|
-| [`code/`](code/) | Frontend HTML, `kho-thoc-api/`, `deploy/` |
-| [`docs/`](docs/) | BRD, technical, tests, DB migrations |
+## Redirect tại root
 
-**Bắt đầu:** mở [`docs/project-guide.html`](docs/project-guide.html) — bản đồ chỉ dẫn toàn dự án.
+Mã frontend nằm trong `code/`, nhưng GitHub Pages phục vụ từ **root repo** (`/keep-house-clean/`). Các file HTML mỏng tại root (`index.html`, `nhat-ky.html`, `kho-qua.html`, `quy-doi.html`, `print.html`, `admin/…`) dùng `<meta refresh>` chuyển hướng sang `code/…` tương ứng.
 
-**Ứng dụng:** [`code/index.html`](code/index.html) — production: `https://batagic.github.io/keep-house-clean/code/nhat-ky.html`
-
-**Deploy:** `./code/deploy/vps/deploy.sh --all`
+**Vì sao cần:** URL cũ và bookmark (`…/keep-house-clean/nhat-ky.html`) vẫn hoạt động sau khi gom mã nguồn vào `code/`; không phải nhân đôi toàn bộ assets. Production vẫn dùng `code/nhat-ky.html` làm entry chính.

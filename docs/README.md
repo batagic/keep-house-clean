@@ -10,10 +10,14 @@ docs/
 ├── snapshot.json          # Hiện trạng dự án (JSON)
 ├── brd/                   # Nghiệp vụ theo domain
 ├── technical/             # Kiến trúc, vận hành, dev/prod
-├── tests/                 # Script test tự động
-├── db/                    # migrate + seed SQL
+├── db/                    # README + migrate mirror + seed SQL
+│   ├── README.md          # ★ Hai thư mục migrations — đọc trước
+│   └── migrate/
+├── prototypes/            # HTML thử nghiệm — không deploy
 └── ui/ux/                 # Design system (style.html)
 ```
+
+Test script: [`../tests/`](../tests/) · Deploy: [`../ops/`](../ops/)
 
 ## BRD & nghiệp vụ
 
@@ -41,6 +45,7 @@ docs/
 
 | File | Nội dung |
 |------|----------|
-| [tests/test-case.md](./tests/test-case.md) | Bảng ID test |
-| [tests/domain/nhatky/nhatky.sh](./tests/domain/nhatky/nhatky.sh) | Chạy test domain Nhật Ký |
-| [db/migrate/](./db/migrate/) | SQL migrations (nguồn chính) |
+| [../tests/test-case.md](../tests/test-case.md) | Bảng ID test |
+| [../tests/domain/nhatky/nhatky.sh](../tests/domain/nhatky/nhatky.sh) | Chạy test domain Nhật Ký |
+| [db/README.md](./db/README.md) | Migrations: nguồn chạy vs bản sao operator |
+| [db/migrate/](./db/migrate/) | SQL mirror (sync từ API) |

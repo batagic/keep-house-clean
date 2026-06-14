@@ -2,16 +2,19 @@
   "project": "keep-house-clean",
   "name": "Kho Thóc Gia Đình",
   "updated": "2026-06-14",
-  "structure_version": "2.0",
+  "structure_version": "2.1",
   "repo_layout": {
-    "code": "Frontend HTML, kho-thoc-api, deploy scripts",
-    "docs": "BRD, technical, tests, db/migrate, ui/ux"
+    "code": "Frontend HTML, kho-thoc-api",
+    "docs": "BRD, technical, db/migrate, ui/ux",
+    "tests": "Script test tự động (domain, coverage)",
+    "ops": "Deploy VPS, Nginx, SSH setup"
   },
   "architecture": {
     "frontend": {
       "host": "GitHub Pages",
       "path": "/keep-house-clean/code/",
-      "entry": "code/nhat-ky.html"
+      "entry": "code/nhat-ky.html",
+      "root_redirects": "index.html, nhat-ky.html, … tại repo root → code/"
     },
     "api": {
       "host": "VPS Docker",
@@ -21,17 +24,18 @@
     "database": {
       "engine": "PostgreSQL",
       "name": "kho_thoc",
-      "migrations": "docs/db/migrate/"
+      "migrations_run": "code/kho-thoc-api/migrations/",
+      "migrations_docs": "docs/db/migrate/"
     }
   },
   "deploy": {
-    "script": "./code/deploy/vps/deploy.sh --all",
-    "ssh_setup": "./code/deploy/vps/setup-ssh.sh",
+    "script": "./ops/vps/deploy.sh --all",
+    "ssh_setup": "./ops/vps/setup-ssh.sh",
     "vps_root": "/opt/nhatkyvumua"
   },
   "tests": {
-    "domain_nhatky": "bash docs/tests/domain/nhatky/nhatky.sh",
-    "coverage": "bash docs/tests/coverage.sh"
+    "domain_nhatky": "bash tests/domain/nhatky/nhatky.sh",
+    "coverage": "bash tests/coverage.sh"
   },
   "key_docs": {
     "guide": "docs/project-guide.html",
@@ -50,7 +54,7 @@
   ],
   "workflow_ai": {
     "after_feature": "Hỏi user trước khi git push + deploy",
-    "update_docs": ["docs/brd/", "docs/tests/test-case.md"],
-    "run_tests": "docs/tests/domain/nhatky/nhatky.sh"
+    "update_docs": ["docs/brd/", "tests/test-case.md"],
+    "run_tests": "tests/domain/nhatky/nhatky.sh"
   }
 }

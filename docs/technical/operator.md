@@ -18,7 +18,7 @@ Mac dev  →  git push main
 | Thành phần | Host | Cập nhật |
 |------------|------|----------|
 | `code/nhat-ky.html`, `code/assets/` | GitHub Pages | `git push` |
-| `code/kho-thoc-api/src/`, `docs/db/migrate/` | VPS Docker | `./code/deploy/vps/deploy.sh` |
+| `code/kho-thoc-api/` (src + migrations) | VPS Docker | `./ops/vps/deploy.sh` |
 | `.env` | Chỉ VPS | Sửa tay — không commit |
 | Nginx / SSL | Host VPS | Khi đổi domain/path |
 
@@ -36,7 +36,7 @@ Mac dev  →  git push main
 |------|------|:---:|:------------:|
 | **A** Chỉ UI | `nhat-ky.html`, `assets/js/pages/*.js` | — | **Có** |
 | **B** Chỉ API | `code/kho-thoc-api/src/` | **Có** | — |
-| **C** API + DB | `docs/db/migrate/` | **Có** + migrate | Tùy |
+| **C** API + DB | `code/kho-thoc-api/migrations/` (+ sync `docs/db/migrate/`) | **Có** + migrate | Tùy |
 | **D** Full-stack | Cả hai | **Có** | **Có** |
 | **E** Env mới | `.env` trên VPS | Sửa + rebuild | — |
 
@@ -223,4 +223,4 @@ curl -s -H 'Origin: https://batagic.github.io' \
 | [specs/passcode.md](./specs/passcode.md) | Spec passcode đổi quà |
 | [specs/admin.md](./specs/admin.md) | Spec trang admin |
 | [tech/migration-vps.md](./tech/migration-vps.md) | Lộ trình migrate |
-| `code/deploy/vps/nginx/` | Config Nginx |
+| `ops/vps/nginx/` | Config Nginx |

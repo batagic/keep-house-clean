@@ -9,7 +9,7 @@ cd code && python3 -m http.server 5500
 
 # API
 cd code/kho-thoc-api
-bash scripts/sync-migrations.sh
+# Sau khi thêm file migrations/*.sql mới: bash scripts/sync-migrations.sh
 docker compose up -d --build
 docker compose exec kho-thoc-api node scripts/migrate.js
 # hoặc: npm run dev
@@ -19,16 +19,16 @@ curl -s 'http://localhost:3001/?type=ping'
 ## Test
 
 ```bash
-bash docs/tests/domain/nhatky/nhatky.sh
-API_URL='http://localhost:3001/kho-thoc/' bash docs/tests/domain/nhatky/nhatky.sh
-bash docs/tests/coverage.sh
+bash tests/domain/nhatky/nhatky.sh
+API_URL='http://localhost:3001/kho-thoc/' bash tests/domain/nhatky/nhatky.sh
+bash tests/coverage.sh
 ```
 
 ## Prod (Mac → VPS)
 
 ```bash
-./code/deploy/vps/deploy.sh              # chỉ API
-./code/deploy/vps/deploy.sh --all        # API + git push (GitHub Pages)
+./ops/vps/deploy.sh              # chỉ API
+./ops/vps/deploy.sh --all        # API + git push (GitHub Pages)
 ssh kho-thoc-vps
 curl -s 'https://apinhatkyvumua.taho.cat/kho-thoc/?type=ping'
 ```

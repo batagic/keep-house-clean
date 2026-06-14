@@ -23,7 +23,7 @@
 </head>
 <body>
 <h1>Kho Thóc Gia Đình — Project Guide</h1>
-<p><span class="badge">v2.0</span><span class="badge">2026-06-14</span> Bản đồ chỉ dẫn — đọc file này trước khi vào dự án.</p>
+<p><span class="badge">v2.1</span><span class="badge">2026-06-14</span> Bản đồ chỉ dẫn — đọc file này trước khi vào dự án.</p>
 
 <h2>Muốn tìm gì → xem đâu</h2>
 <table>
@@ -36,23 +36,57 @@
   <tr><td>Deploy prod</td><td><a href="technical/prod.md">technical/prod.md</a></td></tr>
   <tr><td>Lệnh nhanh</td><td><a href="technical/fast-operation.md">technical/fast-operation.md</a></td></tr>
   <tr><td>Design / UI</td><td><a href="ui/ux/style.html">ui/ux/style.html</a></td></tr>
-  <tr><td>SQL migrate</td><td><a href="db/migrate/">db/migrate/</a></td></tr>
-  <tr><td>Test</td><td><a href="tests/domain/nhatky/nhatky.sh">tests/domain/nhatky/nhatky.sh</a></td></tr>
+  <tr><td>SQL migrate &amp; seed</td><td><a href="db/README.md">db/README.md</a> · <a href="db/migrate/">db/migrate/</a> (bản sao operator)</td></tr>
+  <tr><td>Prototype UI (không deploy)</td><td><a href="prototypes/">prototypes/</a></td></tr>
+  <tr><td>Test</td><td><a href="../tests/domain/nhatky/nhatky.sh">../tests/domain/nhatky/nhatky.sh</a></td></tr>
   <tr><td>Hiện trạng JSON</td><td><a href="snapshot.json">snapshot.json</a></td></tr>
   <tr><td>Mã nguồn</td><td><a href="../code/">../code/</a></td></tr>
 </table>
 
 <h2>Cấu trúc repo</h2>
 <div class="tree">keep-house-clean/
-├── code/                    # Mã nguồn
+├── code/                    # Mã nguồn (frontend + API)
 │   ├── index.html, nhat-ky.html, kho-qua.html, …
-│   ├── assets/                # CSS, JS, data
-│   ├── admin/                 # Admin UI
-│   ├── kho-thoc-api/          # Node.js API + Docker
-│   └── deploy/vps/            # deploy.sh, setup-ssh.sh
-└── docs/                    # Tài liệu (bạn đang ở đây)
-    ├── project-guide.html
-    ├── brd/ technical/ tests/ db/ ui/ux/</div>
+│   ├── assets/              # CSS, JS, data
+│   ├── admin/               # Admin UI
+│   └── kho-thoc-api/        # Node.js API + Docker
+│       └── migrations/      # ★ Nguồn chạy migrate.js
+├── docs/                    # Tài liệu (bạn đang ở đây)
+│   ├── project-guide.html
+│   ├── db/migrate/          # Bản sao SQL cho operator (sync từ API)
+│   ├── prototypes/          # HTML thử nghiệm — không deploy
+│   └── brd/ technical/ ui/ux/
+├── tests/                   # Script test tự động
+│   └── domain/nhatky/ …
+├── ops/                     # Vận hành & deploy
+│   └── vps/                 # deploy.sh, setup-ssh.sh, nginx/
+├── index.html, nhat-ky.html …  # Redirect mỏng → code/ (xem bên dưới)
+└── README.md</div>
+
+<h2>Redirect tại root — vì sao cần?</h2>
+<p>Frontend thật nằm trong <code>code/</code>. GitHub Pages publish từ <strong>root repo</strong>, nên URL công khai là <code>…/keep-house-clean/</code> chứ không phải <code>…/keep-house-clean/code/</code> làm “gốc” duy nhất.</p>
+<ul>
+  <li>Các file HTML mỏng tại root (<code>index.html</code>, <code>nhat-ky.html</code>, <code>kho-qua.html</code>, <code>quy-doi.html</code>, <code>print.html</code>, <code>admin/login.html</code>, …) dùng <code>&lt;meta http-equiv="refresh"&gt;</code> + link <code>canonical</code> trỏ sang <code>code/…</code>.</li>
+  <li><strong>Bookmark &amp; link cũ</strong> (<code>/keep-house-clean/nhat-ky.html</code>) vẫn mở đúng trang sau khi tái cấu trúc.</li>
+  <li><strong>Không nhân đôi assets</strong> — chỉ vài dòng redirect, một bản CSS/JS trong <code>code/assets/</code>.</li>
+  <li>Entry production chính thức: <code>code/nhat-ky.html</code> (API config trỏ đúng path GitHub Pages).</li>
+</ul>
+
+<h2>Migrations — hai thư mục, một schema</h2>
+<p>Tránh nhầm lẫn khi deploy hoặc dựng DB mới:</p>
+<table>
+  <tr><th>Thư mục</th><th>Vai trò</th></tr>
+  <tr><td><code>code/kho-thoc-api/migrations/</code></td><td><strong>Nguồn chạy</strong> — <code>migrate.js</code>, Docker, VPS rsync API</td></tr>
+  <tr><td><code>docs/db/migrate/</code></td><td><strong>Bản sao operator</strong> — SQL thuần, <code>psql -f</code>, audit lịch sử</td></tr>
+</table>
+<ul>
+  <li><strong>Developer:</strong> thêm <code>NNN_mo_ta.sql</code> trong <code>code/kho-thoc-api/migrations/</code> → <code>npm run migrate</code> → <code>bash scripts/sync-migrations.sh</code> → commit cả hai.</li>
+  <li><strong>Operator:</strong> dựng DB sạch từ <code>docs/db/migrate/*.sql</code> (theo thứ tự) hoặc <code>node scripts/migrate.js</code> trong container.</li>
+  <li>Chi tiết: <a href="db/README.md">db/README.md</a></li>
+</ul>
+
+<h2>Prototype — không deploy</h2>
+<p>HTML thử layout cũ nằm trong <code>docs/prototypes/</code> (trước đây <code>code/ideas/</code>). Không liên quan GitHub Pages hay API production — chỉ tham khảo thiết kế.</p>
 
 <h2>Kiến trúc tóm tắt</h2>
 <pre class="mermaid">
@@ -65,9 +99,9 @@ flowchart LR
 <ul>
   <li>Frontend tĩnh trên GitHub Pages — không build step</li>
   <li>API Node.js Docker trên VPS, DB Postgres riêng <code>kho_thoc</code></li>
-  <li>Migrate SQL nguồn chính: <code>docs/db/migrate/</code></li>
+  <li>Migrate SQL — nguồn chạy: <code>code/kho-thoc-api/migrations/</code>; bản sao operator: <code>docs/db/migrate/</code> (<a href="db/README.md">db/README.md</a>)</li>
   <li>Cách ly gia đình qua <code>X-Family-Id</code> sau <strong>phiên passcode</strong> (<code>unlock_family</code>)</li>
-  <li>Deploy: <code>./code/deploy/vps/deploy.sh --all</code></li>
+  <li>Deploy: <code>./ops/vps/deploy.sh --all</code></li>
 </ul>
 
 <h2>Tiến độ & kế hoạch</h2>
