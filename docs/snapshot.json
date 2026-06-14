@@ -1,0 +1,55 @@
+{
+  "project": "keep-house-clean",
+  "name": "Kho Thóc Gia Đình",
+  "updated": "2026-06-14",
+  "structure_version": "2.0",
+  "repo_layout": {
+    "code": "Frontend HTML, kho-thoc-api, deploy scripts",
+    "docs": "BRD, technical, tests, db/migrate, ui/ux"
+  },
+  "architecture": {
+    "frontend": {
+      "host": "GitHub Pages",
+      "path": "/keep-house-clean/code/",
+      "entry": "code/nhat-ky.html"
+    },
+    "api": {
+      "host": "VPS Docker",
+      "url": "https://apinhatkyvumua.taho.cat/kho-thoc/",
+      "path": "code/kho-thoc-api"
+    },
+    "database": {
+      "engine": "PostgreSQL",
+      "name": "kho_thoc",
+      "migrations": "docs/db/migrate/"
+    }
+  },
+  "deploy": {
+    "script": "./code/deploy/vps/deploy.sh --all",
+    "ssh_setup": "./code/deploy/vps/setup-ssh.sh",
+    "vps_root": "/opt/nhatkyvumua"
+  },
+  "tests": {
+    "domain_nhatky": "bash docs/tests/domain/nhatky/nhatky.sh",
+    "coverage": "bash docs/tests/coverage.sh"
+  },
+  "key_docs": {
+    "guide": "docs/project-guide.html",
+    "brd": "docs/brd/brd.md",
+    "hld": "docs/technical/hld.html",
+    "operator": "docs/technical/operator.md"
+  },
+  "features_shipped": [
+    "Nhật ký nhiệm vụ + Gạo/EXP",
+    "Đăng ký/xóa bé (max 3/family)",
+    "Cách ly gia đình (family_id)",
+    "Đổi quà + passcode",
+    "Admin JWT",
+    "Deploy một lệnh VPS"
+  ],
+  "workflow_ai": {
+    "after_feature": "Hỏi user trước khi git push + deploy",
+    "update_docs": ["docs/brd/", "docs/tests/test-case.md"],
+    "run_tests": "docs/tests/domain/nhatky/nhatky.sh"
+  }
+}

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nhật Ký Vụ Mùa – Kho Thóc Gia Đình</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="preconnect" href="https://script.google.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Mulish:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/shared/variables.css" />
+  <link rel="stylesheet" href="assets/css/shared/nav.css" />
+  <link rel="stylesheet" href="assets/css/shared/footer.css" />
+  <link rel="stylesheet" href="assets/css/pages/nhat-ky.css" />
+</head>
+<body>
+
+  <nav class="nav" id="mainNav" data-page="nhat-ky"></nav>
+  <script src="assets/js/shared/site-nav.js"></script>
+
+  <div class="container">
+    <h1 class="page-title">Nhật Ký Vụ Mùa</h1>
+    <p class="page-subtitle">Nơi Bố Mẹ ghi nhận công sức và quản lý điểm số tích lũy trực tiếp.</p>
+
+    <p class="sync-status" id="syncStatus" aria-live="polite"></p>
+
+    <div class="add-profile-bar">
+      <p class="add-profile-hint" id="addProfileHint" hidden>Mỗi gia đình chỉ đăng ký tối đa 3 bé.</p>
+      <button class="btn-secondary" id="addProfileBtn" onclick="openModal()">➕ Đăng ký bé mới</button>
+    </div>
+
+    <div class="profile-grid" id="profileGrid"></div>
+
+    <div class="main-dashboard-grid">
+
+      <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #edf7f1; padding-bottom: 1rem; margin-bottom: 0.5rem;">
+          <h3 style="font-family:'Baloo 2'; margin:0; color:var(--green-deep); font-size: 1.4rem;">📋 Nhiệm Vụ Hôm Nay</h3>
+          <span style="background: var(--amber-light); color: var(--earth); font-size: 0.9rem; font-weight: 800; padding: 0.3rem 0.8rem; border-radius: 1.5rem;" id="checkedCount">0 / 15</span>
+        </div>
+
+        <div class="tasks-compact-container" id="tasksCompactGrid">
+        </div>
+
+        <div class="bonus-box" id="bonusToggleDiv" onclick="toggleBonus()">
+          <div class="toggle-switch"></div>
+          <div>
+            <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main)">Tự giác — không cần nhắc nhở</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted)">Cộng thêm 20% Gạo cho tất cả nhiệm vụ đã hoàn thành</div>
+          </div>
+        </div>
+
+        <div class="totals-bar">
+          <span>🌾 Tổng Gạo: <span id="todayGrain" style="color:var(--earth);">0</span></span>
+          <span>⭐ EXP: <span id="todayExp" style="color:var(--green-deep);">0</span></span>
+        </div>
+
+        <div style="display: flex; gap: 0.8rem; margin-top: 1.5rem;">
+          <input type="text" id="logNote" placeholder="Ghi chú (Tùy chọn)..." style="flex:1; padding:0.8rem; border:1px solid #e2e8f0; border-radius:0.6rem; font-size:0.95rem;" />
+          <button class="btn-main" style="padding: 0 1.5rem;" onclick="submitDailyLog()">Ghi Nhật Ký</button>
+        </div>
+      </div>
+
+      <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
+        <div style="border-bottom: 2px solid #edf7f1; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+          <h3 style="font-family:'Baloo 2'; margin:0; color:var(--green-deep); font-size: 1.4rem; display:flex; justify-content:space-between; align-items:center;">
+            <span>🎁 Kho Quà Tặng</span>
+            <span class="rewards-afford-hint is-empty" id="rewardsAffordHint">Chọn bé để xem quà</span>
+          </h3>
+        </div>
+
+        <div class="rewards-small-grid" id="rewardsSmallGrid">
+        </div>
+
+        <div style="margin-top: 2rem; text-align: right; border-top: 1px dashed #e2e8f0; padding-top: 1.5rem;">
+          <button class="btn-main" style="background: var(--amber); color: var(--earth); font-size: 1rem; padding: 0.8rem 1.5rem;" onclick="openRedeemModal()">Nhận Quà Đã Chọn</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <h3 style="font-family:'Baloo 2'; font-size: 1.5rem; color: var(--green-deep); margin-bottom: 1.5rem;">📜 Lịch Sử Gieo Hạt</h3>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <h3 class="modal-title">Thêm Tài Khoản Bé</h3>
+      <div class="form-group">
+        <label>Tên của bé</label>
+        <input type="text" id="pName" class="form-control" placeholder="VD: Gia Minh..."/>
+      </div>
+      <div class="form-group">
+        <label>Biểu tượng (Emoji)</label>
+        <input type="text" id="pAvatar" class="form-control" placeholder="👦, 👧, 🦸‍♂️..."/>
+      </div>
+      <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top: 1.5rem;">
+        <button class="btn-secondary" onclick="closeModal()">Hủy</button>
+        <button class="btn-main" onclick="confirmAddProfile()">Tạo Mới</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="passcodeModalOverlay">
+    <div class="modal-box">
+      <h3 class="modal-title">🔑 Mã đổi quà của bé</h3>
+      <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;">
+        Ghi lại mã cho bé <strong id="newProfilePasscodeName"></strong>. Dùng khi bé đổi quà — bố/mẹ đọc mã cho bé nhập.
+        Nếu quên mã, liên hệ admin để được cấp lại.
+      </p>
+      <div class="passcode-reveal-box">
+        <div class="passcode-reveal-code" id="newProfilePasscodeValue"></div>
+      </div>
+      <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top: 1.5rem;">
+        <button class="btn-main" onclick="closePasscodeModal()">Đã ghi nhớ</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="penaltyModalOverlay">
+    <div class="modal-box">
+      <h3 class="modal-title">⛔ Phạt Gạo</h3>
+      <p id="penaltySummary" style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;"></p>
+      <div class="form-group">
+        <label for="penaltyGrain">Số Gạo bị trừ</label>
+        <input type="number" id="penaltyGrain" class="form-control" min="1" step="1" inputmode="numeric" placeholder="VD: 20"/>
+      </div>
+      <div class="form-group">
+        <label for="penaltyNote">Lý do phạt</label>
+        <input type="text" id="penaltyNote" class="form-control" placeholder="VD: Không dọn phòng, nói dối…"/>
+      </div>
+      <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top: 1.5rem;">
+        <button class="btn-secondary" onclick="closePenaltyModal()">Hủy</button>
+        <button class="btn-main btn-penalty" id="penaltyConfirmBtn" onclick="confirmPenalty()">Xác nhận phạt</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="redeemModalOverlay">
+    <div class="modal-box">
+      <h3 class="modal-title">🎁 Xác nhận đổi quà</h3>
+      <p id="redeemSummary" style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;"></p>
+      <div class="form-group">
+        <label for="redeemPasscode">Mã xác nhận từ bố/mẹ</label>
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="redeemPasscode" class="form-control" placeholder="Nhập mã Zalo..." autocomplete="off"/>
+      </div>
+      <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top: 1.5rem;">
+        <button class="btn-secondary" onclick="closeRedeemModal()">Hủy</button>
+        <button class="btn-main" style="background:var(--amber);color:var(--earth);" id="redeemConfirmBtn" onclick="confirmRedeem()">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="assets/js/shared/nav.js" defer></script>
+  <script src="assets/js/data/config.js" defer></script>
+  <script src="assets/js/shared/family-api.js" defer></script>
+  <script src="assets/js/data/tasks.js" defer></script>
+  <script src="assets/js/data/rewards.js" defer></script>
+  <script src="assets/js/pages/nhat-ky.js" defer></script>
+</body>
+</html>

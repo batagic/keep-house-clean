@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kho Thóc — Project Guide</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root { --bg:#0f1117; --surface:#1a1d2e; --border:#2a2d4a; --accent:#6c63ff; --text:#e2e8f0; --muted:#94a3b8; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; line-height:1.6; padding:24px; max-width:960px; margin:0 auto; }
+  h1 { font-size:1.6rem; margin-bottom:8px; }
+  h2 { font-size:1.1rem; margin:28px 0 12px; color:var(--accent); }
+  p, li { color:var(--muted); margin-bottom:8px; }
+  a { color:#9d96ff; }
+  code { background:#12152a; padding:2px 6px; border-radius:4px; font-size:.9em; }
+  .tree { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px; font-family:monospace; font-size:12px; white-space:pre; overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:14px; }
+  th, td { border:1px solid var(--border); padding:8px 12px; text-align:left; }
+  th { background:var(--surface); }
+  .badge { display:inline-block; background:#6c63ff33; color:#9d96ff; padding:2px 10px; border-radius:99px; font-size:12px; margin-right:6px; }
+</style>
+</head>
+<body>
+<h1>Kho Thóc Gia Đình — Project Guide</h1>
+<p><span class="badge">v2.0</span><span class="badge">2026-06-14</span> Bản đồ chỉ dẫn — đọc file này trước khi vào dự án.</p>
+
+<h2>Muốn tìm gì → xem đâu</h2>
+<table>
+  <tr><th>Mục đích</th><th>File</th></tr>
+  <tr><td>Nghiệp vụ tổng thể</td><td><a href="brd/brd.md">brd/brd.md</a></td></tr>
+  <tr><td>Actor & use case</td><td><a href="brd/usecase-actor.md">brd/usecase-actor.md</a></td></tr>
+  <tr><td>Kiến trúc HLD</td><td><a href="technical/hld.html">technical/hld.html</a></td></tr>
+  <tr><td>Quyết định kiến trúc</td><td><a href="technical/architech.html">technical/architech.html</a></td></tr>
+  <tr><td>Cài dev</td><td><a href="technical/dev.md">technical/dev.md</a></td></tr>
+  <tr><td>Deploy prod</td><td><a href="technical/prod.md">technical/prod.md</a></td></tr>
+  <tr><td>Lệnh nhanh</td><td><a href="technical/fast-operation.md">technical/fast-operation.md</a></td></tr>
+  <tr><td>Design / UI</td><td><a href="ui/ux/style.html">ui/ux/style.html</a></td></tr>
+  <tr><td>SQL migrate</td><td><a href="db/migrate/">db/migrate/</a></td></tr>
+  <tr><td>Test</td><td><a href="tests/domain/nhatky/nhatky.sh">tests/domain/nhatky/nhatky.sh</a></td></tr>
+  <tr><td>Hiện trạng JSON</td><td><a href="snapshot.json">snapshot.json</a></td></tr>
+  <tr><td>Mã nguồn</td><td><a href="../code/">../code/</a></td></tr>
+</table>
+
+<h2>Cấu trúc repo</h2>
+<div class="tree">keep-house-clean/
+├── code/                    # Mã nguồn
+│   ├── index.html, nhat-ky.html, kho-qua.html, …
+│   ├── assets/                # CSS, JS, data
+│   ├── admin/                 # Admin UI
+│   ├── kho-thoc-api/          # Node.js API + Docker
+│   └── deploy/vps/            # deploy.sh, setup-ssh.sh
+└── docs/                    # Tài liệu (bạn đang ở đây)
+    ├── project-guide.html
+    ├── brd/ technical/ tests/ db/ ui/ux/</div>
+
+<h2>Kiến trúc tóm tắt</h2>
+<pre class="mermaid">
+flowchart LR
+  GH[GitHub Pages code/] -->|HTTPS fetch| API[kho-thoc-api VPS]
+  API --> DB[(Postgres kho_thoc)]
+</pre>
+
+<h2>Quyết định quan trọng</h2>
+<ul>
+  <li>Frontend tĩnh trên GitHub Pages — không build step</li>
+  <li>API Node.js Docker trên VPS, DB Postgres riêng <code>kho_thoc</code></li>
+  <li>Migrate SQL nguồn chính: <code>docs/db/migrate/</code></li>
+  <li>Cách ly gia đình qua header <code>X-Family-Id</code></li>
+  <li>Deploy: <code>./code/deploy/vps/deploy.sh --all</code></li>
+</ul>
+
+<h2>Tiến độ & kế hoạch</h2>
+<ul>
+  <li>✅ Nhật ký, đổi quà, admin, deploy một lệnh</li>
+  <li>✅ Cách ly gia đình (family_id)</li>
+  <li>⏳ Cron backup pg_dump</li>
+  <li>⏳ UI sửa tên/avatar bé</li>
+</ul>
+
+<script>mermaid.initialize({ startOnLoad:true, theme:'dark' });</script>
+</body>
+</html>

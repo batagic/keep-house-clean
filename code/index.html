@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kho Thóc Gia Đình – Gamification Việc Nhà</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800;900&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/shared/variables.css" />
+  <link rel="stylesheet" href="assets/css/shared/base.css" />
+  <link rel="stylesheet" href="assets/css/shared/nav.css" />
+  <link rel="stylesheet" href="assets/css/shared/layout.css" />
+  <link rel="stylesheet" href="assets/css/shared/buttons.css" />
+  <link rel="stylesheet" href="assets/css/shared/footer.css" />
+  <link rel="stylesheet" href="assets/css/shared/components.css" />
+  <link rel="stylesheet" href="assets/css/pages/index.css" />
+</head>
+<body>
+
+<nav class="nav" id="mainNav" data-page="index"></nav>
+<script src="assets/js/shared/site-nav.js"></script>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-badge">🎮 Gamification cho gia đình · Dành cho teen 10–15 tuổi</div>
+  <h1 class="hero-title">
+    Biến Việc Nhà Thành<br/>
+    <span class="highlight">Vụ Mùa Bội Thu!</span>
+  </h1>
+  <p class="hero-sub">
+    Tích lũy <strong>Hạt Gạo</strong> từ việc nhà, thăng cấp Quản Gia,
+    và đổi lấy những đặc quyền giải trí cực chất. Học cách quản lý tài chính ngay từ nhỏ!
+  </p>
+  <div class="hero-btns">
+    <a href="#how-it-works" class="btn-primary">🌱 Xem Cách Hoạt Động</a>
+    <a href="kho-qua.html" class="btn-outline">🎁 Kho Quà Tặng</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">5</div>
+      <div class="hero-stat-label">Cấp Bậc Quản Gia</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">20+</div>
+      <div class="hero-stat-label">Nhiệm Vụ Mỗi Tuần</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">10🌾</div>
+      <div class="hero-stat-label">= 1.000 VNĐ</div>
+    </div>
+  </div>
+
+  <div class="hero-field" id="heroField"></div>
+</section>
+
+<div class="wave">
+  <svg viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:60px;background:var(--cream);">
+    <path d="M0,80 L0,30 Q300,0 600,30 Q900,60 1200,20 L1200,80 Z" fill="#1b4332"/>
+  </svg>
+</div>
+
+<!-- ── BENEFITS (dành cho ba mẹ) ── -->
+<section class="benefits" id="benefits">
+  <div class="container">
+    <p class="section-label reveal">🌿 Tại sao nên dùng</p>
+    <h2 class="section-title reveal">Lợi Ích Cho Cả Gia Đình</h2>
+    <p class="section-sub reveal">Không chỉ là bảng phân công việc nhà — đây là mô hình giáo dục tài chính và kỹ năng sống thực thụ.</p>
+
+    <div class="benefits-grid">
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">💰</div>
+        <h4>Hiểu Giá Trị Đồng Tiền</h4>
+        <p>Khi con thấy rửa bát = 20 Gạo = 2.000đ, con sẽ hiểu lao động tạo ra giá trị thật sự — không phải tiền xin ba mẹ nữa.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🧠</div>
+        <h4>Kỹ Năng Lập Kế Hoạch</h4>
+        <p>Muốn mua giày 500k? Con tự tính: cần 5.000 Gạo, mỗi ngày kiếm được bao nhiêu, mất bao lâu. Toán học ứng dụng thực tế!</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🏠</div>
+        <h4>Tinh Thần Trách Nhiệm</h4>
+        <p>Thay vì nhắc nhở mệt mỏi, hệ thống tự vận hành. Con chủ động làm việc vì chính lợi ích của mình, không phải vì bị ép.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🤝</div>
+        <h4>Gắn Kết Gia Đình</h4>
+        <p>"Lễ đổi thưởng" hàng tuần trở thành khoảnh khắc cả nhà cùng nhau nhìn lại, tôn vinh và ăn mừng thành quả lao động.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">🎮</div>
+        <h4>Động Lực Dài Hạn</h4>
+        <p>Hệ thống cấp bậc, thẻ bài, kho quà — biến việc nhà nhàm chán thành game nhập vai có cốt truyện và mục tiêu rõ ràng.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <div class="benefit-icon">⚖️</div>
+        <h4>Công Bằng & Minh Bạch</h4>
+        <p>Mọi quy tắc đều được niêm yết rõ ràng. Không có tranh cãi về "công bằng" vì mọi thứ đều có giá niêm yết cố định.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how" id="how-it-works">
+  <div class="container">
+    <p class="section-label reveal">⚙️ Cơ chế vận hành</p>
+    <h2 class="section-title reveal">Cách Hoạt Động Của Kho Thóc</h2>
+    <p class="section-sub reveal">Đơn giản như một game — chỉ cần 5 phút để hiểu, cả tuần để trải nghiệm.</p>
+
+    <div class="currency-cards reveal">
+      <div class="currency-card green">
+        <div class="icon-box">📈</div>
+        <div>
+          <h4>Điểm Sành Sỏi (EXP)</h4>
+          <p>Đo lường <strong>cấp độ kỹ năng</strong> của con. Tích lũy EXP để thăng hạng từ Tân Binh lên Đại Điền Chủ và mở khóa các đặc quyền mới.</p>
+        </div>
+      </div>
+      <div class="currency-card amber">
+        <div class="icon-box">🌾</div>
+        <div>
+          <h4>Hạt Gạo (Tiền Tệ)</h4>
+          <p>Đồng tiền trong game. Dùng để <strong>đổi phần thưởng</strong> ngắn hạn (thẻ bài đặc quyền) hoặc tích lũy dài hạn để quy ra tiền mặt thật.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="rate-callout reveal">
+      <div class="rate-item">
+        <span class="rate-num">10 🌾</span>
+        <span class="rate-label">Hạt Gạo</span>
+      </div>
+      <span class="rate-eq">=</span>
+      <div class="rate-item">
+        <span class="rate-num">1.000đ</span>
+        <span class="rate-label">Tiền Mặt</span>
+      </div>
+      <span class="rate-eq">→</span>
+      <div class="rate-item">
+        <span class="rate-num">5.000 🌾</span>
+        <span class="rate-label">= Giày 500k</span>
+      </div>
+      <a href="quy-doi.html">Tính Ngay →</a>
+    </div>
+
+    <div class="steps reveal" style="margin-top:3rem">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-emoji">📋</div>
+        <h4>Nhận Nhiệm Vụ</h4>
+        <p>Ba mẹ và con cùng thống nhất danh sách việc nhà + số Gạo tương ứng mỗi tuần.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-emoji">⚡</div>
+        <h4>Hoàn Thành & Tích Lũy</h4>
+        <p>Làm xong việc, con ghi vào sổ kho. Ba mẹ xác nhận và cộng Gạo + EXP.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-emoji">🏆</div>
+        <h4>Thăng Cấp</h4>
+        <p>Đủ EXP thì lên hạng. Mỗi cấp mở ra đặc quyền và bonus Gạo mới.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-emoji">🎁</div>
+        <h4>Đổi Phần Thưởng</h4>
+        <p>Dùng Gạo đổi thẻ bài đặc quyền hoặc tích lũy để quy ra tiền mua đồ thật.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TASKS PREVIEW ── -->
+<section style="background:#fff; padding:3rem 2rem 5rem;">
+  <div class="container">
+    <p class="section-label reveal">🌾 Ví dụ nhiệm vụ</p>
+    <h2 class="section-title reveal">Đồng Điền – Bảng Nhiệm Vụ Mẫu</h2>
+    <p class="section-sub reveal">Một số công việc nhà phổ biến và số Hạt Gạo tương ứng. Ba mẹ và con có thể tự điều chỉnh!</p>
+
+    <div class="tasks-preview reveal" id="tasksPreview"></div>
+  </div>
+</section>
+
+<!-- ── RANKS ── -->
+<section class="ranks" id="ranks">
+  <div class="container">
+    <p class="section-label reveal">🏅 Hệ thống tiến trình</p>
+    <h2 class="section-title reveal">5 Cấp Bậc Quản Gia</h2>
+    <p class="section-sub reveal">Con bắt đầu là Tân Binh rồi từng bước lên Đại Điền Chủ với càng nhiều đặc quyền hơn.</p>
+
+    <div class="ranks-track reveal">
+      <div class="rank-item">
+        <div class="rank-emoji">🌱</div>
+        <div class="rank-name">Tân Binh</div>
+        <div class="rank-exp">0 – 200 EXP</div>
+        <span class="rank-badge" style="background:#d1fae5;color:#065f46">Mới Vào Làng</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">🌿</div>
+        <div class="rank-name">Thợ Cày</div>
+        <div class="rank-exp">200 – 500 EXP</div>
+        <span class="rank-badge" style="background:#dcfce7;color:#166534">+5% bonus Gạo</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">🌾</div>
+        <div class="rank-name">Điền Chủ</div>
+        <div class="rank-exp">500 – 1.000 EXP</div>
+        <span class="rank-badge" style="background:#fef9c3;color:#854d0e">+10% bonus Gạo</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">🏡</div>
+        <div class="rank-name">Lão Làng</div>
+        <div class="rank-exp">1.000 – 2.000 EXP</div>
+        <span class="rank-badge" style="background:#fed7aa;color:#9a3412">+15% · Đặc quyền</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-emoji">👑</div>
+        <div class="rank-name">Đại Điền Chủ</div>
+        <div class="rank-exp">2.000+ EXP</div>
+        <span class="rank-badge" style="background:#fde68a;color:#713f12">+20% · Tất cả QH</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PENALTY ── -->
+<section class="penalty">
+  <div class="container">
+    <div class="penalty-box reveal">
+      <div class="penalty-icon-wrap">⛈️</div>
+      <div class="penalty-content">
+        <h3>🚫 Luật Thiên Tai — Cơ Chế Phạt</h3>
+        <p>Nông trại có thể gặp thiên tai nếu người nông dân lười biếng. Công bằng là nền tảng của hệ thống!</p>
+        <div class="penalty-rules">
+          <div class="penalty-rule">
+            <i class="fas fa-leaf"></i>
+            <div>
+              <strong>Bỏ hoang ruộng vườn</strong>
+              <span>Quên làm việc đã nhận: <span class="highlight">Phạt –20 Gạo</span> vào Kho.</span>
+            </div>
+          </div>
+          <div class="penalty-rule">
+            <i class="fas fa-bug"></i>
+            <div>
+              <strong>Làm dối, làm ẩu (Gạo mốc)</strong>
+              <span>Phạt làm lại từ đầu. Nhiệm vụ tiếp theo <span class="highlight">chỉ nhận 50% Gạo</span>.</span>
+            </div>
+          </div>
+          <div class="penalty-rule">
+            <i class="fas fa-triangle-exclamation"></i>
+            <div>
+              <strong>Vi phạm cam kết</strong>
+              <span>Đổi thưởng xong không giữ lời: <span class="highlight">Mất thẻ bài, phạt thêm –50 Gạo</span>.</span>
+            </div>
+          </div>
+          <div class="penalty-rule">
+            <i class="fas fa-circle-xmark"></i>
+            <div>
+              <strong>Liên tiếp bỏ việc</strong>
+              <span>3 ngày liên tiếp không làm gì: <span class="highlight">Đóng băng Kho 24h</span> — không đổi thưởng được.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="container" style="position:relative;z-index:1;">
+    <h2 class="reveal">Gia Đình Bạn Sẵn Sàng<br/>Mở Kho Thóc Chưa? 🌾</h2>
+    <p class="reveal">Một hệ thống đơn giản, vui vẻ và hiệu quả để dạy con tuổi teen về giá trị lao động, quản lý tài chính và tinh thần trách nhiệm.</p>
+    <div class="cta-btns">
+      <a href="kho-qua.html" class="btn-white">🎁 Xem Kho Quà Tặng</a>
+      <a href="quy-doi.html" class="btn-primary">🌾 Tính Gạo → Tiền</a>
+    </div>
+  </div>
+</section>
+
+<footer id="siteFooter"></footer>
+  <script src="assets/js/data/tasks.js"></script>
+  <script src="assets/js/shared/tasks-preview.js"></script>
+  <script src="assets/js/shared/nav.js"></script>
+  <script src="assets/js/shared/reveal.js"></script>
+  <script src="assets/js/pages/index.js"></script>
+  <script>renderIndexTasksPreview('tasksPreview');</script>
+</body>
+</html>

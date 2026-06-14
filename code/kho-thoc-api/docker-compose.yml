@@ -1,0 +1,32 @@
+# API kho-thoc — dùng Postgres sẵn có (eedt-postgres), KHÔNG tạo container Postgres mới.
+#
+# Trước khi chạy:
+#   1. bash scripts/sync-migrations.sh   # copy từ docs/db/migrate
+#   2. Tạo DB kho_thoc (docs/db/seed-dev.sql)
+#   3. cp .env.example .env
+#   4. docker compose up -d --build
+#   5. docker compose exec kho-thoc-api node scripts/migrate.js
+
+services:
+  kho-thoc-api:
+    build: .
+    container_name: kho-thoc-api
+    env_file: .env
+    ports:
+      - "${PORT:-3001}:3001"
+    volumes:
+      - ./data:/app/data:ro
+    networks:
+      - eedt_postgres_net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  eedt_postgres_net:
+    external: true
+    name: ${EEDT_DOCKER_NETWORK:-docker_eedt-net}

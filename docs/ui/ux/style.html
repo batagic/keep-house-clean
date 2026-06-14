@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kho Thóc — Design System</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 24px; line-height: 1.6; color: #1a1a1a; }
+  h1 { color: #1a5c38; } h2 { color: #2d8a55; margin-top: 1.5em; }
+  code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+</style>
+</head>
+<body>
+<p><em>Design tokens CSS: <code>code/assets/css/shared/variables.css</code></em></p>
+<h1>Hướng Dẫn Thiết Kế — Kho Thóc Gia Đình</h1>
+
+<p>**Phiên bản:** 1.0  </p>
+<p>**Ngày cập nhật:** 10/06/2026  </p>
+<p>**Phạm vi:** Toàn bộ giao diện trong repository `keep-house-clean`</p>
+
+<hr>
+
+<h2>Mục lục</h2>
+
+<p>1. [Tổng quan phong cách](#1-tổng-quan-phong-cách)</p>
+<p>2. [Bảng màu &amp; Design Tokens](#2-bảng-màu--design-tokens)</p>
+<p>3. [Typography](#3-typography)</p>
+<p>4. [Layout &amp; Spacing](#4-layout--spacing)</p>
+<p>5. [Hiệu ứng &amp; Kết cấu](#5-hiệu-ứng--kết-cấu)</p>
+<p>6. [Component Library](#6-component-library)</p>
+<p>7. [Màu ngữ nghĩa (Semantic Colors)](#7-màu-ngữ-nghĩa-semantic-colors)</p>
+<p>8. [Animation &amp; Motion](#8-animation--motion)</p>
+<p>9. [Responsive &amp; Breakpoints](#9-responsive--breakpoints)</p>
+<p>10. [Icon &amp; Emoji](#10-icon--emoji)</p>
+<p>11. [Quy tắc thiết kế](#11-quy-tắc-thiết-kế)</p>
+<p>12. [Biến thể theo trang](#12-biến-thể-theo-trang)</p>
+<p>13. [Ghi chú kỹ thuật](#13-ghi-chú-kỹ-thuật)</p>
+
+<hr>
+
+<h2>1. Tổng quan phong cách</h2>
+
+<h3>1.1 Định vị thương hiệu</h3>
+
+<p>**Kho Thóc Gia Đình** là hệ thống gamification gia đình — biến việc nhà thành trò chơi vui, có phần thưởng và cấp bậc. Giao diện cần truyền tải:</p>
+
+<p><code>| Yếu tố | Mô tả |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| **Ấm áp, gần gũi** | Tông kem, xanh lá đồng ruộng, vàng hạt gạo — gợi cảm giác nhà cửa, mùa gặt |</code></p>
+<p><code>| **Vui tươi nhưng không trẻ con** | Font tròn, emoji phong phú, animation nhẹ — phù hợp teen 10–15 tuổi |</code></p>
+<p><code>| **Giáo dục tài chính** | Màu vàng/đất cho Gạo, xanh cho EXP — phân biệt rõ hai loại tiền tệ |</code></p>
+<p><code>| **Tin cậy cho phụ huynh** | Layout rõ ràng, typography dễ đọc, không quá &quot;game hóa&quot; |</code></p>
+
+<h3>1.2 Từ khóa phong cách</h3>
+
+<p>&gt; **Warm Agrarian Gamification** — Gamification nông trại ấm áp</p>
+
+<p>- Organic (hữu cơ, tự nhiên)</p>
+<p>- Playful but structured (vui nhưng có cấu trúc)</p>
+<p>- Family-first (ưu tiên gia đình)</p>
+<p>- Educational warmth (ấm áp giáo dục)</p>
+
+<h3>1.3 Nguyên tắc thiết kế cốt lõi</h3>
+
+<p>1. **Màu xanh = hành động &amp; tiến bộ** — nút chính, EXP, cấp bậc</p>
+<p>2. **Màu vàng/đất = giá trị &amp; phần thưởng** — Gạo, chi phí quà, CTA nổi bật</p>
+<p>3. **Nền kem = không gian thoáng** — tránh trắng tinh, tạo cảm giác ấm</p>
+<p>4. **Bo góc lớn** — thân thiện, không góc cạnh</p>
+<p>5. **Emoji làm icon chính** — không dùng icon set phức tạp, ưu tiên emoji Unicode</p>
+<p>6. **Gradient xanh đậm cho hero/CTA** — tạo chiều sâu, gợi cánh đồng</p>
+
+<hr>
+
+<h2>2. Bảng màu &amp; Design Tokens</h2>
+
+<h3>2.1 CSS Variables (chuẩn toàn dự án)</h3>
+
+<p>Định nghĩa trong `:root` của mỗi trang HTML:</p>
+
+<p>:root {</p>
+<p>  /* Màu thương hiệu chính */</p>
+<p>  --green-deep:   #1a5c38;   /* Xanh lá đậm — tiêu đề, nav CTA, footer accent */</p>
+<p>  --green-mid:    #2d8a55;   /* Xanh lá trung — hover, link active, progress */</p>
+<p>  --green-light:  #4abe7a;   /* Xanh lá nhạt — border hover, accent phụ */</p>
+
+<p>  /* Màu phần thưởng / Gạo */</p>
+<p>  --amber:        #f5a623;   /* Vàng hạt gạo — CTA chính, số liệu nổi bật */</p>
+<p>  --amber-light:  #fde68a;   /* Vàng nhạt — nền badge Gạo, highlight */</p>
+<p>  --earth:        #7c4b1e;   /* Nâu đất — chữ trên nền vàng */</p>
+<p>  --earth-light:  #c47d3a;   /* Nâu cam nhạt — phụ cho reward tag */</p>
+
+<p>  /* Nền &amp; chữ */</p>
+<p>  --cream:        #fdf8ee;   /* Kem ấm — nền body chính */</p>
+<p>  --text-main:    #1e1e1e;   /* Chữ chính — gần đen */</p>
+<p>  --text-muted:   #6b7280;   /* Chữ phụ — xám trung tính */</p>
+<p>  --white:        #ffffff;</p>
+
+<p>  /* Cảnh báo / phạt */</p>
+<p>  --red-penalty:  #c0392b;   /* Đỏ — vi phạm, xóa, penalty (index, print) */</p>
+<p>  --red:          #c0392b;   /* Alias trên nhat-ky.html */</p>
+
+<p>  /* Hình học &amp; đổ bóng */</p>
+<p>  --radius-card:  1.5rem;    /* Bo góc card lớn */</p>
+<p>  --shadow-soft:  0 4px 24px rgba(0,0,0,0.07);</p>
+<p>  --shadow-card:  0 8px 32px rgba(0,0,0,0.10);  /* hoặc 0.12 trên kho-qua */</p>
+<p>}</p>
+
+<h3>2.2 Màu phụ (hardcoded, dùng lặp lại)</h3>
+
+<p><code>| Màu | Hex | Vai trò |</code></p>
+<p><code>|---|---|---|</code></p>
+<p><code>| Xanh hero đậm | `#1b4332` | Gradient hero/CTA (điểm cuối) |</code></p>
+<p><code>| Xanh hero giữa | `#2d6a4f` | Gradient hero (điểm giữa) |</code></p>
+<p><code>| Xanh hero sáng | `#3d9e6a` | Gradient page-hero quy-doi |</code></p>
+<p><code>| Footer nền | `#0d2b1a` | Footer tối |</code></p>
+<p><code>| Nền xanh nhạt | `#f0faf4` / `#edf7f1` / `#f4fbf7` | Card EXP, stat box, nền app |</code></p>
+<p><code>| Nền vàng nhạt | `#fffbeb` / `#fef3c7` | Card Gạo, epic task, reward selected |</code></p>
+<p><code>| Border xám | `#e5e7eb` / `#e2e8f0` | Viền card, input, divider |</code></p>
+<p><code>| Border xanh nhạt | `#d1fae5` / `#c6f0d8` | Input calculator, currency card |</code></p>
+<p><code>| Border đỏ nhạt | `#fecaca` / `#fee2e2` | Penalty box |</code></p>
+
+<h3>2.3 Gradient chuẩn</h3>
+
+<p><code>| Tên | Giá trị | Dùng cho |</code></p>
+<p><code>|---|---|---|</code></p>
+<p><code>| Hero chính | `linear-gradient(150deg, #1a5c38 0%, #2d6a4f 50%, #1b4332 100%)` | `code/index.html` hero |</code></p>
+<p><code>| Hero trang phụ (xanh) | `linear-gradient(135deg, #1a5c38 0%, #2d8a55 50%, #3d9e6a 100%)` | `code/quy-doi.html` page-hero |</code></p>
+<p><code>| Hero Kho Quà (cam) | `linear-gradient(135deg, #92400e 0%, #b45309 40%, #f5a623 100%)` | `code/kho-qua.html` page-hero |</code></p>
+<p><code>| CTA / Callout | `linear-gradient(135deg, #1a5c38 0%, #1b4332 100%)` | CTA section, calc result, power callout |</code></p>
+<p><code>| Parent section | `linear-gradient(135deg, #0d2b1a 0%, #1a5c38 100%)` | Góc phụ huynh quy-doi |</code></p>
+<p><code>| Logo icon | `linear-gradient(135deg, #2d8a55, #f5a623)` | Icon logo nav |</code></p>
+<p><code>| Progress bar | `linear-gradient(90deg, #4abe7a, #f5a623)` | Thanh tiến độ |</code></p>
+<p><code>| Benefit hover | `linear-gradient(135deg, #4abe7a 0%, #f5a623 100%)` | Overlay card (opacity 5%) |</code></p>
+
+<h3>2.4 Bảng màu Thẻ Đặc Quyền (Power Cards)</h3>
+
+<p>Mỗi thẻ có bộ 3 lớp: **nền / viền / chữ**</p>
+
+<p><code>| Class | Nền | Viền | Tên chữ | Cost nền |</code></p>
+<p><code>|---|---|---|---|---|</code></p>
+<p><code>| `.pc-yellow` | `#fffbeb` | `#f59e0b` | `#92400e` | `#fde68a` |</code></p>
+<p><code>| `.pc-green` | `#f0fdf4` | `#22c55e` | `#14532d` | `#bbf7d0` |</code></p>
+<p><code>| `.pc-blue` | `#eff6ff` | `#3b82f6` | `#1e3a8a` | `#bfdbfe` |</code></p>
+<p><code>| `.pc-red` | `#fff1f2` | `#f43f5e` | `#881337` | `#fecdd3` |</code></p>
+<p><code>| `.pc-purple` | `#faf5ff` | `#a855f7` | `#581c87` | `#e9d5ff` |</code></p>
+<p><code>| `.pc-orange` | `#fff7ed` | `#f97316` | `#7c2d12` | `#fed7aa` |</code></p>
+
+<h3>2.5 Bảng màu Tag phân loại quà</h3>
+
+<p><code>| Class | Nền | Chữ | Ý nghĩa |</code></p>
+<p><code>|---|---|---|---|</code></p>
+<p><code>| `.reward-tag` (default) | `#e0f2fe` | `#0369a1` | Mặc định |</code></p>
+<p><code>| `.reward-tag.family` | `#f0fdf4` | `#166534` | Gia đình |</code></p>
+<p><code>| `.reward-tag.freedom` | `#fef3c7` | `#92400e` | Tự do |</code></p>
+<p><code>| `.reward-tag.food` | `#fdf4ff` | `#7e22ce` | Ăn uống |</code></p>
+<p><code>| `.reward-tag.social` | `#fff1f2` | `#be123c` | Xã hội |</code></p>
+<p><code>| `.reward-tag.learning` | `#eff6ff` | `#1d4ed8` | Học tập |</code></p>
+
+<hr>
+
+<h2>3. Typography</h2>
+
+<h3>3.1 Font families</h3>
+
+<p><code>| Vai trò | Font | Weights | Nguồn |</code></p>
+<p><code>|---|---|---|---|</code></p>
+<p><code>| **Display / Heading** | [Baloo 2](https://fonts.google.com/specimen/Baloo+2) | 400, 600, 700, 800, 900 | Google Fonts |</code></p>
+<p><code>| **Body / UI** | [Mulish](https://fonts.google.com/specimen/Mulish) | 400, 500, 600, 700 | Google Fonts |</code></p>
+<p><code>| **Icon** | Font Awesome 6.4.0 | — | CDN (chủ yếu penalty, nav phụ) |</code></p>
+
+<p>body { font-family: &#x27;Mulish&#x27;, sans-serif; }</p>
+<p>h1, h2, h3, h4, h5 { font-family: &#x27;Baloo 2&#x27;, sans-serif; }</p>
+
+<h3>3.2 Type scale</h3>
+
+<p><code>| Element | Font | Size | Weight | Màu |</code></p>
+<p><code>|---|---|---|---|---|</code></p>
+<p><code>| Hero title | Baloo 2 | `clamp(2.5rem, 7vw, 5rem)` | 900 | `#fff` |</code></p>
+<p><code>| Page hero h1 | Baloo 2 | `clamp(2rem, 6vw, 3.8rem)` | 900 | `#fff` |</code></p>
+<p><code>| Section title | Baloo 2 | `clamp(1.8rem, 4vw, 2.8rem)` | 900 | `--green-deep` |</code></p>
+<p><code>| Section label | Baloo 2 | `.78rem` | 800 | `--green-mid` |</code></p>
+<p><code>| Body | Mulish | `1rem` / `.93rem` | 400–500 | `--text-main` |</code></p>
+<p><code>| Body muted | Mulish | `.85rem`–`1.05rem` | 500 | `--text-muted` |</code></p>
+<p><code>| Nav link | Mulish | `.9rem` | 700 | `--text-muted` |</code></p>
+<p><code>| Nav logo | Baloo 2 | `1.3rem` | 900 | `--green-deep` |</code></p>
+<p><code>| Button | Baloo 2 | `.88rem`–`1rem` | 800 | tùy variant |</code></p>
+<p><code>| Stat number | Baloo 2 | `2rem`–`2.5rem` | 900 | `--amber` |</code></p>
+<p><code>| Task name | Mulish/Baloo | `.88rem`–`1rem` | 700–800 | `--green-deep` |</code></p>
+
+<h3>3.3 Quy tắc chữ</h3>
+
+<p>- **Section label:** `letter-spacing: .15em`, `text-transform: uppercase`, luôn đi kèm emoji đầu dòng</p>
+<p>- **Line-height body:** `1.6`–`1.75` cho đoạn văn dài</p>
+<p>- **Line-height heading:** `1.1`–`1.2`</p>
+<p>- **Không dùng font khác** ngoài Baloo 2 + Mulish</p>
+<p>- **Số liệu quan trọng** (Gạo, VNĐ, EXP): dùng Baloo 2 weight 800–900</p>
+
+<hr>
+
+<h2>4. Layout &amp; Spacing</h2>
+
+<h3>4.1 Container</h3>
+
+<p>.container {</p>
+<p>  max-width: 1100px;  /* 1150px trên print.html, 1200px trên nhat-ky.html */</p>
+<p>  margin: 0 auto;</p>
+<p>}</p>
+
+<h3>4.2 Section padding</h3>
+
+<p><code>| Breakpoint | Padding |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| Desktop | `5rem 2rem` (section), `6rem 2rem` (CTA) |</code></p>
+<p><code>| Mobile `≤768px` | `3.5rem 1.2rem` |</code></p>
+
+<h3>4.3 Grid patterns</h3>
+
+<p><code>| Pattern | CSS | Dùng cho |</code></p>
+<p><code>|---|---|---|</code></p>
+<p><code>| Auto-fit cards | `repeat(auto-fit, minmax(280px, 1fr))` | Benefits, steps |</code></p>
+<p><code>| Auto-fill rewards | `repeat(auto-fill, minmax(300px, 1fr))` | Reward cards |</code></p>
+<p><code>| Auto-fill tasks | `repeat(auto-fill, minmax(240px–300px, 1fr))` | Task preview |</code></p>
+<p><code>| 2 cột | `1fr 1fr` → `1fr` @ 640px | Currency cards, why grid |</code></p>
+<p><code>| Flex ranks | `display:flex` horizontal scroll | Rank track |</code></p>
+
+<h3>4.4 Border radius scale</h3>
+
+<p><code>| Token | Giá trị | Dùng cho |</code></p>
+<p><code>|---|---|---|</code></p>
+<p><code>| Pill / button | `2rem`–`3rem` | CTA, nav-cta, badge |</code></p>
+<p><code>| Card lớn | `1.5rem` (`--radius-card`) | Card, modal, section box |</code></p>
+<p><code>| Card nhỏ | `1rem`–`1.2rem` | Task row, input, plan card |</code></p>
+<p><code>| Icon box | `.7rem`–`1rem` | Logo icon, benefit icon |</code></p>
+<p><code>| Tag / pill nhỏ | `.4rem`–`1rem` | Reward cost, rank badge |</code></p>
+<p><code>| Toggle | `20px` (full round) | Switch nhat-ky |</code></p>
+
+<h3>4.5 Shadow scale</h3>
+
+<p><code>| Token | Giá trị | Dùng cho |</code></p>
+<p><code>|---|---|---|</code></p>
+<p><code>| `--shadow-soft` | `0 4px 24px rgba(0,0,0,0.07)` | Card mặc định, task row |</code></p>
+<p><code>| `--shadow-card` | `0 8px 32px rgba(0,0,0,0.10–0.12)` | Hover state, modal |</code></p>
+<p><code>| Nav scrolled | `0 2px 20px rgba(0,0,0,0.08)` | Nav khi scroll |</code></p>
+<p><code>| Button amber | `0 4px 20px rgba(245,166,35,0.5)` | btn-primary |</code></p>
+<p><code>| Green callout | `0 8px 32px rgba(26,92,56,0.3)` | Rate callout, power callout |</code></p>
+
+<hr>
+
+<h2>5. Hiệu ứng &amp; Kết cấu</h2>
+
+<h3>5.1 Noise texture overlay (toàn site marketing)</h3>
+
+<p>Lớp phủ SVG fractal noise cố định trên toàn viewport:</p>
+
+<p>body::before {</p>
+<p>  content: &#x27;&#x27;;</p>
+<p>  position: fixed;</p>
+<p>  inset: 0;</p>
+<p>  pointer-events: none;</p>
+<p>  z-index: 9999;</p>
+<p>  background-image: url(&quot;data:image/svg+xml,...feTurbulence...&quot;);</p>
+<p>  opacity: 0.4;</p>
+<p>}</p>
+
+<p>**Mục đích:** Thêm chiều sâu vật liệu, tránh nền phẳng &quot;digital&quot;.  </p>
+<p>**Lưu ý:** `code/nhat-ky.html` **không** dùng noise overlay (trang app vận hành).</p>
+
+<h3>5.2 Glassmorphism (Nav)</h3>
+
+<p>.nav {</p>
+<p>  background: rgba(253, 248, 238, 0.92);</p>
+<p>  backdrop-filter: blur(12px);</p>
+<p>  border-bottom: 2px solid rgba(245, 166, 35, 0.2);</p>
+<p>}</p>
+
+<h3>5.3 Wave divider</h3>
+
+<p>SVG wave chuyển tiếp giữa hero và nội dung. Màu fill wave theo hero:</p>
+<p>- Xanh: hero trang chủ / quy đổi</p>
+<p>- Cam `#b45309`: hero Kho Quà</p>
+
+<h3>5.4 Watermark emoji</h3>
+
+<p>Emoji khổng lồ mờ (`font-size: 18rem–20rem`, `opacity: .04–.06`) làm watermark nền:</p>
+<p>- 🌾 — CTA, quy đổi</p>
+<p>- 🎁 — Kho Quà</p>
+
+<h3>5.5 Scroll reveal</h3>
+
+<p>.reveal { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }</p>
+<p>.reveal.visible { opacity: 1; transform: translateY(0); }</p>
+
+<p>Kích hoạt bằng Intersection Observer khi scroll.</p>
+
+<hr>
+
+<h2>6. Component Library</h2>
+
+<h3>6.1 Navigation</h3>
+
+<p>**Marketing pages** (`index`, `kho-qua`, `quy-doi`, `print`):</p>
+
+<p><code>| Thuộc tính | Giá trị |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| Position | `fixed`, `z-index: 100` |</code></p>
+<p><code>| Logo | 🌾 + &quot;Kho Thóc Gia Đình&quot;, Baloo 2 900 |</code></p>
+<p><code>| Links | Trang Chủ, Kho Quà, Quy Đổi, Nhật ký, 🖨️ In |</code></p>
+<p><code>| CTA | `.nav-cta` — &quot;🌾 Tính Gạo&quot;, nền `--green-deep` |</code></p>
+<p><code>| Active state | `color: --green-deep` |</code></p>
+<p><code>| Hover | `color: --green-mid` |</code></p>
+<p><code>| Mobile `≤768px` | Ẩn `.nav-links` |</code></p>
+
+<p>**App page** (`code/nhat-ky.html`):</p>
+
+<p><code>| Khác biệt | Giá trị |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| Class | `.navbar` (không glass) |</code></p>
+<p><code>| Nền | `white`, `box-shadow` nhẹ |</code></p>
+<p><code>| Position | `sticky` (không fixed) |</code></p>
+<p><code>| Không có nav-cta | — |</code></p>
+
+<h3>6.2 Buttons</h3>
+
+<p><code>| Class | Nền | Chữ | Bo góc | Hover |</code></p>
+<p><code>|---|---|---|---|---|</code></p>
+<p><code>| `.btn-primary` | `--amber` | `--earth` | `3rem` | `translateY(-3px)` + shadow amber |</code></p>
+<p><code>| `.btn-outline` | `rgba(255,255,255,.1)` | `#fff` | `3rem` | nền sáng hơn + lift |</code></p>
+<p><code>| `.btn-white` | `#fff` | `--green-deep` | `3rem` | lift + shadow |</code></p>
+<p><code>| `.btn-green` | `--green-deep` | `#fff` | `3rem` | lift + shadow xanh |</code></p>
+<p><code>| `.btn-amber` | `--amber` | `--earth` | `3rem` | lift + shadow amber |</code></p>
+<p><code>| `.nav-cta` | `--green-deep` | `#fff` | `2rem` | `--green-mid` + `translateY(-1px)` |</code></p>
+<p><code>| `.btn-main` (app) | `--green-mid` | `white` | `.6rem` | `--green-deep` |</code></p>
+<p><code>| `.btn-secondary` (app) | `#edf7f1` | `--green-deep` | `.6rem` | dashed border |</code></p>
+
+<p>**Quy tắc button:**</p>
+<p>- Luôn `font-family: &#x27;Baloo 2&#x27;`, `font-weight: 800`</p>
+<p>- Icon/emoji đặt bên trái (`gap: .5rem`, `inline-flex`)</p>
+<p>- Transition: `transform .2s`, `box-shadow .2s`, `background .2s`</p>
+
+<h3>6.3 Cards</h3>
+
+<p>#### Benefit / Step card</p>
+<p>- Nền: `--cream` hoặc `#fff`</p>
+<p>- Border: `2px solid transparent` → hover `--green-light`</p>
+<p>- Padding: `2rem`</p>
+<p>- Hover: `translateY(-4px đến -6px)` + `--shadow-card`</p>
+
+<p>#### Reward card</p>
+<p>- Nền trắng, border `#e5e7eb`</p>
+<p>- Hover: border `--amber`, lift</p>
+<p>- Cấu trúc: emoji → tên → cost badge → mô tả → &quot;Tại sao&quot; box</p>
+
+<p>#### Task row</p>
+<p>- Nền trắng/kem, `border-radius: 1rem`</p>
+<p>- Layout: icon emoji | info | reward pills</p>
+<p>- Hover: `border-color: --green-light`, `translateX(4px)` hoặc `translateY(-2px)`</p>
+
+<p>#### Profile card (nhat-ky)</p>
+<p>- Border `2px solid #e2e8f0`</p>
+<p>- Active: `border-color: --green-mid`, nền `#f0faf4`, dấu ✓ góc phải</p>
+
+<h3>6.4 Form controls (nhat-ky)</h3>
+
+<p>.form-control {</p>
+<p>  width: 100%;</p>
+<p>  padding: .6rem;</p>
+<p>  border: 1px solid #e2e8f0;</p>
+<p>  border-radius: .6rem;</p>
+<p>  font-family: inherit;</p>
+<p>  font-size: .95rem;</p>
+<p>}</p>
+
+<h3>6.5 Modal</h3>
+
+<p>- Overlay: `rgba(0,0,0,.4)`, fade transition</p>
+<p>- Box: trắng, `border-radius: var(--radius)`, `max-width: 400px`</p>
+<p>- Title: Baloo 2 1.5rem, `--green-deep`</p>
+
+<h3>6.6 Toast</h3>
+
+<p>- Position: fixed bottom center</p>
+<p>- Nền: `#1a5c38`, chữ trắng</p>
+<p>- `border-radius: 2rem`, slide up animation</p>
+
+<h3>6.7 Footer</h3>
+
+<p>footer {</p>
+<p>  background: #0d2b1a;</p>
+<p>  color: rgba(255,255,255,.55);</p>
+<p>  border-top: 3px solid var(--green-mid);</p>
+<p>  padding: 3rem 2rem;</p>
+<p>}</p>
+
+<p>- Link hover: `--amber`</p>
+<p>- Brand: Baloo 2 900, màu trắng</p>
+
+<h3>6.8 Filter tabs</h3>
+
+<p>.tab-btn {</p>
+<p>  background: #fff;</p>
+<p>  border: 2px solid #e5e7eb;</p>
+<p>  border-radius: 2rem;</p>
+<p>  font-family: &#x27;Baloo 2&#x27;;</p>
+<p>  font-weight: 700;</p>
+<p>}</p>
+<p>.tab-btn.active, .tab-btn:hover {</p>
+<p>  background: var(--green-deep);</p>
+<p>  border-color: var(--green-deep);</p>
+<p>  color: #fff;</p>
+<p>}</p>
+
+<h3>6.9 Toggle switch (nhat-ky)</h3>
+
+<p>- Off: `#cbd5e1`</p>
+<p>- On: `--green-mid`</p>
+<p>- Knob: trắng, `18px`, transition `0.3s`</p>
+
+<hr>
+
+<h2>7. Màu ngữ nghĩa (Semantic Colors)</h2>
+
+<p>Gắn màu với khái niệm nghiệp vụ — **bắt buộc nhất quán** trên mọi trang:</p>
+
+<h3>7.1 Hạt Gạo 🌾</h3>
+
+<p><code>| Thuộc tính | Giá trị |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| Màu chữ | `#b45309` / `--earth` |</code></p>
+<p><code>| Nền badge | `--amber-light` (`#fde68a`) |</code></p>
+<p><code>| Class | `.val-grain`, `.p-stat-box.grain` |</code></p>
+<p><code>| Ý nghĩa | Tiền tệ — đổi quà, quy ra VNĐ |</code></p>
+
+<h3>7.2 EXP ⭐</h3>
+
+<p><code>| Thuộc tính | Giá trị |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| Màu chữ | `#059669` / `#065f46` / `--green-deep` |</code></p>
+<p><code>| Nền badge | `#d1fae5` / `#edf7f1` |</code></p>
+<p><code>| Class | `.val-exp`, `.p-stat-box.money` |</code></p>
+<p><code>| Ý nghĩa | Điểm kinh nghiệm — thăng hạng, không trừ khi đổi quà |</code></p>
+
+<h3>7.3 Nhiệm vụ Epic ♛</h3>
+
+<p><code>| Thuộc tính | Giá trị |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| Nền | `linear-gradient(135deg, #fefce8, #fff)` hoặc `#fffbeb` |</code></p>
+<p><code>| Border | `#fde047` / `#fde68a` / `#47ea08` (có biến thể) |</code></p>
+<p><code>| Chữ tên | `#854d0e`, weight 900 |</code></p>
+<p><code>| Icon | ♛ góc phải, `#eab308` |</code></p>
+<p><code>| Class | `.task-row.epic`, `.task-compact-card.epic-task` |</code></p>
+
+<h3>7.4 Highlight task</h3>
+
+<p>- Nền: `#fffbeb`</p>
+<p>- Border: `--amber`</p>
+<p>- Class: `.task-row.highlight`</p>
+
+<h3>7.5 Penalty / Vi phạm</h3>
+
+<p>- Màu chính: `--red-penalty` (`#c0392b`)</p>
+<p>- Nền section: `linear-gradient(135deg, #fff5f5, #fff)`</p>
+<p>- Border: `#fecaca`</p>
+<p>- Icon wrap: `#fee2e2`</p>
+
+<h3>7.6 Trạng thái mục tiêu (quy-doi)</h3>
+
+<p><code>| Class | Nền | Chữ | Ý nghĩa |</code></p>
+<p><code>|---|---|---|---|</code></p>
+<p><code>| `.goal-status.locked` | `#fee2e2` | `#991b1b` | Chưa đủ Gạo |</code></p>
+<p><code>| `.goal-status.unlocked` | `#d1fae5` | `#065f46` | Đủ Gạo đổi |</code></p>
+
+<hr>
+
+<h2>8. Animation &amp; Motion</h2>
+
+<h3>8.1 Nguyên tắc chuyển động</h3>
+
+<p>- **Nhẹ nhàng, không gây chóng mặt** — phù hợp trẻ em nhưng không &quot;trẻ con&quot;</p>
+<p>- Duration chuẩn: `.2s` (hover), `.25s` (card), `.3s`–`.6s` (reveal)</p>
+<p>- Easing: `ease`, `ease-out`, `cubic-bezier(.4,0,.2,1)` cho toast/progress</p>
+
+<h3>8.2 Animations có sẵn</h3>
+
+<p><code>| Tên | Mô tả | Dùng cho |</code></p>
+<p><code>|---|---|---|</code></p>
+<p><code>| `slideDown` | Fade + translateY từ trên | Hero elements stagger |</code></p>
+<p><code>| `grow` | Chiều cao 0 → var(--h) | Cây lúa hero |</code></p>
+<p><code>| `fadeIn` | Emoji 🌾 xuất hiện | Stalk animation |</code></p>
+<p><code>| `shimmer` | Gradient trượt ngang | Power card bottom edge |</code></p>
+
+<h3>8.3 Hover micro-interactions</h3>
+
+<p><code>| Element | Effect |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| Button | `translateY(-3px)` + shadow tăng |</code></p>
+<p><code>| Card | `translateY(-4px đến -6px)` + shadow |</code></p>
+<p><code>| Task row | `translateX(4px)` hoặc `translateY(-2px)` |</code></p>
+<p><code>| Power card | `rotate(1deg) translateY(-6px)` |</code></p>
+<p><code>| Nav CTA | `translateY(-1px)` |</code></p>
+
+<hr>
+
+<h2>9. Responsive &amp; Breakpoints</h2>
+
+<p><code>| Breakpoint | Thay đổi chính |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| `≤992px` | Infographic flow → column (`code/print.html`) |</code></p>
+<p><code>| `≤768px` | Ẩn nav links, giảm section padding, penalty/rate column |</code></p>
+<p><code>| `≤640px` | Currency cards 1 cột, rate CTA full width |</code></p>
+<p><code>| `≤600px` | Penalty rules 1 cột |</code></p>
+<p><code>| `≤480px` | Tasks preview 1 cột, task name wrap |</code></p>
+
+<p>**Chiến lược:** Mobile-first với `clamp()` cho typography, `auto-fit`/`auto-fill` cho grid, `flex-wrap` cho hàng ngang.</p>
+
+<hr>
+
+<h2>10. Icon &amp; Emoji</h2>
+
+<h3>10.1 Emoji chính (brand icons)</h3>
+
+<p><code>| Emoji | Ý nghĩa |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| 🌾 | Logo, Gạo, thương hiệu |</code></p>
+<p><code>| ⭐ | EXP, điểm sành sỏi |</code></p>
+<p><code>| 🎁 | Kho quà, phần thưởng |</code></p>
+<p><code>| ♛ | Nhiệm vụ Epic |</code></p>
+<p><code>| 🖨️ | Trang in |</code></p>
+
+<h3>10.2 Quy tắc emoji</h3>
+
+<p>- Dùng emoji Unicode trực tiếp trong HTML — **không** dùng image sprite</p>
+<p>- Mỗi nhiệm vụ/quà có emoji riêng làm icon (`font-size: 1.4rem`–`2.8rem`)</p>
+<p>- Section label luôn có emoji prefix: `💡 Triết lý phần thưởng`</p>
+<p>- Font Awesome chỉ bổ trợ (icon penalty, một số UI phụ)</p>
+
+<h3>10.3 Logo</h3>
+
+<p>&lt;span class=&quot;logo-icon&quot;&gt;🌾&lt;/span&gt;</p>
+<p>Kho Thóc Gia Đình</p>
+
+<p>- Icon box: gradient xanh→vàng, `2.4rem`, bo `.7rem`</p>
+<p>- Text: Baloo 2 900, `--green-deep`</p>
+
+<hr>
+
+<h2>11. Quy tắc thiết kế</h2>
+
+<h3>11.1 Nên làm (Do)</h3>
+
+<p>1. **Dùng CSS variables** từ `:root` — không hardcode màu thương hiệu khi có thể</p>
+<p>2. **Phân tách rõ Gạo (vàng) và EXP (xanh)** trên mọi UI hiển thị phần thưởng</p>
+<p>3. **Bo góc lớn** cho mọi container tương tác</p>
+<p>4. **Thêm hover state** cho card và button — lift + shadow/border</p>
+<p>5. **Dùng Baloo 2 cho số liệu** và heading; Mulish cho body</p>
+<p>6. **Giữ nền kem** cho trang marketing; xanh nhạt `#f4fbf7` cho app</p>
+<p>7. **Section xen kẽ** nền `#fff` ↔ `--cream` tạo nhịp đọc</p>
+<p>8. **Emoji có ý nghĩa** — mỗi task/reward có icon riêng</p>
+<p>9. **Accessibility cơ bản:** contrast chữ `--text-main` trên nền sáng đạt WCAG AA</p>
+<p>10. **In ấn (`code/print.html`):** thẻ cắt dùng `border: 3px dashed #9ca3af`, ticket notch pattern</p>
+
+<h3>11.2 Không nên làm (Don&#x27;t)</h3>
+
+<p>1. **Không dùng màu neon** hoặc gradient rainbow — phá vỡ tone nông trại ấm</p>
+<p>2. **Không dùng font serif hoặc monospace** cho UI</p>
+<p>3. **Không dùng shadow đen đậm** — giữ opacity thấp (`.07`–`.12`)</p>
+<p>4. **Không bỏ hover state** trên element clickable</p>
+<p>5. **Không trộn Gạo/EXP cùng màu** — gây nhầm lẫn nghiệp vụ</p>
+<p>6. **Không dùng border vuông** (`border-radius: 0`) trừ rank track nối liền</p>
+<p>7. **Không animation quá 1s** cho interaction thường ngày</p>
+<p>8. **Không dùng popup/modal cho marketing** — chỉ app (nhat-ky) dùng modal</p>
+<p>9. **Không thay emoji logo** 🌾 bằng icon khác</p>
+
+<h3>11.3 Hierarchy nội dung</h3>
+
+<p>Section Label (nhỏ, uppercase, xanh mid, emoji)</p>
+<p>    ↓</p>
+<p>Section Title (lớn, Baloo 900, xanh deep)</p>
+<p>    ↓</p>
+<p>Section Sub (muted, max-width 560px)</p>
+<p>    ↓</p>
+<p>Content (cards, grids, tables)</p>
+
+<hr>
+
+<h2>12. Biến thể theo trang</h2>
+
+<p><code>| Trang | Loại | Nền body | Nav | Hero | Đặc thù |</code></p>
+<p><code>|---|---|---|---|---|---|</code></p>
+<p><code>| `code/index.html` | Marketing | `--cream` | Glass fixed | Xanh đậm full viewport + cây lúa animated | Scroll reveal, hero stats |</code></p>
+<p><code>| `code/kho-qua.html` | Marketing | `--cream` | Glass fixed | Gradient cam (quà) | Power cards 6 màu, filter tabs |</code></p>
+<p><code>| `code/quy-doi.html` | Marketing + tool | `--cream` | Glass fixed | Gradient xanh | Calculator, chart, goal list |</code></p>
+<p><code>| `code/print.html` | In ấn | `--cream` | Glass fixed | Infographic flow | Cut-card dashed, bảng quy đổi |</code></p>
+<p><code>| `code/nhat-ky.html` | App vận hành | `#f4fbf7` | White sticky | Không hero | Profile cards, task checklist, modal, toast |</code></p>
+
+<h3>12.1 Page Hero variants</h3>
+
+<p><code>| Trang | Gradient | Watermark | Badge text |</code></p>
+<p><code>|---|---|---|---|</code></p>
+<p><code>| index | Xanh 3 điểm + field animation | Cây lúa 🌾 | Tuỳ nội dung |</code></p>
+<p><code>| kho-qua | Cam `#92400e → #f5a623` | 🎁 | 🎁 Kho Phần Thưởng |</code></p>
+<p><code>| quy-doi | Xanh `#1a5c38 → #3d9e6a` | 🌾 | 🌾 Trung Tâm Quy Đổi |</code></p>
+
+<hr>
+
+<h2>13. Ghi chú kỹ thuật</h2>
+
+<h3>13.1 Kiến trúc CSS hiện tại</h3>
+
+<p>- **Không có file CSS riêng** — mỗi trang HTML embed `&lt;style&gt;` inline</p>
+<p>- **Design tokens lặp lại** trong `:root` mỗi file → cần đồng bộ thủ công khi thay đổi</p>
+<p>- **Không dùng framework** (Bootstrap, Tailwind...) — vanilla CSS thuần</p>
+
+<h3>13.2 Khác biệt cần lưu ý (technical debt)</h3>
+
+<p><code>| Vấn đề | Chi tiết |</code></p>
+<p><code>|---|---|</code></p>
+<p><code>| Nav không thống nhất | `nhat-ky` dùng `.navbar` trắng sticky; các trang khác dùng `.nav` glass fixed |</code></p>
+<p><code>| Token naming | `--red-penalty` vs `--red`; `--radius-card` vs `--radius`; `--shadow-card` vs `--shadow` |</code></p>
+<p><code>| Container width | 1100 / 1150 / 1200px tùy trang |</code></p>
+<p><code>| Epic task border | `#47ea08`, `#fde047`, `#fde68a` — 3 biến thể khác nhau |</code></p>
+<p><code>| Body background app | `#f4fbf7` (nhat-ky) vs `--cream` (marketing) — có chủ ý phân biệt app vs marketing |</code></p>
+
+<h3>13.3 Khi thêm trang/component mới</h3>
+
+<p>1. Copy block `:root` từ `code/index.html` làm baseline</p>
+<p>2. Chọn nav pattern: marketing (glass) hoặc app (white sticky)</p>
+<p>3. Dùng section label → title → sub hierarchy</p>
+<p>4. Gán semantic color đúng cho Gạo/EXP</p>
+<p>5. Thêm class `.reveal` + Intersection Observer nếu là trang marketing</p>
+<p>6. Test responsive tại 768px và 480px</p>
+
+<h3>13.4 Tài liệu liên quan</h3>
+
+<p>- [specs/brd.md](../specs/brd.md) — Quy tắc nghiệp vụ, luồng Gạo/EXP</p>
+<p>- [README.md](../README.md) — Mục lục tài liệu</p>
+
+<hr>
+
+<p>*Tài liệu này được tổng hợp từ mã nguồn thực tế trong `code/index.html`, `code/kho-qua.html`, `code/quy-doi.html`, `code/nhat-ky.html`, `code/print.html`.*</p>
+</body>
+</html>

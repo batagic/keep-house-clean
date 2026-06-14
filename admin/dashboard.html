@@ -1,79 +1,9 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quản trị — Kho Thóc</title>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Mulish:wght@400;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../assets/css/pages/admin.css"/>
+<meta charset="UTF-8" />
+<meta http-equiv="refresh" content="0; url=../code/admin/dashboard.html" />
+<title>Redirect — admin dashboard</title>
 </head>
-<body>
-  <div class="admin-layout">
-    <aside class="admin-sidebar" id="adminSidebar">
-      <div class="sidebar-brand">
-        <p class="admin-logo">🌾 Kho Thóc</p>
-        <p class="sidebar-tagline">Hệ thống quản trị</p>
-      </div>
-
-      <nav class="sidebar-nav" aria-label="Menu quản trị">
-        <a href="dashboard.html" class="sidebar-link active" data-page="passcode">
-          <span class="sidebar-icon">🔑</span>
-          <span>Mã đổi quà</span>
-        </a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <button type="button" class="sidebar-link sidebar-logout" id="logoutBtn">
-          <span class="sidebar-icon">🚪</span>
-          <span>Đăng xuất</span>
-        </button>
-      </div>
-    </aside>
-
-    <div class="admin-main">
-      <header class="admin-topbar">
-        <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Mở menu">☰</button>
-        <h1 class="page-title">Mã đổi quà</h1>
-      </header>
-
-      <main class="admin-content">
-        <div class="admin-card">
-          <p class="page-intro">
-            Mỗi bé có một mã riêng. Khi đăng ký bé mới, hệ thống trả mã ngay cho bố/mẹ.
-            Chỉ khi bố/mẹ <strong>quên mã</strong>, admin dùng <strong>Sinh mã mới</strong> để cấp lại.
-          </p>
-
-          <div id="passcodeReveal" class="passcode-reveal hidden">
-            <div>Mã mới cho <strong id="revealProfileName"></strong> — copy và gửi Zalo</div>
-            <div class="code" id="newPasscode"></div>
-            <div class="hint">Mã chỉ hiện một lần. Mã cũ của bé này đã bị thu hồi.</div>
-          </div>
-
-          <p class="error-msg hidden" id="actionError"></p>
-
-          <div class="table-wrap">
-            <table class="profile-table" id="profileTable">
-              <thead>
-                <tr>
-                  <th>Bé</th>
-                  <th>Trạng thái mã</th>
-                  <th>Tạo lúc</th>
-                  <th>Dùng lần cuối</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody id="profileTableBody">
-                <tr><td colspan="5" class="table-loading">Đang tải…</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
-
-  <script src="../assets/js/data/config.js"></script>
-  <script src="../assets/js/shared/admin-auth.js"></script>
-  <script src="../assets/js/pages/admin-dashboard.js"></script>
-</body>
+<body><p><a href="../code/admin/dashboard.html">code/admin/dashboard.html</a></p></body>
 </html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kho Thóc — High-Level Design</title>
+<style>
+  :root { --bg:#0f1117; --surface:#1a1d2e; --border:#2a2d4a; --accent:#6c63ff; --text:#e2e8f0; --muted:#94a3b8; --green:#3dd68c; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; padding:32px 24px; max-width:960px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:32px; }
+  .header-label { font-size:11px; letter-spacing:.2em; color:#9d96ff; text-transform:uppercase; }
+  .header-title { font-size:22px; font-weight:700; margin-top:8px; }
+  .section { margin:24px 0; }
+  .section-title { font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+  .box { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:12px; }
+  .box h3 { font-size:13px; margin-bottom:6px; color:var(--green); }
+  .box p { font-size:12px; color:var(--muted); line-height:1.5; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th, td { border:1px solid var(--border); padding:10px; text-align:left; }
+  th { background:var(--surface); color:#9d96ff; }
+  code { color:#22d3ee; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-label">High-Level Design</div>
+  <div class="header-title">Kho Thóc Gia Đình</div>
+</div>
+
+<div class="section">
+  <div class="section-title">Tổng quan hệ thống</div>
+  <div class="box">
+    <h3>Client Layer</h3>
+    <p>HTML/CSS/JS tĩnh trên GitHub Pages (<code>code/</code>). Không build. Gọi API qua <code>fetch</code> + header <code>X-Family-Id</code>.</p>
+  </div>
+  <div class="box">
+    <h3>API Layer</h3>
+    <p>Node.js Express trong Docker <code>kho-thoc-api</code>, port 3001. Contract tương thích GAS legacy (doGet/doPost).</p>
+  </div>
+  <div class="box">
+    <h3>Data Layer</h3>
+    <p>PostgreSQL <code>kho_thoc</code> trong container <code>eedt-postgres</code> (chung host VPS, DB tách biệt).</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Luồng request production</div>
+  <table>
+    <tr><th>Bước</th><th>Thành phần</th><th>Ghi chú</th></tr>
+    <tr><td>1</td><td>Browser → GitHub Pages</td><td>Tải <code>code/nhat-ky.html</code></td></tr>
+    <tr><td>2</td><td>JS → HTTPS API</td><td><code>apinhatkyvumua.taho.cat/kho-thoc/</code></td></tr>
+    <tr><td>3</td><td>Host Nginx :443</td><td>SSL terminate, proxy → :3001</td></tr>
+    <tr><td>4</td><td>kho-thoc-api</td><td>familyContext middleware</td></tr>
+    <tr><td>5</td><td>PostgreSQL</td><td>Filter theo <code>family_id</code></td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Đánh giá & số liệu</div>
+  <table>
+    <tr><th>Tiêu chí</th><th>Đánh giá</th><th>Số liệu / ghi chú</th></tr>
+    <tr><td>Chi phí hạ tầng</td><td>Thấp</td><td>GitHub Pages miễn phí; VPS dùng chung với eedt</td></tr>
+    <tr><td>Độ trễ API</td><td>Chấp nhận được</td><td>ping ~50–200ms từ VN (ước lượng)</td></tr>
+    <tr><td>Scale</td><td>~100 gia đình</td><td>Single Postgres, không sharding</td></tr>
+    <tr><td>Bảo mật</td><td>Cơ bản</td><td>HTTPS, CORS, passcode/redeem, JWT admin</td></tr>
+    <tr><td>Khả năng mở rộng</td><td>Modular</td><td>API tách repo path; migrate versioned</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Module tương tác</div>
+  <table>
+    <tr><th>Module</th><th>Path</th><th>Phụ thuộc</th></tr>
+    <tr><td>Frontend pages</td><td><code>code/*.html</code></td><td>config.js API_URL</td></tr>
+    <tr><td>family-api</td><td><code>code/assets/js/shared/</code></td><td>localStorage</td></tr>
+    <tr><td>API routes</td><td><code>code/kho-thoc-api/src/routes/</code></td><td>services/*</td></tr>
+    <tr><td>Migrations</td><td><code>docs/db/migrate/</code></td><td>migrate.js</td></tr>
+    <tr><td>Deploy</td><td><code>code/deploy/vps/</code></td><td>SSH, Docker</td></tr>
+  </table>
+</div>
+
+<p style="margin-top:32px;font-size:11px;color:var(--muted);text-align:center">
+  docs/technical/hld.html · đồng bộ docs/snapshot.json · 2026-06-14
+</p>
+</body>
+</html>

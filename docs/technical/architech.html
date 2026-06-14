@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kho Thóc Gia Đình — Kiến trúc Thư mục Dự án</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1a12;
+    --surface: #14261a;
+    --surface-alt: #0f1f15;
+    --border: #2a4a35;
+    --accent: #2d8a55;
+    --accent-soft: #4abe7a;
+    --green: #3dd68c;
+    --orange: #f5a623;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --cyan: #22d3ee;
+    --text: #e8f5ec;
+    --text-muted: #94b8a3;
+    --text-dim: #5f7d6a;
+    --sidebar-w: 220px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--surface-alt);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .sidebar-brand {
+    padding: 0 16px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-brand .label {
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent-soft); margin-bottom: 4px;
+  }
+
+  .sidebar-brand .title {
+    font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.4;
+  }
+
+  .nav-group {
+    font-size: 8px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-dim); padding: 12px 16px 4px;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 6px 16px;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .sidebar a:hover,
+  .sidebar a.active {
+    color: var(--accent-soft);
+    background: #2d8a5518;
+    border-left-color: var(--accent);
+  }
+
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 40px 48px 80px;
+    max-width: 1100px;
+  }
+
+  .page-header { margin-bottom: 48px; }
+  .page-header .label {
+    font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--accent-soft); margin-bottom: 8px;
+  }
+  .page-header h1 {
+    font-size: 26px; font-weight: 700; color: var(--text);
+    letter-spacing: -0.02em; margin-bottom: 12px;
+  }
+  .page-header .meta {
+    font-size: 11px; color: var(--text-muted); line-height: 1.6;
+  }
+  .badge {
+    display: inline-block; font-size: 10px;
+    background: #2d8a5533; color: var(--accent-soft);
+    padding: 2px 10px; border-radius: 99px;
+    border: 1px solid #2d8a5555; margin-right: 6px;
+  }
+
+  section { margin-bottom: 56px; scroll-margin-top: 24px; }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; color: var(--accent-soft);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .section-desc {
+    font-size: 11px; color: var(--text-muted);
+    line-height: 1.7; margin-bottom: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 11px; font-weight: 700; color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .placeholder {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-style: italic;
+    padding: 24px;
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    background: var(--surface-alt);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+    margin-bottom: 16px;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--surface-alt);
+    color: var(--accent-soft);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    line-height: 1.5;
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #ffffff05; }
+
+  td code, th code {
+    font-size: 9px;
+    background: #2d8a5518;
+    color: var(--accent-soft);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .tree {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-size: 10px;
+    line-height: 1.8;
+    color: var(--text-muted);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .tree .dir  { color: var(--cyan); }
+  .tree .file { color: var(--text-muted); }
+  .tree .cmt  { color: var(--text-dim); font-style: italic; }
+
+  pre {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 10px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    overflow-x: auto;
+    margin-bottom: 16px;
+  }
+
+  pre .key { color: var(--cyan); }
+  pre .val { color: var(--green); }
+  pre .cmt { color: var(--text-dim); }
+
+  .diagram-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+  }
+
+  .mermaid { display: flex; justify-content: center; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tag {
+    font-size: 9px; border-radius: 4px; padding: 2px 8px;
+    border: 1px solid; letter-spacing: 0.04em;
+  }
+  .tag-green  { background: #2d8a5518; color: var(--accent-soft); border-color: #2d8a5544; }
+  .tag-orange { background: #f5a62318; color: var(--orange);      border-color: #f5a62344; }
+  .tag-blue   { background: #60a5fa18; color: var(--blue);         border-color: #60a5fa44; }
+  .tag-cyan   { background: #22d3ee18; color: var(--cyan);        border-color: #22d3ee44; }
+
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .module-box {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 10px;
+  }
+
+  .module-box .name { color: var(--cyan); font-weight: 700; margin-bottom: 4px; }
+  .module-box .desc { color: var(--text-dim); font-size: 9px; line-height: 1.5; }
+
+  .summary-box {
+    background: linear-gradient(135deg, #2d8a5518, #f5a6230a);
+    border: 1px solid #2d8a5544;
+    border-radius: 10px;
+    padding: 20px 24px;
+  }
+
+  .summary-box ul {
+    list-style: none;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 2;
+  }
+
+  .summary-box ul li::before {
+    content: '→ ';
+    color: var(--accent-soft);
+  }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 9px;
+    color: var(--text-dim);
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 24px 20px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="label">🌾 Kho Thóc</div>
+    <div class="title">Kiến trúc<br>Thư mục Dự án</div>
+  </div>
+
+  <div class="nav-group">Tổng quan</div>
+  <a href="#overview">Tổng quan</a>
+  <a href="#decisions">Quyết định lock-in</a>
+  <a href="#architecture-diagram">Sơ đồ kiến trúc</a>
+
+  <div class="nav-group">Cấu trúc</div>
+  <a href="#directory-tree">Cây thư mục</a>
+  <a href="#frontend-modules">Frontend</a>
+  <a href="#backend-modules">Backend API</a>
+  <a href="#data-mapping">Mapping Dữ liệu</a>
+  <a href="#deploy-routing">Deploy &amp; Routing</a>
+  <a href="#docs-structure">Tài liệu docs/</a>
+
+  <div class="nav-group">Quy ước</div>
+  <a href="#conventions">Quy ước quan trọng</a>
+  <a href="#roadmap">Lộ trình triển khai</a>
+  <a href="#open-choices">Việc còn mở</a>
+  <a href="#summary">Tóm tắt</a>
+</nav>
+
+<main class="main">
+
+  <header class="page-header" id="overview">
+    <div class="label">Project Directory Architecture</div>
+    <h1>Kiến trúc Thư mục Dự án</h1>
+    <div class="meta">
+      <span class="badge">v2.0.0</span>
+      <span class="badge">2026-06-10</span>
+      <span class="badge">Static HTML</span>
+      <span class="badge">GitHub Pages + VPS</span>
+      <span class="badge">No build step</span>
+      <br><br>
+      Cấu trúc repo <code>keep-house-clean</code> — frontend HTML ở thư mục gốc, API <code>kho-thoc-api</code> trên VPS Docker + PostgreSQL.
+      Rollback GAS vẫn khả dụng qua <code>config.js</code>. Chi tiết hạ tầng: <code>docs/technical/infrastructure.md</code>.
+    </div>
+  </header>
+
+  <!-- DECISIONS -->
+  <section id="decisions">
+    <div class="section-title">Quyết định đã lock-in</div>
+    <p class="section-desc">Các quyết định thiết kế ảnh hưởng trực tiếp đến cấu trúc thư mục.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Quyết định</th>
+          <th>ID</th>
+          <th>Ảnh hưởng lên cấu trúc</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Frontend ở thư mục gốc repo + <code>assets/</code></td>
+          <td><code>D1</code></td>
+          <td>HTML trang gốc; CSS/JS trong <code>assets/</code> — deploy thẳng GitHub Pages</td>
+        </tr>
+        <tr>
+          <td>Assets tách file — không inline CSS/JS</td>
+          <td><code>D2</code></td>
+          <td><code>assets/css/shared|pages/</code> + <code>assets/js/shared|data|pages/</code></td>
+        </tr>
+        <tr>
+          <td>Nav/footer đồng bộ qua một file JS</td>
+          <td><code>D3</code></td>
+          <td><code>assets/js/shared/site-nav.js</code> — sửa menu tại một chỗ</td>
+        </tr>
+        <tr>
+          <td>Không bắt buộc framework / build tool</td>
+          <td><code>D4</code></td>
+          <td>Deploy thẳng lên GitHub Pages, mở file HTML trực tiếp</td>
+        </tr>
+        <tr>
+          <td>Dữ liệu nhiệm vụ &amp; quà tập trung</td>
+          <td><code>D5</code></td>
+          <td><code>assets/js/data/tasks.js</code>, <code>rewards.js</code>, <code>config.js</code></td>
+        </tr>
+        <tr>
+          <td>Backend tách <code>code/kho-thoc-api/</code></td>
+          <td><code>D6</code></td>
+          <td>Node.js + Express + PostgreSQL; Docker trên VPS; contract tương thích GAS</td>
+        </tr>
+        <tr>
+          <td>Passcode + Admin (Phase 2)</td>
+          <td><code>D7</code></td>
+          <td><code>admin/</code> pages; JWT admin; mã đổi quà theo <code>profile_id</code></td>
+        </tr>
+        <tr>
+          <td>Tài liệu gọn: <code>installation</code> + <code>operations</code></td>
+          <td><code>D8</code></td>
+          <td><code>docs/technical/dev.md</code> (cài lần đầu) · <code>docs/technical/operator.md</code> (deploy + sự cố)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ARCHITECTURE DIAGRAM -->
+  <section id="architecture-diagram">
+    <div class="section-title">Sơ đồ kiến trúc</div>
+    <p class="section-desc">Production: GitHub Pages + VPS API. Chi tiết: <code>docs/technical/infrastructure.md</code>.</p>
+
+    <div class="diagram-wrap">
+      <pre class="mermaid">
+flowchart TB
+  subgraph client ["Trình duyệt"]
+    PAGES["*.html + admin/"]
+    ASSETS["assets/"]
+  end
+
+  subgraph gh ["GitHub Pages"]
+    GH["batagic.github.io/keep-house-clean/"]
+  end
+
+  subgraph vps ["VPS Vultr"]
+    NGX["Host Nginx :443"]
+    API["kho-thoc-api Docker :3001"]
+    PG[("PostgreSQL kho_thoc")]
+  end
+
+  subgraph legacy ["Rollback (tùy chọn)"]
+    GAS["Google Apps Script"]
+    SHEETS[("Google Sheets")]
+  end
+
+  PAGES --> GH
+  ASSETS --> GH
+  PAGES -->|HTTPS fetch API_URL| NGX
+  NGX --> API
+  API --> PG
+  PAGES -.->|rollback config.js| GAS
+  GAS -.-> SHEETS
+      </pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Thành phần runtime</div>
+      <div class="tags">
+        <span class="tag tag-green">Frontend — HTML/CSS/JS thuần (code/ + docs/)</span>
+        <span class="tag tag-orange">API — kho-thoc-api Node.js + Docker</span>
+        <span class="tag tag-blue">DB — PostgreSQL (eedt-postgres / kho_thoc)</span>
+        <span class="tag tag-cyan">Deploy — GitHub Pages + VPS rsync</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIRECTORY TREE -->
+  <section id="directory-tree">
+    <div class="section-title">Cây thư mục hiện tại</div>
+    <p class="section-desc">Cấu trúc repo <code>keep-house-clean</code> — cập nhật 10/06/2026.</p>
+
+    <div class="tree"><span class="dir">keep-house-clean/</span>
+│
+├── <span class="file">README.md</span>
+│
+├── <span class="file">index.html</span>                   <span class="cmt"># Marketing — quy tắc, giới thiệu</span>
+├── <span class="file">kho-qua.html</span>                 <span class="cmt"># Catalog quà (bé xem)</span>
+├── <span class="file">quy-doi.html</span>                 <span class="cmt"># Máy tính Gạo ↔ VNĐ</span>
+├── <span class="file">nhat-ky.html</span>                 <span class="cmt"># App vận hành — nhật ký, đổi quà</span>
+├── <span class="file">print.html</span>                   <span class="cmt"># In ấn A4</span>
+│
+├── <span class="dir">admin/</span>                         <span class="cmt"># Phase 2 — không link từ nav bé</span>
+│   ├── <span class="file">login.html</span>
+│   └── <span class="file">dashboard.html</span>             <span class="cmt"># Quản lý mã đổi quà</span>
+│
+├── <span class="dir">assets/</span>
+│   ├── <span class="dir">css/shared|pages/</span>          <span class="cmt"># Design system + CSS từng trang</span>
+│   └── <span class="dir">js/</span>
+│       ├── <span class="dir">shared/</span>                  <span class="cmt"># site-nav, admin-auth, reveal, …</span>
+│       ├── <span class="dir">data/</span>                    <span class="cmt"># config.js, tasks.js, rewards.js</span>
+│       └── <span class="dir">pages/</span>                   <span class="cmt"># nhat-ky.js, admin-*.js, …</span>
+│
+├── <span class="dir">code/kho-thoc-api/</span>                  <span class="cmt"># Backend Node.js — Docker trên VPS</span>
+│   ├── <span class="file">docker-compose.yml</span>
+│   ├── <span class="dir">src/</span>
+│   │   ├── <span class="file">index.js</span>                 <span class="cmt"># Express entry</span>
+│   │   ├── <span class="dir">routes/</span>                  <span class="cmt"># api.js, admin.js</span>
+│   │   ├── <span class="dir">services/</span>                <span class="cmt"># profiles, logs, redeem, auth</span>
+│   │   └── <span class="dir">middleware/</span>              <span class="cmt"># requireAdmin.js</span>
+│   ├── <span class="dir">migrations/</span>                  <span class="cmt"># 001_init, 002_redeem_auth, …</span>
+│   └── <span class="dir">scripts/</span>                     <span class="cmt"># setup-db, migrate, import-csv, seed-admin</span>
+│
+├── <span class="dir">code/deploy/vps/</span>
+│   ├── <span class="dir">nginx/</span>                       <span class="cmt"># apinhatkyvumua.taho.cat.conf</span>
+│   └── <span class="file">setup-vps.sh</span>
+│
+├── <span class="dir">docs/</span>
+│   ├── <span class="file">installation.md</span>            <span class="cmt"># Cài đặt macOS + VPS lần đầu</span>
+│   ├── <span class="file">operations.md</span>              <span class="cmt"># Deploy tính năng mới + sự cố</span>
+│   ├── <span class="dir">specs/</span>                       <span class="cmt"># brd.md, passcode.md, admin.md</span>
+│   ├── <span class="dir">tech/</span>                        <span class="cmt"># architecture/, migration-vps, legacy/</span>
+│   └── <span class="dir">design/</span>
+│       └── <span class="file">style.md</span>
+│
+└── <span class="dir">ideas/</span>                         <span class="cmt"># Prototype cũ — không deploy</span></div>
+  </section>
+
+  <!-- FRONTEND MODULES -->
+  <section id="frontend-modules">
+    <div class="section-title">Frontend — Trang &amp; vai trò</div>
+    <p class="section-desc">Mapping trang HTML → đối tượng sử dụng → assets liên quan.</p>
+
+    <div class="module-grid">
+      <div class="module-box">
+        <div class="name">index.html</div>
+        <div class="desc">Marketing · Cả gia đình · shared/* + pages/index.css</div>
+      </div>
+      <div class="module-box">
+        <div class="name">kho-qua.html</div>
+        <div class="desc">Catalog quà · Bé xem · filter-cards.js</div>
+      </div>
+      <div class="module-box">
+        <div class="name">quy-doi.html</div>
+        <div class="desc">Máy tính Gạo↔VNĐ · Chart.js CDN · quy-doi.js</div>
+      </div>
+      <div class="module-box">
+        <div class="name">nhat-ky.html</div>
+        <div class="desc">App vận hành · Bố/mẹ · data/* + nhat-ky.js</div>
+      </div>
+      <div class="module-box">
+        <div class="name">print.html</div>
+        <div class="desc">In ấn A4 · Gia đình · print.css @media print</div>
+      </div>
+      <div class="module-box">
+        <div class="name">admin/login.html</div>
+        <div class="desc">Đăng nhập JWT · admin-login.js · admin-auth.js</div>
+      </div>
+      <div class="module-box">
+        <div class="name">admin/dashboard.html</div>
+        <div class="desc">Sinh/thu hồi mã đổi quà · admin-dashboard.js</div>
+      </div>
+      <div class="module-box">
+        <div class="name">site-nav.js</div>
+        <div class="desc">Nav + footer đồng bộ — NAV_ITEMS single source</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BACKEND MODULES -->
+  <section id="backend-modules">
+    <div class="section-title">Backend — kho-thoc-api</div>
+    <p class="section-desc">Node.js + Express + pg. Chạy Docker trên VPS, dùng chung <code>eedt-postgres</code>. Contract tương thích GAS.</p>
+
+    <div class="module-grid">
+      <div class="module-box">
+        <div class="name">routes/api.js</div>
+        <div class="desc">GET ping/profiles/logs · POST log, profile, delete_log, redeem</div>
+      </div>
+      <div class="module-box">
+        <div class="name">routes/admin.js</div>
+        <div class="desc">POST login · GET/POST passcode generate/revoke</div>
+      </div>
+      <div class="module-box">
+        <div class="name">services/profiles.js</div>
+        <div class="desc">CRUD profiles · tạo passcode khi đăng ký bé</div>
+      </div>
+      <div class="module-box">
+        <div class="name">services/redeem.js</div>
+        <div class="desc">Validate passcode bcrypt · ghi log REDEEM · trừ Gạo</div>
+      </div>
+      <div class="module-box">
+        <div class="name">services/auth.js</div>
+        <div class="desc">JWT admin · bcrypt · rate limit redeem</div>
+      </div>
+      <div class="module-box">
+        <div class="name">migrations/</div>
+        <div class="desc">001 profiles+logs · 002 admin+passcodes · 003 profile passcodes</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA MAPPING -->
+  <section id="data-mapping">
+    <div class="section-title">Mapping Dữ liệu → Code</div>
+    <p class="section-desc">PostgreSQL production + dữ liệu tĩnh frontend. Legacy GAS: <code>docs/technical/legacy/apps-script-v11.md</code>.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Bảng / Nguồn</th>
+          <th>Cột chính</th>
+          <th>Code</th>
+          <th>Ghi chú</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>profiles</code></td>
+          <td>id, name, avatar, total_grain, total_exp</td>
+          <td><code>services/profiles.js</code></td>
+          <td>Cache số dư; đồng bộ khi ghi/xóa log</td>
+        </tr>
+        <tr>
+          <td><code>logs</code></td>
+          <td>id, name, date, grain, exp, tasks, bonus, note</td>
+          <td><code>services/logs.js</code></td>
+          <td>Sổ cái gốc; <code>tasks=REDEEM</code> khi đổi quà</td>
+        </tr>
+        <tr>
+          <td><code>redeem_passcodes</code></td>
+          <td>profile_id, passcode_hash, revoked_at</td>
+          <td><code>services/redeem.js</code></td>
+          <td>Một mã active / bé (Phase 2)</td>
+        </tr>
+        <tr>
+          <td><code>admin_users</code></td>
+          <td>username, password_hash</td>
+          <td><code>routes/admin.js</code></td>
+          <td>Seed: <code>npm run seed:admin</code></td>
+        </tr>
+        <tr>
+          <td><code>TASKS</code> (static)</td>
+          <td>15 nhiệm vụ — grain, exp</td>
+          <td><code>assets/js/data/tasks.js</code></td>
+          <td>Đồng bộ print.html</td>
+        </tr>
+        <tr>
+          <td><code>REWARDS</code> (static)</td>
+          <td>15 quà — cost, emoji</td>
+          <td><code>assets/js/data/rewards.js</code></td>
+          <td>Catalog client; server validate khi redeem</td>
+        </tr>
+        <tr>
+          <td><code>API_URL</code></td>
+          <td>VPS hoặc GAS rollback</td>
+          <td><code>assets/js/data/config.js</code></td>
+          <td>Trailing <code>/</code> bắt buộc với VPS</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- DEPLOY ROUTING -->
+  <section id="deploy-routing">
+    <div class="section-title">Deploy &amp; Routing</div>
+    <p class="section-desc">Hai host độc lập. Chi tiết: <code>docs/technical/operator.md</code>.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>URL</th>
+          <th>Host</th>
+          <th>Mô tả</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>…/keep-house-clean/nhat-ky.html</code></td>
+          <td>GitHub Pages</td>
+          <td>App vận hành</td>
+        </tr>
+        <tr>
+          <td><code>…/keep-house-clean/admin/login.html</code></td>
+          <td>GitHub Pages</td>
+          <td>Admin (Phase 2)</td>
+        </tr>
+        <tr>
+          <td><code>…/keep-house-clean/assets/*</code></td>
+          <td>GitHub Pages</td>
+          <td>CSS, JS tĩnh</td>
+        </tr>
+        <tr>
+          <td><code>https://apinhatkyvumua.taho.cat/kho-thoc/</code></td>
+          <td>VPS Nginx → Docker</td>
+          <td>API production — trailing <code>/</code> bắt buộc</td>
+        </tr>
+        <tr>
+          <td><code>http://localhost:3001/</code></td>
+          <td>Mac dev</td>
+          <td>API local (<code>BASE_PATH</code> trống)</td>
+        </tr>
+        <tr>
+          <td><code>/opt/nhatkyvumua/kho-thoc-api</code></td>
+          <td>VPS</td>
+          <td>Docker chạy thật (rsync từ <code>repo/</code>)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- DOCS STRUCTURE -->
+  <section id="docs-structure">
+    <div class="section-title">Tài liệu docs/</div>
+    <p class="section-desc">Một README tổng — không có summary.md lồng nhau.</p>
+
+    <table>
+      <thead>
+        <tr><th>File / thư mục</th><th>Vai trò</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>installation.md</code></td>
+          <td>Cài đặt lần đầu — macOS local + VPS bootstrap</td>
+        </tr>
+        <tr>
+          <td><code>operations.md</code></td>
+          <td>Deploy tính năng mới, SSL, xử lý sự cố, backup</td>
+        </tr>
+        <tr>
+          <td><code>specs/brd.md</code></td>
+          <td>BRD tổng + index → passcode, admin</td>
+        </tr>
+        <tr>
+          <td><code>specs/passcode.md</code> · <code>admin.md</code></td>
+          <td>Đặc tả từng tính năng Phase 2</td>
+        </tr>
+        <tr>
+          <td><code>tech/architecture/</code></td>
+          <td>Infrastructure, frontend, file HTML này</td>
+        </tr>
+        <tr>
+          <td><code>tech/migration-vps.md</code></td>
+          <td>Lộ trình migrate GAS → VPS</td>
+        </tr>
+        <tr>
+          <td><code>design/style.md</code></td>
+          <td>Design system</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- CONVENTIONS -->
+  <section id="conventions">
+    <div class="section-title">Quy ước quan trọng</div>
+
+    <div class="card">
+      <div class="card-title">1. Thêm trang marketing mới</div>
+      <pre><span class="cmt"># Head — load shared CSS theo thứ tự:</span>
+assets/css/shared/variables.css → base → nav → layout → buttons → footer → components
+assets/css/pages/&lt;ten-trang&gt;.css
+
+<span class="cmt"># Body — nav đồng bộ:</span>
+&lt;nav class="nav" id="mainNav" data-page="ten-trang"&gt;&lt;/nav&gt;
+&lt;script src="assets/js/shared/site-nav.js"&gt;&lt;/script&gt;</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">2. Sửa menu toàn site</div>
+      <pre><span class="cmt"># Chỉ sửa một file:</span>
+assets/js/shared/site-nav.js  →  NAV_ITEMS[]</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">3. Phân tách runtime vs tài liệu</div>
+      <table>
+        <thead>
+          <tr><th>Thư mục</th><th>Vai trò</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>HTML + <code>assets/</code> (code/ + docs/)</td>
+            <td>Frontend deploy GitHub Pages</td>
+          </tr>
+          <tr>
+            <td><code>code/kho-thoc-api/</code></td>
+            <td>Backend — Docker trên VPS</td>
+          </tr>
+          <tr>
+            <td><code>code/deploy/vps/nginx/</code></td>
+            <td>Config Nginx — không commit secrets</td>
+          </tr>
+          <tr>
+            <td><code>docs/</code></td>
+            <td>Tài liệu — không deploy</td>
+          </tr>
+          <tr>
+            <td><code>ideas/</code></td>
+            <td>Prototype — không dùng production</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">4. Deploy tính năng mới</div>
+      <pre><span class="cmt"># Mac:</span>
+git push origin main
+
+<span class="cmt"># VPS (sau mỗi đổi API):</span>
+git -C /opt/nhatkyvumua/repo pull
+rsync -a repo/code/kho-thoc-api/ code/kho-thoc-api/ --exclude .env
+docker compose up -d --build --force-recreate
+
+<span class="cmt"># Chi tiết:</span>
+docs/technical/operator.md</pre>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="roadmap">
+    <div class="section-title">Lộ trình triển khai</div>
+    <p class="section-desc">Phase 1 (API + VPS) đã chạy. Phase 2 passcode + admin đang triển khai.</p>
+
+    <div class="diagram-wrap">
+      <pre class="mermaid">
+flowchart LR
+  A["✅ Frontend assets"] --> B["✅ kho-thoc-api"]
+  B --> C["✅ PostgreSQL kho_thoc"]
+  C --> D["✅ VPS HTTPS"]
+  D --> E["🔄 Passcode redeem"]
+  E --> F["🔄 Admin UI"]
+  F --> G["⏳ Multi-tenant Phase 3"]
+      </pre>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Phase</th><th>Deliverable</th><th>Trạng thái</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>kho-thoc-api + Postgres + deploy VPS + cutover API_URL</td>
+          <td>✅ Hoàn thành</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Passcode đổi quà + <code>admin/</code> + JWT</td>
+          <td>🔄 Đang triển khai</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Multi-tenant <code>family_id</code> (~100 gia đình)</td>
+          <td>⏳ Chưa bắt đầu</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- OPEN CHOICES -->
+  <section id="open-choices">
+    <div class="section-title">Việc còn mở</div>
+    <p class="section-desc">Các hạng mục chưa chốt — cập nhật dần theo tiến độ dự án.</p>
+
+    <table>
+      <thead>
+        <tr><th>Chủ đề</th><th>Trạng thái</th><th>Ghi chú</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Luật phạt &amp; bonus cấp bậc trong app</td>
+          <td>Chưa làm</td>
+          <td>Có trên index.html, chưa có trong nhat-ky.html</td>
+        </tr>
+        <tr>
+          <td>Multi-tenant (Phase 3)</td>
+          <td>Chưa làm</td>
+          <td>docs/brd/passcode.md §10 · docs/technical/migration-vps.md</td>
+        </tr>
+        <tr>
+          <td>Cron backup <code>pg_dump</code></td>
+          <td>Chưa làm</td>
+          <td>docs/technical/operator.md</td>
+        </tr>
+        <tr>
+          <td>Build tool (Vite/bundler)</td>
+          <td>Chưa quyết</td>
+          <td>Hiện không cần — có thể thêm sau</td>
+        </tr>
+        <tr>
+          <td>Mobile nav menu</td>
+          <td>Stub</td>
+          <td>toggleMobileMenu() — alert placeholder</td>
+        </tr>
+        <tr>
+          <td colspan="3" style="color:var(--text-dim); font-style:italic; text-align:center;">
+            — Bổ sung thêm khi có quyết định mới —
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SUMMARY -->
+  <section id="summary">
+    <div class="section-title">Tóm tắt</div>
+
+    <div class="summary-box">
+      <ul>
+        <li>Frontend: HTML ở code/ + docs/ + <code>assets/</code> + <code>admin/</code> — GitHub Pages, không build</li>
+        <li>Backend: <code>kho-thoc-api</code> Docker trên VPS → PostgreSQL <code>kho_thoc</code></li>
+        <li>API: <code>https://apinhatkyvumua.taho.cat/kho-thoc/</code> — rollback GAS qua <code>config.js</code></li>
+        <li>Tài liệu: <code>installation.md</code> + <code>operations.md</code> + <code>specs/</code> + <code>tech/</code></li>
+        <li>Nav/footer: <code>site-nav.js</code> — một nguồn duy nhất</li>
+        <li>Deploy API: <code>git pull</code> + <code>rsync</code> + <code>docker compose up -d --build</code></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Kho Thóc Gia Đình — Project Directory Architecture v2.0.0 &nbsp;·&nbsp; Updated 2026-06-10 &nbsp;·&nbsp;
+    Source: code/ + docs/ · code/kho-thoc-api/ · docs/
+  </footer>
+
+</main>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#14261a',
+      primaryTextColor: '#e8f5ec',
+      primaryBorderColor: '#2d8a55',
+      lineColor: '#2d8a5588',
+      secondaryColor: '#0f1f15',
+      tertiaryColor: '#0d1a12',
+      fontFamily: 'JetBrains Mono, Fira Code, monospace',
+      fontSize: '11px',
+    },
+    flowchart: { curve: 'basis', padding: 16 },
+  });
+
+  const sections = document.querySelectorAll('section[id], header[id]');
+  const navLinks = document.querySelectorAll('.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`.sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

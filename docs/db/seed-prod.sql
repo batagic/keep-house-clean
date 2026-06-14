@@ -1,0 +1,6 @@
+-- Seed production (chạy thủ công trên VPS sau migrate)
+-- Admin: dùng npm run seed:admin trong container — không commit mật khẩu vào repo.
+--
+--   cd /opt/nhatkyvumua/kho-thoc-api
+--   docker compose exec kho-thoc-api npm run seed:admin -- \
+--     --username admin --password 'MAT_KHAU_MANH'
