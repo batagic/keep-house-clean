@@ -24,8 +24,9 @@
 
     <p class="sync-status" id="syncStatus" aria-live="polite"></p>
 
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
-      <button class="btn-secondary" onclick="openModal()">➕ Đăng ký bé mới</button>
+    <div class="add-profile-bar">
+      <p class="add-profile-hint" id="addProfileHint" hidden>Mỗi gia đình chỉ đăng ký tối đa 3 bé.</p>
+      <button class="btn-secondary" id="addProfileBtn" onclick="openModal()">➕ Đăng ký bé mới</button>
     </div>
 
     <div class="profile-grid" id="profileGrid"></div>

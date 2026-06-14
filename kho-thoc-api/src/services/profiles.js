@@ -1,6 +1,8 @@
 const { query } = require('../db');
 const { createInitialPasscodeForProfile } = require('./auth');
 
+const MAX_PROFILES_PER_FAMILY = 3;
+
 function normalizeProfile(row) {
   return {
     id: String(row.id || ''),
@@ -41,6 +43,16 @@ async function writeProfile(params) {
       [id, name, avatar]
     );
     return { result: 'success', action: 'updated' };
+  }
+
+  const { rows: countRows } = await query(
+    `SELECT COUNT(*)::int AS n FROM profiles WHERE id <> ''`
+  );
+  if ((countRows[0]?.n || 0) >= MAX_PROFILES_PER_FAMILY) {
+    throw Object.assign(
+      new Error('Mỗi gia đình chỉ đăng ký tối đa 3 bé'),
+      { status: 400 }
+    );
   }
 
   await query(

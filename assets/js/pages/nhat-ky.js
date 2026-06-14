@@ -312,6 +312,7 @@
       if (!grid) return;
       if (!profiles.length) {
         grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:2rem;">Chưa có bé nào. Nhấn "Đăng ký bé mới" để bắt đầu!</p>';
+        updateAddProfileButton();
         return;
       }
 
@@ -366,6 +367,22 @@
         </div>`);
       }
       grid.innerHTML = parts.join('');
+      updateAddProfileButton();
+    }
+
+    function isProfileLimitReached() {
+      return profiles.length >= MAX_PROFILES_PER_FAMILY;
+    }
+
+    function updateAddProfileButton() {
+      const btn  = document.getElementById('addProfileBtn');
+      const hint = document.getElementById('addProfileHint');
+      if (!btn) return;
+
+      const atLimit = isProfileLimitReached();
+      btn.disabled = atLimit;
+      btn.title = atLimit ? 'Mỗi gia đình chỉ đăng ký tối đa 3 bé' : '';
+      if (hint) hint.hidden = !atLimit;
     }
 
     function renderRewards() {
@@ -841,7 +858,14 @@
       }
     }
 
-    function openModal()  { document.getElementById('modalOverlay').classList.add('open'); }
+    function openModal() {
+      if (isProfileLimitReached()) {
+        showToast('Mỗi gia đình chỉ đăng ký tối đa 3 bé.');
+        return;
+      }
+      document.getElementById('modalOverlay').classList.add('open');
+      document.getElementById('pName')?.focus();
+    }
     function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 
     async function deleteProfile(pid) {
@@ -884,6 +908,12 @@
     }
 
     async function confirmAddProfile() {
+      if (isProfileLimitReached()) {
+        showToast('Mỗi gia đình chỉ đăng ký tối đa 3 bé.');
+        closeModal();
+        return;
+      }
+
       const name   = document.getElementById('pName')?.value.trim();
       const avatar = document.getElementById('pAvatar')?.value.trim() || '👶';
       if (!name) { alert('Vui lòng nhập tên của bé!'); return; }
