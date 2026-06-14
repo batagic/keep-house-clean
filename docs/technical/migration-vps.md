@@ -215,9 +215,9 @@ Chi tiết từng bước: [installation.md](../installation.md)
 
 ### Phase 3.1 — Phiên gia đình (passcode tầng 1)
 
-- [ ] `POST type=unlock_family`
-- [ ] Client: bỏ auto UUID, modal phiên, bootstrap bé đầu
-- [ ] Spec: [family-session.md](../brd/family-session.md)
+- [x] `POST type=unlock_family`
+- [x] Client: bỏ auto UUID, modal phiên, bootstrap bé đầu
+- [x] Spec: [family-session.md](../brd/family-session.md)
 - [ ] API luôn filter theo gia đình từ session/JWT
 - [ ] Onboarding gia đình mới
 - [ ] Bảng `redemptions` tách khỏi log âm

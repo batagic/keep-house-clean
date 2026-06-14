@@ -1,8 +1,8 @@
 const express = require('express');
-const { readProfiles, writeProfile, deleteProfile } = require('../services/profiles');
+const { readProfiles, writeProfile, writeProfileBootstrap, deleteProfile } = require('../services/profiles');
 const { readLogs, writeLog, deleteLog } = require('../services/logs');
 const { redeemWithPasscode } = require('../services/redeem');
-const { requireFamilyId } = require('../middleware/familyContext');
+const { unlockFamilyByPasscode } = require('../services/familyUnlock');
 
 const router = express.Router();
 
@@ -49,11 +49,26 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', requireFamilyId, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const params = req.body || {};
-    const familyId = req.familyId;
+
+    if (params.type === 'unlock_family') {
+      const result = await unlockFamilyByPasscode(params.passcode, req);
+      return res.json(result);
+    }
+
+    const familyId = String(req.headers['x-family-id'] || '').trim();
     let result;
+
+    if (params.type === 'profile' && !familyId) {
+      result = await writeProfileBootstrap(params);
+      return res.json(result);
+    }
+
+    if (!familyId) {
+      return res.status(400).json({ result: 'error', message: 'Thiếu X-Family-Id' });
+    }
 
     switch (params.type) {
       case 'redeem':

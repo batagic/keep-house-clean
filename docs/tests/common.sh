@@ -74,6 +74,13 @@ api_get_family() {
     -H "X-Family-Id: ${family_id}"
 }
 
+api_post_no_family() {
+  local payload="$1"
+  curl -sS -w '\n%{http_code}' -X POST "$(api_url '/')" \
+    -H 'Content-Type: application/json; charset=utf-8' \
+    --data-binary "$payload"
+}
+
 json_encode() {
   node -e '
     const [type, ...rest] = process.argv.slice(1);

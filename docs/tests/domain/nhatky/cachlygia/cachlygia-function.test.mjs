@@ -40,32 +40,41 @@ function loadFamilyApi(storage = {}) {
 }
 
 describe('NK-ISO-F — frontend family-api.js', () => {
-  test('NK-ISO-F01 getFamilyId tạo mã mới khi chưa có', () => {
+  test('NK-ISO-F01 getFamilyId không tự sinh UUID khi chưa unlock', () => {
     const ctx = loadFamilyApi();
-    const id = ctx.getFamilyId();
-    assert.match(id, /^fam_/);
-    assert.equal(ctx.store.kho_thoc_family_id, id);
+    assert.equal(ctx.getFamilyId(), '');
+    assert.equal(ctx.store.kho_thoc_family_id, undefined);
   });
 
-  test('NK-ISO-F02 getFamilyId trả lại mã đã lưu', () => {
-    const ctx = loadFamilyApi({ kho_thoc_family_id: 'fam_existing_abc' });
+  test('NK-ISO-F02 getFamilyId trả lại mã đã unlock', () => {
+    const ctx = loadFamilyApi({
+      kho_thoc_family_id: 'fam_existing_abc',
+      kho_thoc_family_unlocked: '1',
+    });
     assert.equal(ctx.getFamilyId(), 'fam_existing_abc');
   });
 
-  test('NK-ISO-F03 migrateLegacyFamilyIfNeeded — cache cũ → fam_v1_default', () => {
+  test('NK-ISO-F03 migrateLegacyFamilyIfNeeded — cache cũ → fam_v1_default + unlocked', () => {
     const ctx = loadFamilyApi({
       kho_thoc_v3_profiles: JSON.stringify([{ id: 'p_old', name: 'Bé cũ' }]),
     });
     assert.equal(ctx.getFamilyId(), 'fam_v1_default');
+    assert.equal(ctx.store.kho_thoc_family_unlocked, '1');
   });
 
   test('NK-ISO-F04 familyStorageKey gắn family_id vào key', () => {
-    const ctx = loadFamilyApi({ kho_thoc_family_id: 'fam_key_test' });
+    const ctx = loadFamilyApi({
+      kho_thoc_family_id: 'fam_key_test',
+      kho_thoc_family_unlocked: '1',
+    });
     assert.equal(ctx.familyStorageKey('kho_thoc_v3_profiles'), 'kho_thoc_v3_profiles_fam_key_test');
   });
 
-  test('NK-ISO-F05 apiFetch gửi header X-Family-Id', async () => {
-    const ctx = loadFamilyApi({ kho_thoc_family_id: 'fam_fetch_test' });
+  test('NK-ISO-F05 apiFetch gửi header X-Family-Id khi đã unlock', async () => {
+    const ctx = loadFamilyApi({
+      kho_thoc_family_id: 'fam_fetch_test',
+      kho_thoc_family_unlocked: '1',
+    });
     await ctx.apiFetch('https://example.test/api', { method: 'GET' });
     assert.equal(ctx.fetch.mock.calls.length, 1);
     const [, opts] = ctx.fetch.mock.calls[0].arguments;

@@ -2,7 +2,7 @@
 
 **Phiên bản:** 1.0  
 **Ngày:** 14/06/2026  
-**Trạng thái:** Thiết kế — chưa triển khai code  
+**Trạng thái:** Đã triển khai (14/06/2026)  
 **Liên quan:** [passcode.md](./passcode.md) · [nhatky.md](./nhatky.md) · [usecase-actor.md](./usecase-actor.md)
 
 ---

@@ -43,12 +43,10 @@
     "Nhật ký nhiệm vụ + Gạo/EXP",
     "Đăng ký/xóa bé (max 3/family)",
     "Cách ly gia đình (family_id)",
+    "Phiên gia đình — unlock_family (Phase 3.1)",
     "Đổi quà + passcode",
     "Admin JWT",
     "Deploy một lệnh VPS"
-  ],
-  "features_planned": [
-    "Phiên gia đình — passcode tầng 1 (unlock_family)"
   ],
   "workflow_ai": {
     "after_feature": "Hỏi user trước khi git push + deploy",

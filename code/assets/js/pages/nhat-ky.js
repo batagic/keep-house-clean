@@ -14,6 +14,7 @@
     let _historyShowAll      = false;
     let _tasksRendered       = false;
     let _logsLoading         = false;
+    let _sessionActionQueue  = null;
 
     const TASK_MAP   = {};
     const REWARD_MAP = {};
@@ -22,6 +23,65 @@
     REWARDS.forEach(r => REWARD_MAP[r.id] = r);
 
     const TASK_CATEGORIES = [...new Set(TASKS.map(t => t.category))];
+
+    /* ============================================================
+       PHIÊN GIA ĐÌNH (Phase 3.1)
+    ============================================================ */
+    function updateSessionBanner() {
+      const banner = document.getElementById('sessionBanner');
+      if (!banner) return;
+      banner.hidden = isFamilyUnlocked();
+    }
+
+    function requireFamilySession(action) {
+      if (isFamilyUnlocked()) {
+        action();
+        return;
+      }
+      _sessionActionQueue = action;
+      openUnlockModal();
+    }
+
+    function openUnlockModal() {
+      document.getElementById('unlockPasscode').value = '';
+      document.getElementById('unlockModalOverlay').classList.add('open');
+      document.getElementById('unlockPasscode').focus();
+    }
+
+    function closeUnlockModal() {
+      document.getElementById('unlockModalOverlay').classList.remove('open');
+      _sessionActionQueue = null;
+    }
+
+    async function confirmUnlockSession() {
+      const passcode = document.getElementById('unlockPasscode').value.trim();
+      if (!passcode) {
+        showToast('Vui lòng nhập mã gia đình!');
+        return;
+      }
+
+      const btn = document.getElementById('unlockConfirmBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang xác nhận…';
+
+      try {
+        await unlockFamily(passcode);
+        const queued = _sessionActionQueue;
+        closeUnlockModal();
+        updateSessionBanner();
+        await loadData(false);
+        if (queued) queued();
+        showToast('✅ Đã mở phiên gia đình');
+      } catch (err) {
+        const msg = err.status === 429
+          ? 'Thử sai quá nhiều lần. Chờ 15 phút.'
+          : (err.message || 'Mã không đúng');
+        showToast('⚠️ ' + msg);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Xác nhận';
+      }
+    }
 
     /* ============================================================
        API & STORAGE
@@ -201,6 +261,16 @@
     }
 
     async function loadData(hadCache = false) {
+      if (!isFamilyUnlocked()) {
+        profiles = [];
+        currentProfile = null;
+        renderProfiles();
+        renderRewards();
+        renderHistory();
+        updateSessionBanner();
+        return;
+      }
+
       if (!hadCache) _setSyncStatus('Đang tải dữ liệu bé…', true);
 
       const prevPid = currentProfile?.id || localStorage.getItem(CACHE_LAST_PID_KEY());
@@ -313,7 +383,10 @@
       const grid = document.getElementById('profileGrid');
       if (!grid) return;
       if (!profiles.length) {
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:2rem;">Chưa có bé nào. Nhấn "Đăng ký bé mới" để bắt đầu!</p>';
+        const locked = !isFamilyUnlocked();
+        grid.innerHTML = locked
+          ? '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:2rem;">Nhập mã gia đình để xem bé của bạn, hoặc đăng ký bé đầu tiên.</p>'
+          : '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:2rem;">Chưa có bé nào. Nhấn "Đăng ký bé mới" để bắt đầu!</p>';
         updateAddProfileButton();
         return;
       }
@@ -536,6 +609,10 @@
        USER ACTIONS
     ============================================================ */
     function selectProfile(pid, light = false, loadLogs = true) {
+      requireFamilySession(() => _selectProfileImpl(pid, light, loadLogs));
+    }
+
+    function _selectProfileImpl(pid, light = false, loadLogs = true) {
       currentProfile = profiles.find(p => p.id === pid);
       localStorage.setItem(CACHE_LAST_PID_KEY(), pid);
       _invalidateSortCache();
@@ -565,6 +642,7 @@
     }
 
     function toggleTask(id) {
+      if (!isFamilyUnlocked()) { requireFamilySession(() => toggleTask(id)); return; }
       const cb   = document.getElementById(`taskCB_${id}`);
       const card = document.getElementById(`taskCard_${id}`);
       if (!cb || !card) return;
@@ -574,6 +652,7 @@
     }
 
     function toggleBonus() {
+      if (!isFamilyUnlocked()) { requireFamilySession(() => toggleBonus()); return; }
       isBonusActive = !isBonusActive;
       document.getElementById('bonusToggleDiv').classList.toggle('active', isBonusActive);
       updateCounterAndTotals();
@@ -585,6 +664,10 @@
     }
 
     async function submitDailyLog() {
+      requireFamilySession(() => { submitDailyLogImpl(); });
+    }
+
+    async function submitDailyLogImpl() {
       if (!currentProfile) { alert('Vui lòng chọn một bé!'); return; }
       let grain = 0, exp = 0, hasChecked = false;
       const tasksDone = [];
@@ -663,6 +746,7 @@
     }
 
     function openPenaltyModal(pid) {
+      requireFamilySession(() => {
       const p = profiles.find(x => x.id === pid);
       if (!p) { showToast('Vui lòng chọn bé trước!'); return; }
 
@@ -675,6 +759,7 @@
       document.getElementById('penaltyModalOverlay').classList.add('open');
       document.getElementById('penaltyGrain').focus();
       window._pendingPenaltyPid = pid;
+      });
     }
 
     function closePenaltyModal() {
@@ -760,8 +845,9 @@
     }
 
     function openRedeemModal() {
-      const pending = _getRedeemSelection();
-      if (!pending) return;
+      requireFamilySession(() => {
+        const pending = _getRedeemSelection();
+        if (!pending) return;
 
       const summary = document.getElementById('redeemSummary');
       summary.innerHTML = `
@@ -773,6 +859,7 @@
       document.getElementById('redeemModalOverlay').classList.add('open');
       document.getElementById('redeemPasscode').focus();
       window._pendingRedeem = pending;
+      });
     }
 
     function closeRedeemModal() {
@@ -842,6 +929,7 @@
     }
 
     async function deleteHistory(dateStr) {
+      requireFamilySession(async () => {
       if (!confirm(`Xóa nhật ký ngày ${dateStr}?\nThao tác này sẽ trừ lại số Gạo và EXP!`)) return;
       const pid = currentProfile.id;
       const removed = (sheetsLogs[pid] || []).find(l => l.date === dateStr);
@@ -857,19 +945,28 @@
       } else {
         showToast('⚠️ Xóa thất bại, thử lại!');
       }
+      });
     }
 
     function openModal() {
+      if (!isFamilyUnlocked() && !profiles.length) {
+        document.getElementById('modalOverlay').classList.add('open');
+        document.getElementById('pName')?.focus();
+        return;
+      }
+      requireFamilySession(() => {
       if (isProfileLimitReached()) {
         showToast('Mỗi gia đình chỉ đăng ký tối đa 3 bé.');
         return;
       }
       document.getElementById('modalOverlay').classList.add('open');
       document.getElementById('pName')?.focus();
+      });
     }
     function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 
     async function deleteProfile(pid) {
+      requireFamilySession(async () => {
       const p = profiles.find(x => x.id === pid);
       if (!p) return;
 
@@ -906,6 +1003,7 @@
       }
 
       showToast(`Đã xóa hồ sơ bé ${p.name}`);
+      });
     }
 
     async function confirmAddProfile() {
@@ -923,7 +1021,26 @@
       const btn = document.querySelector('#modalOverlay .btn-main');
       if (btn) { btn.disabled = true; btn.textContent = 'Đang tạo…'; }
 
-      const result = await saveData({ type:'profile', ...newProfile });
+      const bootstrap = !isFamilyUnlocked();
+      let result;
+      if (bootstrap) {
+        try {
+          const res = await apiPostPublic({ type:'profile', ...newProfile });
+          result = await res.json();
+          if (!res.ok || result.result !== 'success') {
+            showToast('⚠️ ' + (result.message || 'Đăng ký bé thất bại'));
+            result = null;
+          } else if (result.familyId) {
+            setFamilySession(result.familyId);
+            updateSessionBanner();
+          }
+        } catch {
+          showToast('⚠️ Không kết nối được Server!');
+          result = null;
+        }
+      } else {
+        result = await saveData({ type:'profile', ...newProfile });
+      }
 
       if (btn) { btn.disabled = false; btn.textContent = 'Tạo Mới'; }
       if (!result || result.result !== 'success') return;
@@ -990,6 +1107,8 @@
        INIT — profiles cache trước, tasks defer, sync nền
     ============================================================ */
     function _bootstrapFromCache() {
+      if (!isFamilyUnlocked()) return false;
+
       const profCache = _readProfilesCache();
       if (!profCache || !profCache.length) return false;
 
@@ -1023,12 +1142,15 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       _initCounterRefs();
+      updateSessionBanner();
 
-      const hadCache = _bootstrapFromCache();
+      const hadCache = isFamilyUnlocked() && _bootstrapFromCache();
       if (hadCache) {
         _setSyncStatus('Đang đồng bộ nền…', true);
-      } else {
+      } else if (isFamilyUnlocked()) {
         _showProfileSkeleton();
+      } else {
+        renderProfiles();
       }
 
       requestAnimationFrame(() => renderTasks());

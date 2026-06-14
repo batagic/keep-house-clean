@@ -24,6 +24,11 @@
 
     <p class="sync-status" id="syncStatus" aria-live="polite"></p>
 
+    <div class="session-banner" id="sessionBanner" hidden>
+      <p>Nhập mã gia đình để xem bé của bạn — dùng mã bố/mẹ đã nhận khi đăng ký bé.</p>
+      <button type="button" class="btn-main" onclick="openUnlockModal()">🔑 Nhập mã gia đình</button>
+    </div>
+
     <div class="add-profile-bar">
       <p class="add-profile-hint" id="addProfileHint" hidden>Mỗi gia đình chỉ đăng ký tối đa 3 bé.</p>
       <button class="btn-secondary" id="addProfileBtn" onclick="openModal()">➕ Đăng ký bé mới</button>
@@ -99,6 +104,28 @@
         <button class="btn-secondary" onclick="closeModal()">Hủy</button>
         <button class="btn-main" onclick="confirmAddProfile()">Tạo Mới</button>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="unlockModalOverlay">
+    <div class="modal-box">
+      <h3 class="modal-title">🔑 Mã gia đình</h3>
+      <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;">
+        Nhập mã xác nhận của <strong>một bé trong nhà</strong> (mã bố/mẹ đã nhận khi đăng ký bé).
+        Quên mã → liên hệ admin.
+      </p>
+      <div class="form-group">
+        <label for="unlockPasscode">Mã xác nhận</label>
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="unlockPasscode" class="form-control" placeholder="VD: 4829" autocomplete="off"/>
+      </div>
+      <div style="display:flex; gap:1rem; justify-content:flex-end; margin-top: 1.5rem; flex-wrap:wrap;">
+        <button type="button" class="btn-secondary" onclick="closeUnlockModal()">Hủy</button>
+        <button type="button" class="btn-main" id="unlockConfirmBtn" onclick="confirmUnlockSession()">Xác nhận</button>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-top:1.25rem;text-align:center;">
+        Gia đình mới?
+        <button type="button" class="link-btn" onclick="closeUnlockModal();openModal()">Đăng ký bé đầu tiên</button>
+      </p>
     </div>
   </div>
 

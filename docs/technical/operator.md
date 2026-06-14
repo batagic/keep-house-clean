@@ -202,7 +202,7 @@ curl -s -H 'Origin: https://batagic.github.io' \
 | HTTPS `apinhatkyvumua.taho.cat` | ✅ |
 | Cutover `API_URL` GitHub Pages | ⏳ trailing `/` |
 | Phase 2 passcode + admin | ✅ |
-| Phase 3.1 phiên gia đình | 📋 thiết kế |
+| Phase 3.1 phiên gia đình | ✅ |
 | Phase 3 multi-tenant | ❌ |
 | Import CSV VPS | ⏳ |
 | Cron `pg_dump` | ❌ |

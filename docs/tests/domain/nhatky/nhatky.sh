@@ -24,6 +24,8 @@ run_suite() {
 bold "Nhật Ký Vụ Mùa — test suite"
 bold "API_URL=${API_URL}"
 
+run_suite "${SCRIPT_DIR}/familysession-function.sh"
+run_suite "${SCRIPT_DIR}/familysession.sh"
 run_suite "${SCRIPT_DIR}/doiqua.sh"
 run_suite "${SCRIPT_DIR}/dangkybe.sh"
 run_suite "${SCRIPT_DIR}/cachlygia.sh"

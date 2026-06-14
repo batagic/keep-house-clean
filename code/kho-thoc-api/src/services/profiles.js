@@ -1,8 +1,13 @@
 const { query } = require('../db');
+const crypto = require('crypto');
 const { createInitialPasscodeForProfile } = require('./auth');
 const { assertProfileInFamily } = require('./family');
 
 const MAX_PROFILES_PER_FAMILY = 3;
+
+function generateFamilyId() {
+  return `fam_${crypto.randomUUID()}`;
+}
 
 function normalizeProfile(row) {
   return {
@@ -73,7 +78,13 @@ async function writeProfile(params, familyId) {
     [id, name, avatar, totalGrain, totalExp, fid]
   );
   const passcode = await createInitialPasscodeForProfile(id);
-  return { result: 'success', action: 'inserted', passcode };
+  return { result: 'success', action: 'inserted', passcode, familyId: fid };
+}
+
+async function writeProfileBootstrap(params) {
+  const familyId = generateFamilyId();
+  const result = await writeProfile(params, familyId);
+  return { ...result, familyId };
 }
 
 async function deleteProfile(params, familyId) {
@@ -115,7 +126,9 @@ async function adjustBalance(profileId, grainDelta, expDelta, familyId = null) {
 module.exports = {
   readProfiles,
   writeProfile,
+  writeProfileBootstrap,
   deleteProfile,
   adjustBalance,
   normalizeProfile,
+  generateFamilyId,
 };

@@ -352,6 +352,31 @@
       min-height: 1.2rem;
     }
     .sync-status.syncing { color: var(--green-mid); }
+    .session-banner {
+      background: #fff8e6;
+      border: 1px solid #f0d78c;
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+    .session-banner p {
+      margin: 0 0 0.75rem;
+      font-size: 0.92rem;
+      color: var(--earth);
+      line-height: 1.5;
+    }
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--green-deep);
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+      text-decoration: underline;
+      padding: 0;
+    }
     .profile-skeleton {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
