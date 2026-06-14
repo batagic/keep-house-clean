@@ -8,8 +8,8 @@
     let profileBalances = {};   // { pid: { totalGrain, totalExp } }
     let logsMeta        = {};   // { pid: { total, hasMore, loaded } }
 
-    const CACHE_PROFILES_KEY = 'kho_thoc_v3_profiles';
-    const CACHE_LAST_PID_KEY = 'kho_thoc_v3_last_pid';
+    const CACHE_PROFILES_KEY = () => familyStorageKey('kho_thoc_v3_profiles');
+    const CACHE_LAST_PID_KEY = () => familyStorageKey('kho_thoc_v3_last_pid');
     const HISTORY_PAGE       = 25;
     let _historyShowAll      = false;
     let _tasksRendered       = false;
@@ -31,7 +31,7 @@
     }
 
     function _logsCacheKey(pid) {
-      return `kho_thoc_v3_logs_${pid}`;
+      return familyStorageKey(`kho_thoc_v3_logs_${pid}`);
     }
 
     function _applyBalancesFromProfiles() {
@@ -85,7 +85,10 @@
 
     function _readProfilesCache() {
       try {
-        const raw = localStorage.getItem(CACHE_PROFILES_KEY);
+        let raw = localStorage.getItem(CACHE_PROFILES_KEY());
+        if (!raw) {
+          raw = localStorage.getItem('kho_thoc_v3_profiles');
+        }
         if (!raw) return null;
         const data = JSON.parse(raw);
         return Array.isArray(data) ? data : null;
@@ -96,7 +99,7 @@
 
     function _writeProfilesCache() {
       try {
-        localStorage.setItem(CACHE_PROFILES_KEY, JSON.stringify(profiles));
+        localStorage.setItem(CACHE_PROFILES_KEY(), JSON.stringify(profiles));
       } catch { /* quota */ }
     }
 
@@ -147,9 +150,8 @@
 
     async function saveData(payload) {
       try {
-        const res    = await fetch(API_URL, {
+        const res    = await apiFetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': API_USE_PLAIN_TEXT ? 'text/plain' : 'application/json' },
           body: JSON.stringify(payload)
         });
         const result = await res.json();
@@ -163,7 +165,7 @@
 
     async function fetchLogsPage(pid, offset = 0, replace = false) {
       const url = `${API_URL}?type=logs&profileId=${encodeURIComponent(pid)}&limit=${HISTORY_PAGE}&offset=${offset}`;
-      const res  = await fetch(url);
+      const res  = await apiFetch(url);
       const data = await res.json();
       const rawLogs = Array.isArray(data.logs) ? data.logs : [];
 
@@ -201,10 +203,10 @@
     async function loadData(hadCache = false) {
       if (!hadCache) _setSyncStatus('Đang tải dữ liệu bé…', true);
 
-      const prevPid = currentProfile?.id || localStorage.getItem(CACHE_LAST_PID_KEY);
+      const prevPid = currentProfile?.id || localStorage.getItem(CACHE_LAST_PID_KEY());
 
       try {
-        const profRes  = await fetch(`${API_URL}?type=profiles`);
+        const profRes  = await apiFetch(`${API_URL}?type=profiles`);
         const profData = await profRes.json();
         const newProfiles = Array.isArray(profData.profiles) ? profData.profiles : [];
 
@@ -218,7 +220,7 @@
           : profiles[0]?.id;
 
         if (activePid) {
-          localStorage.setItem(CACHE_LAST_PID_KEY, activePid);
+          localStorage.setItem(CACHE_LAST_PID_KEY(), activePid);
           currentProfile = profiles.find(p => p.id === activePid) || null;
           document.querySelectorAll('.profile-card').forEach(el => {
             el.classList.toggle('active', el.dataset.pid === activePid);
@@ -535,7 +537,7 @@
     ============================================================ */
     function selectProfile(pid, light = false, loadLogs = true) {
       currentProfile = profiles.find(p => p.id === pid);
-      localStorage.setItem(CACHE_LAST_PID_KEY, pid);
+      localStorage.setItem(CACHE_LAST_PID_KEY(), pid);
       _invalidateSortCache();
       _historyShowAll = false;
 
@@ -791,9 +793,8 @@
 
       const pid = currentProfile.id;
       try {
-        const res = await fetch(API_URL, {
+        const res = await apiFetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': API_USE_PLAIN_TEXT ? 'text/plain' : 'application/json' },
           body: JSON.stringify({
             type: 'redeem',
             passcode,
@@ -895,7 +896,7 @@
           selectProfile(nextPid, false, true);
         } else {
           currentProfile = null;
-          localStorage.removeItem(CACHE_LAST_PID_KEY);
+          localStorage.removeItem(CACHE_LAST_PID_KEY());
           renderProfiles();
           renderRewards();
           renderHistory();
@@ -996,12 +997,21 @@
       _applyBalancesFromProfiles();
       renderProfiles();
 
-      const lastPid = localStorage.getItem(CACHE_LAST_PID_KEY);
+      let lastPid = localStorage.getItem(CACHE_LAST_PID_KEY());
+      if (!lastPid) {
+        lastPid = localStorage.getItem('kho_thoc_v3_last_pid');
+      }
       const pid = (lastPid && profiles.some(p => p.id === lastPid))
         ? lastPid
         : profiles[0].id;
 
-      const logCache = _readLogsCache(pid);
+      let logCache = _readLogsCache(pid);
+      if (!logCache) {
+        try {
+          const legacyRaw = localStorage.getItem(`kho_thoc_v3_logs_${pid}`);
+          if (legacyRaw) logCache = JSON.parse(legacyRaw);
+        } catch { /* ignore */ }
+      }
       if (logCache && Array.isArray(logCache.logs)) {
         _mergeLogsForProfile(pid, logCache.logs, true);
         if (logCache.meta) logsMeta[pid] = logCache.meta;

@@ -15,5 +15,5 @@ const API_USE_PLAIN_TEXT = API_URL.includes('script.google.com');
 /** Admin API — cùng host VPS, path /admin */
 const ADMIN_API_URL = API_URL.replace(/\/?$/, '/') + 'admin/';
 const GRAIN_RATE = 100; // 1 Gạo = 100 VNĐ
-/** Số bé tối đa mỗi gia đình (Phase 1: single family) */
+/** Số bé tối đa mỗi gia đình */
 const MAX_PROFILES_PER_FAMILY = 3;

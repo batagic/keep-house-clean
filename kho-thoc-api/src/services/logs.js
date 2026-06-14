@@ -1,5 +1,6 @@
 const { query } = require('../db');
 const { adjustBalance } = require('./profiles');
+const { assertProfileInFamily } = require('./family');
 
 /** Khớp format cột Google Sheets: id, name, date, grain, exp, tasks, bonus, note */
 function rowToLog(row) {
@@ -15,31 +16,49 @@ function rowToLog(row) {
   };
 }
 
+function familyLogsWhere(familyId, profileId) {
+  const fid = String(familyId || '').trim();
+  if (!fid) throw Object.assign(new Error('Thiếu family_id'), { status: 400 });
+
+  if (profileId) {
+    return {
+      where: `WHERE profile_id = $1
+              AND profile_id IN (SELECT id FROM profiles WHERE family_id = $2)`,
+      params: [profileId, fid],
+    };
+  }
+
+  return {
+    where: 'WHERE profile_id IN (SELECT id FROM profiles WHERE family_id = $1)',
+    params: [fid],
+  };
+}
+
 async function readLogs(opts = {}) {
   const profileId = opts.profileId ? String(opts.profileId) : '';
+  const familyId = opts.familyId;
   const limit = opts.limit > 0 ? opts.limit : 0;
   const offset = opts.offset > 0 ? opts.offset : 0;
 
-  const where = profileId ? 'WHERE profile_id = $1' : '';
-  const countParams = profileId ? [profileId] : [];
+  const { where, params } = familyLogsWhere(familyId, profileId);
 
   const { rows: countRows } = await query(
     `SELECT COUNT(*)::int AS total FROM logs ${where}`,
-    countParams
+    params
   );
   const total = countRows[0]?.total ?? 0;
 
   let sql = `SELECT profile_id, profile_name, date, grain, exp, tasks, bonus, note
              FROM logs ${where}
              ORDER BY date DESC`;
-  const params = [...countParams];
+  const queryParams = [...params];
 
   if (limit > 0) {
-    sql += ` LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(limit, offset);
+    sql += ` LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}`;
+    queryParams.push(limit, offset);
   }
 
-  const { rows } = await query(sql, params);
+  const { rows } = await query(sql, queryParams);
   const logs = rows.map(rowToLog);
 
   return {
@@ -49,7 +68,7 @@ async function readLogs(opts = {}) {
   };
 }
 
-async function writeLog(params) {
+async function writeLog(params, familyId) {
   const profileId = String(params.profileId || '');
   const profileName = String(params.profileName || '');
   const date = String(params.date || new Date().toISOString());
@@ -60,6 +79,8 @@ async function writeLog(params) {
   const note = String(params.note || '');
 
   if (!profileId) throw new Error('Thiếu profileId');
+
+  await assertProfileInFamily(profileId, familyId);
 
   const existing = await query(
     'SELECT grain, exp FROM logs WHERE profile_id = $1 AND date = $2',
@@ -75,7 +96,7 @@ async function writeLog(params) {
        WHERE profile_id = $1 AND date = $2`,
       [profileId, date, profileName, grain, exp, tasks, bonus, note]
     );
-    await adjustBalance(profileId, grain - oldGrain, exp - oldExp);
+    await adjustBalance(profileId, grain - oldGrain, exp - oldExp, familyId);
     return { result: 'success', action: 'log_updated' };
   }
 
@@ -85,13 +106,15 @@ async function writeLog(params) {
     [profileId, profileName, date, grain, exp, tasks, bonus, note]
   );
 
-  await adjustBalance(profileId, grain, exp);
+  await adjustBalance(profileId, grain, exp, familyId);
   return { result: 'success', action: 'log_inserted' };
 }
 
-async function deleteLog(params) {
+async function deleteLog(params, familyId) {
   const profileId = String(params.profileId || '');
   const date = String(params.date || '');
+
+  await assertProfileInFamily(profileId, familyId);
 
   const { rows } = await query(
     `DELETE FROM logs
@@ -106,7 +129,7 @@ async function deleteLog(params) {
 
   const grain = Number(rows[0].grain) || 0;
   const exp = Number(rows[0].exp) || 0;
-  await adjustBalance(profileId, -grain, -exp);
+  await adjustBalance(profileId, -grain, -exp, familyId);
   return { result: 'success', action: 'log_deleted' };
 }
 

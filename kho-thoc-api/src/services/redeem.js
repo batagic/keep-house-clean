@@ -36,13 +36,21 @@ function clearFails(profileId) {
   failAttempts.delete(rateLimitKey(profileId));
 }
 
-async function redeemWithPasscode(params) {
+async function redeemWithPasscode(params, familyId) {
   const profileId = String(params.profileId || '');
   const profileName = String(params.profileName || '');
   const passcode = String(params.passcode || '');
 
   if (!profileId) throw Object.assign(new Error('Thiếu profileId'), { status: 400 });
   if (!passcode) throw Object.assign(new Error('Thiếu mã xác nhận'), { status: 400 });
+
+  const { rows: profileRows } = await query(
+    'SELECT id, total_grain FROM profiles WHERE id = $1 AND family_id = $2',
+    [profileId, String(familyId || '').trim()]
+  );
+  if (!profileRows.length) {
+    throw Object.assign(new Error('Không tìm thấy hồ sơ bé'), { status: 404 });
+  }
 
   if (isRateLimited(profileId)) {
     throw Object.assign(
@@ -67,15 +75,7 @@ async function redeemWithPasscode(params) {
 
   const { totalCost, rewardNames } = resolveRewards(params.rewardIds);
 
-  const { rows } = await query(
-    'SELECT total_grain FROM profiles WHERE id = $1',
-    [profileId]
-  );
-  if (!rows.length) {
-    throw Object.assign(new Error('Không tìm thấy hồ sơ bé'), { status: 400 });
-  }
-
-  const balance = Number(rows[0].total_grain) || 0;
+  const balance = Number(profileRows[0].total_grain) || 0;
   if (balance < totalCost) {
     throw Object.assign(new Error('Không đủ Gạo để đổi quà'), { status: 400 });
   }
@@ -92,7 +92,7 @@ async function redeemWithPasscode(params) {
     tasks: 'REDEEM',
     bonus: false,
     note,
-  });
+  }, familyId);
 
   return {
     ...result,

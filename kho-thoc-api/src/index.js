@@ -15,6 +15,7 @@ app.use(cors({
     }
     callback(new Error(`CORS blocked: ${origin}`));
   },
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Family-Id'],
 }));
 
 app.use(express.json({ limit: '256kb' }));
