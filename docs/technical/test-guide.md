@@ -18,6 +18,7 @@ docs/tests/nhatky/          # Test màn Nhật Ký
     run.sh
   dangkybe.sh               # Đăng ký bé — giới hạn 3 bé / gia đình
   doiqua.sh                 # Đổi quà — bắt buộc passcode
+  familysession.sh          # Phiên gia đình — unlock_family (khi triển khai)
   nhatky.sh                 # Chạy tất cả test nhật ký
 docs/tests/test-case.md     # Bảng ID test chi tiết
 ```
@@ -100,6 +101,21 @@ Ba lớp: **function** → **api** → **integration**. Chi tiết đầy đủ:
 | NK-DQ-01 | Ghi log `REDEEM` trực tiếp | HTTP 403 |
 | NK-DQ-02 | `type=redeem` thiếu passcode | HTTP 400 |
 | NK-DQ-03 | `type=redeem` sai passcode | HTTP 403 |
+
+## ID test — phiên gia đình (`familysession.sh` — Phase 3.1)
+
+Spec: [family-session.md](../brd/family-session.md). Script chưa có cho đến khi triển khai code.
+
+| ID | Mô tả | Kỳ vọng |
+|----|--------|---------|
+| NK-SES-01 | Chưa unlock, không có `X-Family-Id` hợp lệ | Profiles trống hoặc guard client |
+| NK-SES-02 | `unlock_family` đúng mã | HTTP 200, có `familyId` |
+| NK-SES-03 | `unlock_family` sai mã | HTTP 403 |
+| NK-SES-04 | Sau unlock, GET profiles | Chỉ bé cùng `family_id` |
+| NK-SES-05 | `type=log` sau unlock | Không cần passcode body |
+| NK-SES-06 | `type=redeem` sau unlock | Vẫn bắt buộc passcode body |
+| NK-SES-07 | Bootstrap đăng ký bé đầu | Response có `familyId` |
+| NK-SES-08 | Xóa localStorage session | Thao tác lại yêu cầu unlock |
 
 ## Đọc kết quả
 

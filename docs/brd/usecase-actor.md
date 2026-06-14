@@ -1,10 +1,12 @@
 # Use Case & Actor — Kho Thóc Gia Đình
 
+**Cập nhật:** 14/06/2026
+
 ## Actors
 
 | Actor | Mô tả | Trang chính |
 |-------|-------|-------------|
-| **Bố/mẹ** | Ghi nhật ký, đăng ký/xóa bé, đổi quà | `code/nhat-ky.html` |
+| **Bố/mẹ** | Mở phiên passcode, ghi nhật ký, đăng ký/xóa bé, đổi quà | `code/nhat-ky.html` |
 | **Bé** | Xem quà, lập kế hoạch quy đổi | `code/kho-qua.html`, `code/quy-doi.html` |
 | **Admin** | Sinh/thu hồi passcode đổi quà | `code/admin/login.html` |
 | **Hệ thống** | API + Postgres, cách ly theo `family_id` | `code/kho-thoc-api/` |
@@ -22,7 +24,7 @@ flowchart LR
     API[kho-thoc-api]
     DB[(Postgres kho_thoc)]
   end
-  NK -->|X-Family-Id| API
+  NK -->|unlock_family + X-Family-Id| API
   KQ --> API
   AD -->|JWT| API
   API --> DB
@@ -32,19 +34,42 @@ flowchart LR
 
 | Domain | Actor | API chính | Doc |
 |--------|-------|-----------|-----|
+| Phiên gia đình | Bố/mẹ | `unlock_family` | [family-session.md](./family-session.md) |
 | Nhật ký | Bố/mẹ | `log`, `profile`, `delete_profile` | [nhatky.md](./nhatky.md) |
-| Đổi quà | Bố/mẹ + Bé | `redeem` + passcode | [passcode.md](./passcode.md) |
+| Đổi quà | Bố/mẹ + Bé | `redeem` + passcode tầng 2 | [passcode.md](./passcode.md) |
 | Admin | Admin | `/admin/*` JWT | [admin.md](./admin.md) |
 
-## Use case nhanh — Bố/mẹ
+## Use case — Bố/mẹ (Nhật Ký)
 
-1. Mở Nhật Ký → hệ thống gán/nhận `family_id` (localStorage)
-2. Đăng ký bé (tối đa 3/gia đình)
-3. Ghi nhiệm vụ → cộng Gạo + EXP
-4. Đổi quà → nhập passcode của bé
+### UC-NK-01 — Mở phiên trên trình duyệt mới
 
-## Use case nhanh — Cách ly gia đình
+1. Mở Nhật Ký → danh sách bé trống (chưa có phiên)
+2. Chạm thao tác bất kỳ → modal nhập passcode (mã một bé trong nhà)
+3. Server trả `familyId` → lưu localStorage → hiển thị đúng bé
 
-- Mỗi trình duyệt một `family_id` → chỉ thấy bé của gia đình đó
-- Gia đình mới chưa có bé → danh sách trống (không lẫn dữ liệu người khác)
-- Chi tiết: [nhatky.md](./nhatky.md)
+### UC-NK-02 — Gia đình mới (bootstrap)
+
+1. Mở Nhật Ký → chọn "Đăng ký bé đầu tiên" (không cần passcode)
+2. Nhập tên bé → server tạo `family_id` + passcode
+3. Modal hiện mã → phiên được mở tự động
+
+### UC-NK-03 — Ghi nhiệm vụ
+
+1. Đã mở phiên → chọn bé → tick nhiệm vụ → Ghi Nhật Ký
+2. **Không** nhập passcode lần 2
+
+### UC-NK-04 — Đổi quà
+
+1. Đã mở phiên → chọn bé → chọn quà → Nhận Quà
+2. Modal passcode **lần nữa** (tầng 2) → xác nhận đổi
+
+### UC-NK-05 — Mất phiên
+
+1. Xóa cache hoặc đổi trình duyệt
+2. Quay lại UC-NK-01
+
+## Use case — Cách ly gia đình
+
+- `family_id` chỉ có sau unlock hoặc bootstrap — không sinh UUID vô nghĩa
+- Mỗi gia đình chỉ thấy bé của mình
+- Chi tiết: [nhatky.md](./nhatky.md) · [family-session.md](./family-session.md)

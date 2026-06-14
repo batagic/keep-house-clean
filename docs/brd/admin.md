@@ -22,6 +22,7 @@ Admin → /admin/login → username + password → JWT
 ```
 
 - **Sinh mã mới:** thu hồi mã active cũ của bé đó; plain text trả **một lần**.
+- Mã dùng cho **mở phiên gia đình** (tầng 1) và **đổi quà** (tầng 2) — xem [family-session.md](./family-session.md).
 - Bé import CSV trước Phase 2: chưa có mã → admin sinh mã từng bé.
 
 ---

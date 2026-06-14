@@ -31,6 +31,21 @@ bash docs/tests/domain/nhatky/cachlygia/cachlygia-integration.sh
 | NK-ISO-F11 | `nhat-ky.html` | Load `family-api.js` |
 | NK-ISO-F12 | migration SQL | `docs/db/migrate/004_family_id.sql` có `family_id` |
 
+## Phiên gia đình — Phase 3.1 (`familysession/` — khi triển khai)
+
+Spec: [family-session.md](../brd/family-session.md)
+
+| ID | Mô tả | Kỳ vọng |
+|----|--------|---------|
+| NK-SES-01 | Chưa unlock | Không load bé / guard client |
+| NK-SES-02 | `unlock_family` đúng | Trả `familyId`, lưu localStorage |
+| NK-SES-03 | `unlock_family` sai | HTTP 403 |
+| NK-SES-04 | GET profiles sau unlock | Chỉ bé cùng gia đình |
+| NK-SES-05 | `type=log` sau unlock | Không passcode body |
+| NK-SES-06 | `type=redeem` sau unlock | Bắt buộc passcode body |
+| NK-SES-07 | Đăng ký bé đầu (bootstrap) | Response `familyId` + `passcode` |
+| NK-SES-08 | Xóa session localStorage | Yêu cầu unlock lại |
+
 ### Domain runner
 
 ```bash

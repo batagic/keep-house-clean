@@ -66,7 +66,7 @@ flowchart LR
   <li>Frontend tĩnh trên GitHub Pages — không build step</li>
   <li>API Node.js Docker trên VPS, DB Postgres riêng <code>kho_thoc</code></li>
   <li>Migrate SQL nguồn chính: <code>docs/db/migrate/</code></li>
-  <li>Cách ly gia đình qua header <code>X-Family-Id</code></li>
+  <li>Cách ly gia đình qua <code>X-Family-Id</code> sau <strong>phiên passcode</strong> (<code>unlock_family</code>)</li>
   <li>Deploy: <code>./code/deploy/vps/deploy.sh --all</code></li>
 </ul>
 
@@ -74,6 +74,7 @@ flowchart LR
 <ul>
   <li>✅ Nhật ký, đổi quà, admin, deploy một lệnh</li>
   <li>✅ Cách ly gia đình (family_id)</li>
+  <li>📋 Phiên gia đình — passcode mở phiên (<a href="brd/family-session.md">family-session.md</a>)</li>
   <li>⏳ Cron backup pg_dump</li>
   <li>⏳ UI sửa tên/avatar bé</li>
 </ul>

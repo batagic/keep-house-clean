@@ -99,20 +99,21 @@ GET  ?type=profiles | logs | ping | all
 POST type=log | delete_log | profile
 ```
 
-Thêm (nếu multi-tenant):
+Thêm (multi-tenant + phiên gia đình):
 
-- `POST /auth` — passcode → JWT
-- Mọi query filter `family_id`
-- Migration script: export Sheets → CSV → import Postgres
+- `POST type=unlock_family` — passcode bé → `familyId` (Phase 3.1)
+- Header `X-Family-Id` trên mọi request sau unlock
+- `POST type=redeem` — passcode mỗi lần đổi quà
+- Migration: `004_family_id.sql`
 
 ### 5.2 Frontend (ước lượng 0.5–1 ngày)
 
 Thay đổi tối thiểu:
 
 1. `assets/js/data/config.js` — đổi `API_URL`
-2. `saveData()` — bỏ hack `text/plain`, thêm `Authorization` header
-3. Màn hình nhập passcode (nếu multi-tenant)
-4. Giữ nguyên cache `localStorage` — vẫn hữu ích
+2. `family-api.js` — phiên passcode (`unlock_family`, không auto UUID)
+3. `nhat-ky.js` — modal tầng 1 (phiên) + tầng 2 (đổi quà)
+4. Giữ cache `localStorage` profiles/logs theo `family_id`
 
 Contract JSON có thể giữ tương thích để giảm rủi ro:
 
@@ -201,16 +202,22 @@ API thay GAS cho **1 gia đình**, chưa auth — chứng minh ổn định trê
 
 Chi tiết từng bước: [installation.md](../installation.md)
 
-### Phase 2 — Auth
+### Phase 2 — Passcode đổi quà + Admin
 
-- [ ] Màn hình nhập passcode trên frontend
-- [ ] Passcode lưu hash (bcrypt), không plain text
-- [ ] JWT session, header `Authorization` trên mọi `fetch`
-- [ ] Phân quyền admin / kid
+- [x] Passcode bcrypt theo bé, `type=redeem`
+- [x] Admin JWT, sinh/thu hồi mã
+- [x] Modal passcode đổi quà trên `nhat-ky.html`
 
-### Phase 3 — Multi-tenant
+### Phase 3 — Cách ly gia đình (`family_id`)
 
-- [ ] Bảng `families`, mọi bảng có `family_id`
+- [x] Migration `004_family_id.sql`
+- [x] Header `X-Family-Id`, filter API theo gia đình
+
+### Phase 3.1 — Phiên gia đình (passcode tầng 1)
+
+- [ ] `POST type=unlock_family`
+- [ ] Client: bỏ auto UUID, modal phiên, bootstrap bé đầu
+- [ ] Spec: [family-session.md](../brd/family-session.md)
 - [ ] API luôn filter theo gia đình từ session/JWT
 - [ ] Onboarding gia đình mới
 - [ ] Bảng `redemptions` tách khỏi log âm

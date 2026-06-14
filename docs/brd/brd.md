@@ -8,9 +8,10 @@
 
 | Tính năng | Summary | Spec |
 |-----------|---------|------|
-| Passcode đổi quà | Mã riêng từng bé khi đổi quà; tự sinh khi đăng ký bé | [passcode.md](./passcode.md) |
+| Phiên gia đình (passcode) | Mở phiên bằng mã bé → đúng `family_id`; mất cache nhập lại | [family-session.md](./family-session.md) |
+| Passcode đổi quà | Mã riêng từng bé; nhập lại **mỗi lần** đổi quà | [passcode.md](./passcode.md) |
 | Trang admin | Đăng nhập JWT; sinh/thu hồi mã theo bé | [admin.md](./admin.md) |
-| Nhật ký việc nhà | Ghi nhiệm vụ, cộng Gạo/EXP — không cần passcode | §5–§6 bên dưới |
+| Nhật ký việc nhà | Ghi nhiệm vụ sau khi mở phiên — không passcode thêm | §5–§6 · [nhatky.md](./nhatky.md) |
 | Kho quà & quy đổi | Catalog quà, máy tính Gạo ↔ VNĐ | §6–§7 bên dưới |
 
 ---
@@ -110,15 +111,16 @@ Tỷ giá được hiển thị trên trang chủ, trang quy đổi và dashboar
 
 ## 4. Vai trò người dùng
 
-Hệ thống **không có xác thực đăng nhập**. Phân quyền dựa trên trang người dùng truy cập:
+Hệ thống **không có đăng nhập tài khoản**. Trang Nhật Ký dùng **passcode phiên gia đình** (mã bé) để xác định `family_id` — xem [family-session.md](./family-session.md).
 
 | Vai trò | Trang sử dụng | Quyền hạn |
 |---|---|---|
-| **Quản trị viên (Bố/Mẹ)** | `nhat-ky.html` | Tạo hồ sơ bé; chọn bé; tick nhiệm vụ; bật bonus tự giác; ghi nhật ký; đổi quà; xóa nhật ký; xem lịch sử |
+| **Quản trị viên (Bố/Mẹ)** | `nhat-ky.html` | Sau mở phiên: CRUD bé, ghi nhật ký, đổi quà (passcode lần 2) |
 | **Người chơi (Bé)** | `kho-qua.html`, `quy-doi.html`, `print.html` | Xem catalog quà, tính mục tiêu tích lũy, in thẻ bài |
 | **Khách / Gia đình** | `index.html` | Đọc quy tắc, nhiệm vụ mẫu, luật phạt (hướng dẫn) |
+| **Admin hệ thống** | `admin/login.html` | JWT — sinh/thu hồi passcode bé |
 
-**Rủi ro vận hành:** Bất kỳ ai mở được `nhat-ky.html` đều có quyền admin đầy đủ.
+**Rủi ro vận hành:** Ai có passcode bé + URL Nhật Ký có quyền tương đương ba/mẹ trên gia đình đó. Cách ly chính là **giữa các gia đình**, không phân quyền bố/mẹ vs bé trong cùng nhà.
 
 ---
 
@@ -444,7 +446,7 @@ Sheet riêng dự kiến: `id | name | date | grain_spent | reward_id | reward_n
 | G1 | Luật phạt & bonus cấp bậc | Có trên `index.html` | **Chưa** trong app vận hành |
 | G2 | Quà nhiều tier | Catalog HTML đầy đủ | App chỉ dùng giá tối thiểu |
 | G3 | Sheet Redemptions | Roadmap | Dùng log grain âm + `tasks='REDEEM'` |
-| G4 | Xác thực người dùng | — | Không có — ai cũng là admin |
+| G4 | Xác thực người dùng | Passcode phiên + đổi quà | 🔄 Phiên gia đình [family-session.md](./family-session.md); redeem ✅ |
 | G5 | Sửa/xóa hồ sơ bé | — | Chưa có UI |
 | G6 | Nav `print.html` | Đồng bộ với các trang | Nav riêng, chưa đồng bộ |
 | G7 | URL API | Nhiều phiên bản deployment | Cần thống nhất khi vận hành |

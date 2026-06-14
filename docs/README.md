@@ -21,8 +21,9 @@ docs/
 |------|----------|
 | [brd/brd.md](./brd/brd.md) | BRD tổng thể |
 | [brd/usecase-actor.md](./brd/usecase-actor.md) | Actor, use case, tương tác domain |
+| [brd/family-session.md](./brd/family-session.md) | Phiên gia đình — passcode tầng 1 |
 | [brd/nhatky.md](./brd/nhatky.md) | Cách ly gia đình, giới hạn bé |
-| [brd/passcode.md](./brd/passcode.md) | Passcode đổi quà |
+| [brd/passcode.md](./brd/passcode.md) | Passcode đổi quà + hai tầng |
 | [brd/admin.md](./brd/admin.md) | Trang admin |
 
 ## Kỹ thuật & vận hành

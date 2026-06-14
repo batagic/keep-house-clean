@@ -104,6 +104,15 @@ curl -s -X POST 'http://127.0.0.1:3001/kho-thoc/' \
 [ ] Browser ẩn danh: end-to-end OK
 ```
 
+### Nâng cấp Phase 3.1 — Phiên gia đình
+
+1. Deploy API có `POST type=unlock_family` + rate limit.
+2. Push frontend: `family-api.js` (session), modal tầng 1 trên `nhat-ky.html`.
+3. Kiểm tra: trình duyệt ẩn danh → nhập passcode bé → thấy đúng danh sách con.
+4. Kiểm tra: đổi quà vẫn hỏi passcode lần 2; ghi nhiệm vụ không hỏi thêm.
+
+Spec: [family-session.md](../brd/family-session.md).
+
 ### Nâng cấp Phase 1 → Phase 2
 
 1. Backup DB (`pg_dump` — xem § Backup).
@@ -192,7 +201,8 @@ curl -s -H 'Origin: https://batagic.github.io' \
 | API `kho-thoc-api` local + VPS | ✅ |
 | HTTPS `apinhatkyvumua.taho.cat` | ✅ |
 | Cutover `API_URL` GitHub Pages | ⏳ trailing `/` |
-| Phase 2 passcode + admin | 🔄 triển khai |
+| Phase 2 passcode + admin | ✅ |
+| Phase 3.1 phiên gia đình | 📋 thiết kế |
 | Phase 3 multi-tenant | ❌ |
 | Import CSV VPS | ⏳ |
 | Cron `pg_dump` | ❌ |

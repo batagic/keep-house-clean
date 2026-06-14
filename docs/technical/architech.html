@@ -564,7 +564,7 @@ flowchart TB
       </div>
       <div class="module-box">
         <div class="name">services/redeem.js</div>
-        <div class="desc">Validate passcode bcrypt · ghi log REDEEM · trừ Gạo</div>
+        <div class="desc">unlock_family · verify passcode · bcrypt · redeem</div>
       </div>
       <div class="module-box">
         <div class="name">services/auth.js</div>
@@ -798,7 +798,7 @@ docs/technical/operator.md</pre>
   <!-- ROADMAP -->
   <section id="roadmap">
     <div class="section-title">Lộ trình triển khai</div>
-    <p class="section-desc">Phase 1 (API + VPS) đã chạy. Phase 2 passcode + admin đang triển khai.</p>
+    <p class="section-desc">Phase 1–3 đã chạy. Phase 3.1 phiên gia đình — thiết kế xong, chờ triển khai code.</p>
 
     <div class="diagram-wrap">
       <pre class="mermaid">
@@ -830,7 +830,12 @@ flowchart LR
         <tr>
           <td>3</td>
           <td>Multi-tenant <code>family_id</code> (~100 gia đình)</td>
-          <td>⏳ Chưa bắt đầu</td>
+          <td>✅ Hoàn thành</td>
+        </tr>
+        <tr>
+          <td>3.1</td>
+          <td>Phiên gia đình — <code>unlock_family</code></td>
+          <td>📋 Thiết kế — docs/brd/family-session.md</td>
         </tr>
       </tbody>
     </table>
@@ -853,8 +858,13 @@ flowchart LR
         </tr>
         <tr>
           <td>Multi-tenant (Phase 3)</td>
-          <td>Chưa làm</td>
-          <td>docs/brd/passcode.md §10 · docs/technical/migration-vps.md</td>
+          <td>✅ Đã làm</td>
+          <td>family_id + X-Family-Id</td>
+        </tr>
+        <tr>
+          <td>Phiên gia đình (Phase 3.1)</td>
+          <td>Thiết kế</td>
+          <td>docs/brd/family-session.md</td>
         </tr>
         <tr>
           <td>Cron backup <code>pg_dump</code></td>

@@ -32,7 +32,7 @@
   <div class="section-title">Tổng quan hệ thống</div>
   <div class="box">
     <h3>Client Layer</h3>
-    <p>HTML/CSS/JS tĩnh trên GitHub Pages (<code>code/</code>). Không build. Gọi API qua <code>fetch</code> + header <code>X-Family-Id</code>.</p>
+    <p>HTML/CSS/JS tĩnh trên GitHub Pages (<code>code/</code>). Gọi API qua <code>fetch</code> + header <code>X-Family-Id</code> sau khi <strong>mở phiên passcode</strong> (tầng 1). Đổi quà: passcode tầng 2 mỗi lần.</p>
   </div>
   <div class="box">
     <h3>API Layer</h3>
@@ -49,7 +49,7 @@
   <table>
     <tr><th>Bước</th><th>Thành phần</th><th>Ghi chú</th></tr>
     <tr><td>1</td><td>Browser → GitHub Pages</td><td>Tải <code>code/nhat-ky.html</code></td></tr>
-    <tr><td>2</td><td>JS → HTTPS API</td><td><code>apinhatkyvumua.taho.cat/kho-thoc/</code></td></tr>
+    <tr><td>2</td><td>JS → HTTPS API</td><td><code>unlock_family</code> hoặc <code>X-Family-Id</code></td></tr>
     <tr><td>3</td><td>Host Nginx :443</td><td>SSL terminate, proxy → :3001</td></tr>
     <tr><td>4</td><td>kho-thoc-api</td><td>familyContext middleware</td></tr>
     <tr><td>5</td><td>PostgreSQL</td><td>Filter theo <code>family_id</code></td></tr>
@@ -63,7 +63,7 @@
     <tr><td>Chi phí hạ tầng</td><td>Thấp</td><td>GitHub Pages miễn phí; VPS dùng chung với eedt</td></tr>
     <tr><td>Độ trễ API</td><td>Chấp nhận được</td><td>ping ~50–200ms từ VN (ước lượng)</td></tr>
     <tr><td>Scale</td><td>~100 gia đình</td><td>Single Postgres, không sharding</td></tr>
-    <tr><td>Bảo mật</td><td>Cơ bản</td><td>HTTPS, CORS, passcode/redeem, JWT admin</td></tr>
+    <tr><td>Bảo mật</td><td>Cơ bản</td><td>HTTPS, passcode phiên + redeem, JWT admin</td></tr>
     <tr><td>Khả năng mở rộng</td><td>Modular</td><td>API tách repo path; migrate versioned</td></tr>
   </table>
 </div>
@@ -78,6 +78,14 @@
     <tr><td>Migrations</td><td><code>docs/db/migrate/</code></td><td>migrate.js</td></tr>
     <tr><td>Deploy</td><td><code>code/deploy/vps/</code></td><td>SSH, Docker</td></tr>
   </table>
+</div>
+
+<div class="section">
+  <div class="section-title">Phiên gia đình (Phase 3.1)</div>
+  <div class="box">
+    <h3>unlock_family → X-Family-Id</h3>
+    <p>Client không tự sinh <code>family_id</code>. Ba/mẹ nhập passcode bé → <code>POST type=unlock_family</code> → server trả <code>familyId</code> → lưu localStorage. Ghi nhiệm vụ không hỏi passcode thêm; đổi quà nhập lại mỗi lần. Spec: <code>docs/brd/family-session.md</code>.</p>
+  </div>
 </div>
 
 <p style="margin-top:32px;font-size:11px;color:var(--muted);text-align:center">

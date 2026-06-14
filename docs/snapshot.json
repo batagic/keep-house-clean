@@ -47,6 +47,9 @@
     "Admin JWT",
     "Deploy một lệnh VPS"
   ],
+  "features_planned": [
+    "Phiên gia đình — passcode tầng 1 (unlock_family)"
+  ],
   "workflow_ai": {
     "after_feature": "Hỏi user trước khi git push + deploy",
     "update_docs": ["docs/brd/", "docs/tests/test-case.md"],
